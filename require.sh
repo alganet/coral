@@ -1,68 +1,60 @@
+# require.sh - A portable shell script module loader.
+#
+# - Supports circular dependencies.
+# - Supports multiple loading paths.
+# - Provides hooks to notify external code of loading events.
+#
+
+# Hook: Function called when a file source is included
+require_on_include="${require_on_include:-require_on_include}"
+# Hook: Function called when a source file is requested
+require_on_request="${require_on_request:-require_on_request}"
+# Hook: Function called when a source file is searched on the path
+require_on_search="${require_on_search:-require_on_search}"
+
+# Loads a module, skips if it is already loaded.
+#
+# Usage: `require DEPENDENCY_NAME`
+#
 require ()
 {
 	local previous="${dependency:-require}"
 	local dependency="${1}"
-	local require_ext="${require_ext:-.sh}"
 	shift
 
 	require_loaded="${require_loaded:- }"
 
-	if require_is_loaded "${dependency}" "${previous}" "${@:-}"
+	if _require_is_on_load_list "${dependency}" "${previous}" "${@:-}"
 	then
 		return 0
 	fi
 
-	require_source "${dependency}" || exit 1
-}
-
-require_source ()
-{
-	local dependency="${1}"
-	local location="$(
-		${require_on_search:-require_on_search} "${dependency}"
-	)"
-
-	test -f "${location}" || exit 69
-
-	require_loaded="${require_loaded:- }${dependency} "
-
-	${require_on_include:-require_on_include} "${location}" || exit 1
-}
-
-require_is_loaded ()
-{
-	dependency="${1}"
-	previous="${2}"
-	require_loaded="${require_loaded:- }"
-
-	${require_on_request:-require_on_request} "${@:-}"
-}
-
-require_on_search () 
-{
-	require_path "${1}${require_ext}"
-}
-
-require_on_include () 
-{
-	local ext_file="${1}"; set --; . "${ext_file}"
-}
-
-require_on_request () 
-{
-	local is_ext="${dependency%${require_ext}}"
-
-	if test "${is_ext}${require_ext}" = "${dependency}"
+	if ! _require_source "${dependency}"
 	then
-		dependency="${is_ext}"
+		echo "Could not find dependency '${dependency}'"
+		exit $?
 	fi
+}
 
+require_on_include ()
+{
+	local required_file="${1}"; set --; . "${required_file}"
+}
+
+require_on_request ()
+{
 	if test "${require_loaded#* ${dependency} *}" = "${require_loaded}"
 	then
 		return 1
 	fi
 }
 
+require_on_search ()
+{
+	require_path "${1}"
+}
+
+# Solves a path
 require_path ()
 {
 	local solved
@@ -77,4 +69,27 @@ require_path ()
 			return
 		fi
 	done
+}
+
+# Checks if a module is loaded in the current list.
+_require_is_on_load_list ()
+{
+	dependency="${1}"
+	previous="${2}"
+	require_loaded="${require_loaded:- }"
+
+	${require_on_request} "${@:-}"
+}
+
+# Sources the module file
+_require_source ()
+{
+	local dependency="${1}"
+	local location="$(${require_on_search} "${dependency}")"
+
+	test -f "${location}" || return 69
+
+	require_loaded="${require_loaded:- }${dependency} "
+
+	${require_on_include} "${location}" || return 1
 }

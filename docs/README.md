@@ -1,3 +1,0 @@
-`coral` Documentation
-=====================
-

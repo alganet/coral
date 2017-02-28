@@ -1,16 +1,42 @@
-#!/usr/bin/env
+#!/usr/bin/env sh
+#
+# Coral Launcher
+#
+# Sets up shell options, environment variables and
+# launches the `coral.sh` library.
+#
+# This is the only executable you'll ever need for coral libraries.
+#
 
+# Options for all shells
+#
+# -e: Exit if any command has an uncaught error code
+# -u: Exit on any use of an undefined variable
+# -f: Do not expand glob patterns
+set -euf
+
+# Unset options for zsh to make it more portable
+#
+# NO_IGNORE_BRACES: Make it ignore proprietary braces syntax
+# NO_MATCH: Avoid expanding extra filename patterns
+# NO_SHWORDSPLIT: Make the word split on zsh behave like POSIX
+# BAD_PATTERN: Ignore errors for zsh-specific syntax
+#
 unsetopt \
 	NO_IGNORE_BRACES \
 	NO_MATCH \
 	NO_SHWORDSPLIT \
 	BAD_PATTERN >/dev/null 2>&1 || :
 
-set -euf
+# Setup library path if not available
+if test -z "${require_path:-}"
+then
+	require_path="$(pwd)"
+fi
 
-. "coral/require.sh"
+# Loads the require and coral libraries
+. "${require_path}/require.sh"
+. "${require_path}/coral.sh"
 
-require_path='coral'
-require "coral"
-
+# Launches coral with the remaining arguments
 coral "${@:-}"
