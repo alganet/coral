@@ -1,0 +1,16 @@
+#!/usr/bin/env
+
+unsetopt \
+	NO_IGNORE_BRACES \
+	NO_MATCH \
+	NO_SHWORDSPLIT \
+	BAD_PATTERN >/dev/null 2>&1 || :
+
+set -euf
+
+. "coral/require.sh"
+
+require_path='coral'
+require "coral"
+
+coral "${@:-}"
