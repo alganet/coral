@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+set -- "${run_target:-"$(basename "${0}")"}" "${@:-}"
+
+require "${1}.sh"
+
+"${@:-:}"

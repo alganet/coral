@@ -1,8 +1,8 @@
-# coral.sh - A library to load and launch other libraries
-#
+##
+ # coral.sh
+ ##
+
 coral ()
 {
-	require "${1}.sh"
-
-	"${@:-}"
+	echo "${@:-}"
 }

@@ -1,12 +1,4 @@
 #!/usr/bin/env sh
-#
-# Coral Launcher
-#
-# Sets up shell options, environment variables and
-# launches the `coral.sh` library.
-#
-# This is the only executable you'll ever need for coral libraries.
-#
 
 # Options for all shells
 #
@@ -28,15 +20,12 @@ unsetopt \
 	NO_SHWORDSPLIT \
 	BAD_PATTERN >/dev/null 2>&1 || :
 
-# Setup library path if not available
-if test -z "${require_path:-}"
-then
-	require_path="$(pwd)"
-fi
+require ()
+{
+	:
+}
 
-# Loads the require and coral libraries
-. "${require_path}/require.sh"
-. "${require_path}/coral.sh"
-
-# Launches coral with the remaining arguments
-coral "${@:-}"
+default ()
+{
+	:
+}
