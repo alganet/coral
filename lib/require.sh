@@ -1,22 +1,13 @@
 ##
- # require.sh - A portable shell script module loader.
- #
- # - Supports circular dependencies.
- # - Supports multiple loading paths.
- # - Provides hooks to notify external code of loading events.
+ # require.sh — a portable shell script file loader
  ##
 
-require_on_include="${require_on_include:-require_on_include}"
-require_on_request="${require_on_request:-require_on_request}"
-require_on_search="${require_on_search:-require_on_search}"
-
-##
- # Loads a module, skips if it is already loaded.
- #
- # Usage: `require DEPENDENCY_NAME`
- ##
 require ()
 {
+	require_on_include="${require_on_include:-require_on_include}"
+	require_on_request="${require_on_request:-require_on_request}"
+	require_on_search="${require_on_search:-require_on_search}"
+
 	local previous="${dependency:-require}"
 	local dependency="${1}"
 	shift
@@ -35,7 +26,6 @@ require ()
 	fi
 }
 
-## Hook: Function called when a file source is included. ##
 require_on_include ()
 {
 	local required_file="${1}"
@@ -43,7 +33,6 @@ require_on_include ()
 	. "${required_file}"
 }
 
-## Hook: Function called when a source file is requested. ##
 require_on_request ()
 {
 	if test "${require_loaded#* ${dependency} *}" = "${require_loaded}"
@@ -52,18 +41,16 @@ require_on_request ()
 	fi
 }
 
-## Hook: Function called when a source file is searched on the path. ##
 require_on_search ()
 {
 	require_path "${1}"
 }
 
-## Solves a path ##
 require_path ()
 {
 	local solved
+	local require_path="${2:-.\:${require_path:-}}"
 	local IFS=':'
-	local require_path=${2:-.\:${require_path:-}}
 
 	for solved in ${require_path}
 	do
@@ -75,7 +62,6 @@ require_path ()
 	done
 }
 
-## Checks if a module is loaded in the current list. ##
 _require_is_on_load_list ()
 {
 	dependency="${1}"
@@ -85,7 +71,6 @@ _require_is_on_load_list ()
 	${require_on_request} "${@:-}"
 }
 
-## Sources the module file. ##
 _require_source ()
 {
 	local dependency="${1}"
