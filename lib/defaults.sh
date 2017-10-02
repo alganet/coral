@@ -15,6 +15,9 @@ if test -n "${KSH_VERSION:-}" &&
    test -z "${KSH_VERSION##*Version AJM*}"
 then
 	alias local=typeset
+elif test -n "${YASH_VERSION:-}"
+then
+	alias local=typeset
 elif test -n "${BASH_VERSION:-}"
 then
 	set -o posix
