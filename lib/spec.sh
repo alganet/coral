@@ -132,8 +132,7 @@ _spec_run_console ()
 		if test "\$ # ${message#*\$ # }" = "${message}"
 		then
 			local title="${message#*\$ # }"
-		elif test "\$ ./${message#*\$ ./}" = "${message}" &&
-			 test -x "./${message#*\$ ./}"
+		elif test "\$ ./${message#*\$ ./}" = "${message}"
 		then
 			_spec_report_single_result
 			last_command_line="${message_line}"
