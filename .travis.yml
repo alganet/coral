@@ -71,7 +71,7 @@ matrix:
     - env: spec_shell="dash" BREW="dash"
       os:  osx
 
-    - env: spec_shell="bash-2.05b" APTGET="bash-2.05b" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash-2.05b.13" APTGET="bash-2.05b.13" PPA="team-mayhem/multishell"
       os:  linux
 
     - env: spec_shell="bash-3.0.16" APTGET="bash-3.0.16" PPA="team-mayhem/multishell"
@@ -80,7 +80,7 @@ matrix:
     - env: spec_shell="bash-3.2.9" APTGET="bash-3.2.9" PPA="team-mayhem/multishell"
       os:  linux
 
-    - env: spec_shell="bash-4.0.9" APTGET="bash-4.0.9" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash-4.0.19" APTGET="bash-4.0.19" PPA="team-mayhem/multishell"
       os:  linux
 
     - env: spec_shell="bash-4.1.9" APTGET="bash-4.1.9" PPA="team-mayhem/multishell"
