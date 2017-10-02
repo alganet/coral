@@ -18,7 +18,7 @@ install:
   - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; chmod +x coral"
 
 test_script:
-  - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; spec_shell=${spec_shell} coral spec run spec/README.md"
+  - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; spec_shell=${spec_shell} ./coral spec run spec/README.md"
 
 environment:
   matrix:
