@@ -36,9 +36,12 @@ spec_parse ()
 	local possible_fence=
 	local line_number=1
 	local line_last_open_fence=0
+	local oldifs="${IFS}"
 
+	IFS=''
 	while read -r line
 	do
+		IFS="${oldifs}"
 		possible_fence="${line#*\`\`\`}"
 
 		if test -z "${open_fence}"
@@ -62,7 +65,9 @@ spec_parse ()
 		fi
 
 		line_number=$((line_number + 1))
+		IFS=''
 	done
+	IFS="${oldifs}"
 }
 
 _spec_fence_open ()
@@ -115,17 +120,19 @@ _spec_run_console ()
 	local result=true
 	local result_code=0
 	local expectation=
-	local title=
 	local message_line=1
 	local last_command_line=0
+	local oldifs="${IFS}"
 
 	cd "${spec_directory}"
 
+	IFS=''
 	while read -r message
 	do
+		IFS="${oldifs}"
 		if test "\$ # ${message#*\$ # }" = "${message}"
 		then
-			local title="${message#*\$ # }"
+			_spec_report_comment
 		elif test "\$ ./${message#*\$ ./}" = "${message}" &&
 			 test -x "./${message#*\$ ./}"
 		then
@@ -154,7 +161,9 @@ _spec_run_console ()
 			_spec_collect_expectation
 		fi
 		message_line=$((message_line + 1))
+		IFS=''
 	done < "console"
+	IFS="${oldifs}"
 
 	_spec_report_single_result
 	instructions="${message#*\$ }"
@@ -164,21 +173,16 @@ _spec_run_console ()
 
 _spec_import_result ()
 {
-	sed 's/.*/# - &/'
+	sed 's/.*/# - &$/'
 }
 
 _spec_run_external ()
 {
-	local OLDPS4="${PS4:-}"
-	local extra_setup=":"
-
 	set +e
-
 	${spec_shell} <<-EXTERNAL > result 2>&1
 		test 'last_command_success=0' = "last_command_success=${result_code}"
 		${instructions} 2>&1
 	EXTERNAL
-
 	result_code="$?"
 	set -e
 	echo "$result_code"
@@ -188,18 +192,18 @@ _spec_collect_expectation ()
 {
 	if test -z "${expectation}" && test -z "${message}"
 	then
-		expectation="# - $(printf \\n)"
+		expectation="# - $(printf \\n)$"
 	elif test -z "${expectation}"
 	then
-		expectation="$(printf %s\\n "# - $message")"
+		expectation="$(printf %s\\n "# - ${message}$")"
 	else
-		expectation="$(printf %s\\n "${expectation}" "# - $message")"
+		expectation="$(printf %s\\n "${expectation}" "# - ${message}$")"
 	fi
 }
 
 _spec_report_single_result ()
 {
-	local line_report="${test_number} - ${title:-${instructions}}"
+	local line_report="${test_number} - ${instructions}"
 
 	if test "${expectation}" = "${result}"
 	then
@@ -221,6 +225,11 @@ _spec_report_single_result ()
 }
 
 _spec_text_line ()
+{
+	:
+}
+
+_spec_report_comment ()
 {
 	:
 }

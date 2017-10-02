@@ -24,9 +24,8 @@
 # - Use tabs, required for HEREDOCs to work properly
 # - Use a 4-space tab width
 #
-[coral]
-  indent_style = tab
-  tab_width  = 4
 [*.sh]
   indent_style = tab
   tab_width  = 4
+[*.md]
+  trim_trailing_whitespace = false

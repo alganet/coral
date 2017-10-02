@@ -46,7 +46,14 @@ The core Shell features are:
 
 - File manipulation
 ```console
-ldknf
+$ # Directing input to a file
+$ echo 'Hello World       ' > hello.txt
+$ # Displaying file contents
+$ cat hello.txt
+Hello World       
+$ # Seeing non-printable characters
+$ sed -n 'l' hello.txt
+Hello World       $
 ```
 - Text manipulation
 - Interaction with other commands
