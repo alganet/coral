@@ -132,7 +132,8 @@ _spec_run_console ()
 		if test "\$ # ${message#*\$ # }" = "${message}"
 		then
 			local title="${message#*\$ # }"
-		elif test "\$ ./${message#*\$ ./}" = "${message}"
+		elif test "\$ ./${message#*\$ ./}" = "${message}" &&
+			 test -x "./${message#*\$ ./}"
 		then
 			_spec_report_single_result
 			last_command_line="${message_line}"
@@ -176,7 +177,7 @@ _spec_run_external ()
 
 	${spec_shell} <<-EXTERNAL > result 2>&1
 		test 'last_command_success=0' = "last_command_success=${result_code}"
-		${instructions}
+		${instructions} 2>&1
 	EXTERNAL
 
 	result_code="$?"

@@ -22,6 +22,8 @@ Hello World
 Or write a script to execute a series of commands:
 
 ```sh file example.sh
+#!/usr/bin/env sh
+
 printf 'How '
 printf 'are '
 printf 'you?'
