@@ -1,24 +1,31 @@
 require 'tempdir.sh'
 
-spec ()
-{
-	spec_command_"${@:-}"
-}
-
-spec_command_ ()
-{
-	:
-}
-
-spec_command_run()
+spec()
 {
 	local target="${1:-.}"
 	local spec_shell="${spec_shell:-sh}"
+	local test_number=0
+	local fail_number=0
+	local test_result=0
 
-	echo "# Running specification for ${target} with ${spec_shell}"
+	echo "# Using	'${spec_shell}'"
 	echo "# "
 
-	cat "${target}" | spec_parse "$(tempdir 'spec')"
+	find "${target}" -type f | while read target_file
+	do
+		echo "# File	'${target_file}'"
+		cat "${target_file}" | spec_parse "$(tempdir 'spec')"
+	done
+
+	if test "${fail_number}" -gt 0
+	then
+		echo "# FAILURE (${fail_number} of ${test_number} assertions failed)"
+		test_result=1
+	fi
+
+	echo "1..${test_number}"
+
+	return "${test_result}"
 }
 
 spec_parse ()
@@ -29,9 +36,6 @@ spec_parse ()
 	local possible_fence=
 	local line_number=1
 	local line_last_open_fence=0
-	local test_number=0
-	local fail_number=0
-	local test_result=0
 
 	while read -r line
 	do
@@ -59,16 +63,6 @@ spec_parse ()
 
 		line_number=$((line_number + 1))
 	done
-
-	if test "${fail_number}" -gt 0
-	then
-		echo "# FAILURE (${fail_number} of ${test_number} assertions failed)"
-		test_result=1
-	fi
-
-	echo "1..${test_number}"
-
-	return "${test_result}"
 }
 
 _spec_fence_open ()
@@ -143,7 +137,7 @@ _spec_run_console ()
 			result_code=$(_spec_run_external 2>/dev/null)
 			instructions="./${spec_file}"
 			spec_file=
-			result="$(cat result)"
+			result="$(cat result | _spec_import_result)"
 
 			expectation=
 		elif test "\$ ${message#*\$ }" = "${message}"
@@ -153,7 +147,7 @@ _spec_run_console ()
 			instructions="${message#*\$ }"
 			test_number=$((test_number + 1))
 			result_code=$(_spec_run_external 2>/dev/null)
-			result="$(cat result)"
+			result="$(cat result | _spec_import_result)"
 
 			expectation=
 		else
@@ -166,6 +160,11 @@ _spec_run_console ()
 	instructions="${message#*\$ }"
 
 	cd "${previous}"
+}
+
+_spec_import_result ()
+{
+	sed 's/.*/# - &/'
 }
 
 _spec_run_external ()
@@ -187,11 +186,14 @@ _spec_run_external ()
 
 _spec_collect_expectation ()
 {
-	if test -z "${expectation}"
+	if test -z "${expectation}" && test -z "${message}"
 	then
-		expectation="${message}"
+		expectation="# - $(printf \\n)"
+	elif test -z "${expectation}"
+	then
+		expectation="$(printf %s\\n "# - $message")"
 	else
-		expectation=$(printf %s\\n "${expectation}" "$message")
+		expectation="$(printf %s\\n "${expectation}" "# - $message")"
 	fi
 }
 
@@ -209,11 +211,11 @@ _spec_report_single_result ()
 		error_line=$((${line_last_open_fence} + ${last_command_line}))
 		echo
 		echo "not ok	${line_report}"
-		echo "# Failure on ${target} line ${error_line}"
+		echo "# Failure on ${target_file} line ${error_line}-$((last_command_line + error_line - 1))"
 		echo "# Output"
-		echo "${result}" | sed 's/.*/# +	&/'
+		echo "${result}"| sed 's/^# - \(.*\)$/# + \1/'
 		echo "# Expected"
-		echo "${expectation}" | sed 's/.*/# -	&/'
+		echo "${expectation}"
 		echo
 	fi
 }
