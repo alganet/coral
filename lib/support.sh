@@ -21,10 +21,6 @@ then
 elif test -n "${BASH_VERSION:-}"
 then
 	set -o posix
-elif test -n "${BASH_VERSION:-}" &&
-	test -z "${BASH_VERSION##*4.0*}"
-then
-	set +u
 elif test -n "${ZSH_VERSION-}"
 then
 	# Unset options for zsh to make it more portable
