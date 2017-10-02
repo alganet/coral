@@ -71,23 +71,23 @@ matrix:
     - env: spec_shell="dash" BREW="dash"
       os:  osx
 
-    - env: spec_shell="bash2.05b" APTGET="bash2.05b" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash2.05b" APTGET="bash-2.05b" PPA="team-mayhem/multishell"
       os:  linux
 
-    - env: spec_shell="bash3.0.16" APTGET="bash3.0.16" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash3.0.16" APTGET="bash-3.0.16" PPA="team-mayhem/multishell"
       os:  linux
 
-    - env: spec_shell="bash3.2.9" APTGET="bash3.2.9" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash3.2.9" APTGET="bash-3.2.9" PPA="team-mayhem/multishell"
       os:  linux
 
-    - env: spec_shell="bash4.0.9" APTGET="bash4.0.9" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash4.0.9" APTGET="bash-4.0.9" PPA="team-mayhem/multishell"
       os:  linux
 
-    - env: spec_shell="bash4.1.9" APTGET="bash4.1.9" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash4.1.9" APTGET="bash-4.1.9" PPA="team-mayhem/multishell"
       os:  linux
 
-    - env: spec_shell="bash4.2.53" APTGET="bash4.2.53" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash4.2.53" APTGET="bash-4.2.53" PPA="team-mayhem/multishell"
       os:  linux
 
-    - env: spec_shell="bash4.3.9" APTGET="bash4.3.9" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash4.3.9" APTGET="bash-4.3.9" PPA="team-mayhem/multishell"
       os:  linux
