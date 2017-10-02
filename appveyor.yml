@@ -11,17 +11,14 @@ install:
   # Install pacman dependencies
   - cmd: call %SHELLENV% -lc "${PACMAN:+pacman --noconfirm -S $PACMAN}"
 
-  # Move to the project folder
-  - cmd: cd %APPVEYOR_BUILD_FOLDER%
-
   # Build the library
-  - cmd: call %SHELLENV% -lc "cat lib/defaults.sh lib/require.sh .env lib/coral.sh lib/entrypoint.sh > coral"
+  - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; cat lib/defaults.sh lib/require.sh .env lib/coral.sh lib/entrypoint.sh > coral"
 
   # Make the library executable
-  - cmd: call %SHELLENV% -lc "chmod +x coral"
+  - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; chmod +x coral"
 
 test_script:
-  - cmd: call %SHELLENV% -lc "spec_shell=${spec_shell} coral spec run spec/README.md"
+  - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; spec_shell=${spec_shell} coral spec run spec/README.md"
 
 environment:
   matrix:
