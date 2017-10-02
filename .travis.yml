@@ -1,4 +1,5 @@
 sudo: required
+language: bash
 before_install:
   # Install PPA if environment requires it
   - ${PPA:+sudo add-apt-repository ppa:${PPA} -y}
@@ -22,7 +23,7 @@ before_install:
   - chmod +x coral
 
 script:
-  - spec_shell=${spec_shell} $spec_shell coral spec run doc/README.md
+  - spec_shell=${spec_shell} $spec_shell coral spec run spec/README.md
 matrix:
   include:
     - env: spec_shell="dash" APTGET=""

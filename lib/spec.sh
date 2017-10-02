@@ -30,6 +30,7 @@ spec_parse ()
 	local line_number=1
 	local test_number=0
 	local fail_number=0
+	local test_result=0
 
 	while read -r line
 	do
@@ -60,9 +61,12 @@ spec_parse ()
 	if test "${fail_number}" -gt 0
 	then
 		echo "# FAILURE (${fail_number} of ${test_number} assertions failed)"
+		test_result=1
 	fi
 
 	echo "1..${test_number}"
+
+	return "${test_result}"
 }
 
 _spec_fence_open ()
