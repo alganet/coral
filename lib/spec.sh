@@ -28,6 +28,7 @@ spec_parse ()
 	local open_fence=
 	local possible_fence=
 	local line_number=1
+	local line_last_open_fence=0
 	local test_number=0
 	local fail_number=0
 	local test_result=0
@@ -41,6 +42,7 @@ spec_parse ()
 			if test "${line}" = "\`\`\`${possible_fence}"
 			then
 				open_fence="${possible_fence}"
+				line_last_open_fence="${line_number}"
 				_spec_fence_open ${open_fence}
 			else
 				_spec_text_line ${open_fence}
@@ -120,6 +122,8 @@ _spec_run_console ()
 	local result_code=0
 	local expectation=
 	local title=
+	local message_line=1
+	local last_command_line=0
 
 	cd "${spec_directory}"
 
@@ -132,6 +136,7 @@ _spec_run_console ()
 			 test -x "./${message#*\$ ./}"
 		then
 			_spec_report_single_result
+			last_command_line="${message_line}"
 			spec_file="${message#*\$ ./}"
 			instructions="$(cat "${spec_file}")"
 			test_number=$((test_number + 1))
@@ -144,15 +149,17 @@ _spec_run_console ()
 		elif test "\$ ${message#*\$ }" = "${message}"
 		then
 			_spec_report_single_result
+			last_command_line="${message_line}"
 			instructions="${message#*\$ }"
 			test_number=$((test_number + 1))
-			_spec_run_test 2>/dev/null && result_code=$? || result_code=$?
+			result_code=$(_spec_run_external 2>/dev/null)
 			result="$(cat result)"
 
 			expectation=
 		else
 			_spec_collect_expectation
 		fi
+		message_line=$((message_line + 1))
 	done < "console"
 
 	_spec_report_single_result
@@ -161,66 +168,21 @@ _spec_run_console ()
 	cd "${previous}"
 }
 
-_spec_run_test ()
-{
-	local OLDPS4="${PS4:-}"
-	local extra_setup=":"
-
-	_spec_setup_debugging
-	set +e
-	export PS4 spec_file
-
-	eval "$extra_setup
-		set -x
-		test 'last_command_success=0' = 'last_command_success=${result_code}'
-		${instructions} 2>&1" 2>> debug 1> result
-
-	result_code="$?"
-	set +x
-	set -e
-	PS4="${OLDPS4}"
-}
-
 _spec_run_external ()
 {
 	local OLDPS4="${PS4:-}"
 	local extra_setup=":"
 
-	_spec_setup_debugging
 	set +e
-	export PS4 spec_file
 
-	"${spec_shell}" <<-EXTERNAL 2>> debug 1> result
-		$extra_setup
-		set -x
+	${spec_shell} <<-EXTERNAL > result 2>&1
 		test 'last_command_success=0' = "last_command_success=${result_code}"
-		${instructions} 2>&1
+		${instructions}
 	EXTERNAL
 
 	result_code="$?"
-	set +x
 	set -e
-	PS4="${OLDPS4}"
 	echo "$result_code"
-}
-
-_spec_setup_debugging ()
-{
-	echo "Trace	File:Line	Statement" > debug
-	if test -n "${KSH_VERSION:-}" &&
-	   test -z "${KSH_VERSION##*Version AJM*}"
-	then
-		PS4='*	${spec_file:-$(basename ${.sh.file})}:$((${LINENO:-} - 3))	'
-	elif test -n "${BASH_VERSION:-}"
-	then
-		PS4='*	${spec_file:-${BASH_SOURCE:-[unknown]}}:$((${LINENO:-} - 3))	'
-	elif test -n "${ZSH_VERSION-}"
-	then
-		extra_setup="setopt PROMPT_SUBST"
-		PS4='*	${spec_file:-%x}:$((${LINENO:-} - 3))	'
-	else
-		PS4='*	[unknown]:${LINENO:-}?	'
-	fi
 }
 
 _spec_collect_expectation ()
@@ -244,9 +206,10 @@ _spec_report_single_result ()
 	elif test ! -z "${instructions}"
 	then
 		fail_number=$((fail_number + 1))
+		error_line=$((${line_last_open_fence} + ${last_command_line}))
 		echo
 		echo "not ok	${line_report}"
-		cat debug | sed 's/.*/# &/'
+		echo "# Failure on ${target} line ${error_line}"
 		echo "# Output"
 		echo "${result}" | sed 's/.*/# +	&/'
 		echo "# Expected"

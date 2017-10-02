@@ -15,8 +15,7 @@ It is a program that reads text and execute commands.
 You can either use it interactively through a console:
 
 ```console
-$ name=World
-$ echo "Hello $name"
+$ echo "Hello World"
 Hello World
 ```
 

@@ -70,15 +70,3 @@ matrix:
 
     - env: spec_shell="dash" BREW="dash"
       os:  osx
-
-    - env: spec_shell="bash2.05b" APTGET="bash2.05b" PPA="agriffis/bashes"
-      os:  linux
-
-    - env: spec_shell="bash3.0.16" APTGET="bash3.0.16" PPA="agriffis/bashes"
-      os:  linux
-
-    - env: spec_shell="bash3.2.48" APTGET="bash3.2.48" PPA="agriffis/bashes"
-      os:  linux
-
-    - env: spec_shell="bash4.2.45" APTGET="bash4.2.45" PPA="agriffis/bashes"
-      os:  linux
