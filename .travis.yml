@@ -23,7 +23,7 @@ before_install:
   - chmod +x coral
 
 script:
-  - spec_shell=${spec_shell} $spec_shell ./coral spec run spec/README.md
+  - spec_shell=${spec_shell} $spec_shell ./coral spec spec/
 matrix:
   include:
     - env: spec_shell="dash" APTGET=""
