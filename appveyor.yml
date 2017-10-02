@@ -12,7 +12,7 @@ install:
   - cmd: call %SHELLENV% -lc "${PACMAN:+pacman --noconfirm -S $PACMAN}"
 
   # Move to the project folder
-  - cmd: cd $APPVEYOR_BUILD_FOLDER
+  - cmd: cd %APPVEYOR_BUILD_FOLDER%
 
   # Build the library
   - cmd: call %SHELLENV% -lc "cat lib/defaults.sh lib/require.sh .env lib/coral.sh lib/entrypoint.sh > coral"
