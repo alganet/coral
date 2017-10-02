@@ -217,9 +217,9 @@ _spec_report_single_result ()
 		echo "not ok	${line_report}"
 		echo "# Failure on ${target_file} line ${error_line}-$((last_command_line + error_line - 1))"
 		echo "# Output"
-		echo "${result}"| sed 's/^# - \(.*\)$/# + \1/'
+		echo "${result}" | sed 's/^# - \(.*\)\$$/# + \1 |/'
 		echo "# Expected"
-		echo "${expectation}"
+		echo "${expectation}" | sed 's/^# - \(.*\)\$$/# + \1 |/'
 		echo
 	fi
 }

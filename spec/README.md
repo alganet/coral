@@ -23,6 +23,7 @@ Or write a script to execute a series of commands:
 ```sh file hello.sh
 #!/usr/bin/env sh
 
+echo # prints a new line
 printf '%s, ' "${1:-Hey}"
 printf 'how '
 printf 'are '
@@ -34,8 +35,10 @@ Scripts can be run and reused individually:
 ```console
 $ chmod +x hello.sh
 $ ./hello.sh
+
 Hey, how are you?
 $ ./hello.sh Alexandre
+
 Alexandre, how are you?
 ```
 
