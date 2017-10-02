@@ -1,0 +1,83 @@
+sudo: required
+before_install:
+  # Install PPA if environment requires it
+  - ${PPA:+sudo add-apt-repository ppa:${PPA} -y}
+
+  # Update apt catalogue if going to install anything
+  - ${APTGET:+sudo apt-get update}
+
+  # Install required apt packages
+  - ${APTGET:+sudo apt-get install -y ${APTGET}}
+
+  # Update brew catalogue if going to install anything
+  - ${BREW:+brew update}
+
+  # Install brew dependencies
+  - ${BREW:+brew install ${BREW}}
+
+  # Build the library
+  - cat lib/defaults.sh lib/require.sh .env lib/coral.sh lib/entrypoint.sh > coral
+
+  # Make the library executable
+  - chmod +x coral
+
+script:
+  - spec_shell=${spec_shell} $spec_shell coral spec run doc/README.md
+matrix:
+  include:
+    - env: spec_shell="dash" APTGET=""
+      os:  linux
+
+    - env: spec_shell="bash" APTGET=""
+      os:  linux
+
+    - env: spec_shell="bash" APTGET=""
+      os:  osx
+
+    - env: spec_shell="posh" APTGET="posh"
+      os:  linux
+
+    - env: spec_shell="mksh" APTGET="mksh"
+      os:  linux
+
+    - env: spec_shell="zsh" APTGET="zsh"
+      os:  linux
+
+    - env: spec_shell="pdksh" APTGET="pdksh"
+      os:  linux
+
+    - env: spec_shell="yash" APTGET="yash"
+      os:  linux
+
+    - env: spec_shell="ksh" APTGET="ksh"
+      os:  linux
+
+    - env: spec_shell="zsh-beta" APTGET="zsh-beta"
+      os:  linux
+
+    - env: spec_shell="busybox sh" APTGET="busybox"
+      os:  linux
+
+    - env: spec_shell="zsh" BREW="zsh"
+      os:  osx
+
+    - env: spec_shell="ksh" BREW="ksh"
+      os:  osx
+
+    - env: spec_shell="mksh" BREW="mksh"
+      os:  osx
+
+    - env: spec_shell="dash" BREW="dash"
+      os:  osx
+
+    - env: spec_shell="bash2.05b" APTGET="bash2.05b" PPA="agriffis/bashes"
+      os:  linux
+
+    - env: spec_shell="bash3.0.16" APTGET="bash3.0.16" PPA="agriffis/bashes"
+      os:  linux
+
+    - env: spec_shell="bash3.2.48" APTGET="bash3.2.48" PPA="agriffis/bashes"
+      os:  linux
+
+    - env: spec_shell="bash4.2.45" APTGET="bash4.2.45" PPA="agriffis/bashes"
+      os:  linux

@@ -33,6 +33,8 @@ then
 		NO_IGNORE_BRACES \
 		NO_MATCH \
 		NO_SH_WORD_SPLIT \
+		NO_PROMPT_SUBST \
+		NO_EVAL_LINENO \
 		BAD_PATTERN >/dev/null 2>&1 || :
 fi
 
