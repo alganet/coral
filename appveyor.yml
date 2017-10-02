@@ -1,0 +1,41 @@
+version: "0.0.{build}"
+os: Windows Server 2012 R2
+build: off
+deploy: off
+
+install:
+  # Update pacman if going to install anything
+  - cmd: call %SHELLENV% -lc "${PACMAN:+pacman --needed --noconfirm -Sy pacman-mirrors}"
+  - cmd: call %SHELLENV% -lc "${PACMAN:+pacman --noconfirm -Sy}"
+
+  # Install pacman dependencies
+  - cmd: call %SHELLENV% -lc "${PACMAN:+pacman --noconfirm -S $PACMAN}"
+
+  # Build the library
+  - cmd: call %SHELLENV% -lc "cat lib/defaults.sh lib/require.sh .env lib/coral.sh lib/entrypoint.sh > coral"
+
+  # Make the library executable
+  - cmd: "chmod +x coral"
+
+test_script:
+  - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; spec_shell=${spec_shell} coral spec run spec/README.md"
+
+environment:
+  matrix:
+    - spec_shell: bash
+      PACMAN: bash
+      SHELLENV: C:\msys64\usr\bin\bash
+    - spec_shell: dash
+      PACMAN: dash
+      SHELLENV: C:\msys64\usr\bin\bash
+    - spec_shell: mksh
+      PACMAN: mksh
+      SHELLENV: C:\msys64\usr\bin\bash
+    - spec_shell: ksh
+      PACMAN: ksh
+      SHELLENV: C:\msys64\usr\bin\bash
+    - spec_shell: busybox sh
+      PACMAN: busybox
+      SHELLENV: C:\msys64\usr\bin\bash
+    - spec_shell: bash
+      SHELLENV: C:\MinGW\msys\1.0\bin\sh
