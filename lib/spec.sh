@@ -12,15 +12,11 @@ spec()
 	echo "# using	'${spec_shell}'"
 	echo "# "
 
-	IFS="$(printf \\n)"
 	for target_file in $(find "${target}" -type f)
 	do
-		IFS="${oldifs}"
 		echo "# file	'${target_file}'"
 		spec_parse "$(tempdir 'spec')" "${target_file}"
-		IFS="$(printf \\n)"
 	done
-	IFS="${oldifs}"
 
 	if test "${fail_number}" -gt 0
 	then
@@ -149,6 +145,7 @@ _spec_run_console ()
 	local result=true
 	local result_code=0
 	local expectation=
+	local expectation_lines=0
 	local message_line=1
 	local last_command_line=0
 	local oldifs="${IFS}"
@@ -228,11 +225,13 @@ _spec_collect_expectation ()
 	else
 		expectation="$(printf %s\\n "${expectation}" "# - ${message}$")"
 	fi
+
+	expectation_lines=$((expectation_lines + 1))
 }
 
 _spec_report_single_result ()
 {
-	local line_report="${test_number} - ${instructions}"
+	local line_report="${test_number} - (${result_code}) ${instructions}"
 
 	if test "${expectation}" = "${result}"
 	then
@@ -246,9 +245,9 @@ _spec_report_single_result ()
 		echo "not ok	${line_report}"
 		echo "# Failure on ${target_file} line ${error_line}"
 		echo "# Output"
-		echo "${result}" | sed 's/# - \([^$]*\)\$/# + \d027[2m┌ \d027[0m\1\d027[2m ┐\d027[0m/'
+		echo "${result}" | sed 's/# - \([^$]*\)\$/# + ┌ \1 ┐/'
 		echo "# Expected"
-		echo "${expectation}" | sed 's/# - \([^$]*\)\$/# - \d027[2m┌ \d027[0m\1\d027[2m ┐\d027[0m/'
+		echo "${expectation}" | sed 's/# - \([^$]*\)\$/# - ┌ \1 ┐/'
 		echo
 	fi
 }
