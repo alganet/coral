@@ -8,12 +8,12 @@ spec()
 	local fail_number=0
 	local test_result=0
 
-	echo "# Using	'${spec_shell}'"
+	echo "# using	'${spec_shell}'"
 	echo "# "
 
 	find "${target}" -type f | while read target_file
 	do
-		echo "# File	'${target_file}'"
+		echo "# file	'${target_file}'"
 		cat "${target_file}" | spec_parse "$(tempdir 'spec')"
 	done
 
@@ -21,6 +21,8 @@ spec()
 	then
 		echo "# FAILURE (${fail_number} of ${test_number} assertions failed)"
 		test_result=1
+	else
+		echo "# SUCCESS"
 	fi
 
 	echo "1..${test_number}"
@@ -82,6 +84,9 @@ _spec_fence_open ()
 	elif test "console" = "${language}"
 	then
 		printf '' > "${spec_directory}/console"
+	elif test "test" = "${key}"
+	then
+		printf '' > "${spec_directory}/test"
 	fi
 }
 
@@ -97,6 +102,9 @@ _spec_fence_line ()
 	elif test "console" = "${language}"
 	then
 		echo "$line" >> "${spec_directory}/console"
+	elif test "test" = "${key}"
+	then
+		echo "$line" >> "${spec_directory}/test"
 	fi
 }
 
@@ -109,7 +117,23 @@ _spec_fence_close ()
 	if test "console" = "${language}"
 	then
 		_spec_run_console
+	elif test "test" = "${key}"
+	then
+		_spec_run_script "${@:-}"
 	fi
+}
+
+_spec_run_script ()
+{
+	cd "${spec_directory}"
+	instructions="$(cat "${spec_directory}/test")"
+	test_number=$((test_number + 1))
+	result="# - Error code: $(_spec_run_external 2>/dev/null)"
+	result_code="$(cat result | _spec_import_result)"
+	instructions="${@:-}"
+	expectation="# - Error code: ${result_code:-0}"
+	_spec_report_single_result
+	cd "${previous}"
 }
 
 _spec_run_console ()
@@ -212,14 +236,14 @@ _spec_report_single_result ()
 	elif test ! -z "${instructions}"
 	then
 		fail_number=$((fail_number + 1))
-		error_line=$((${line_last_open_fence} + ${last_command_line}))
+		error_line=$((${line_last_open_fence} + ${last_command_line:-}))
 		echo
 		echo "not ok	${line_report}"
-		echo "# Failure on ${target_file} line ${error_line}-$((last_command_line + error_line - 1))"
+		echo "# Failure on ${target_file} line ${error_line}"
 		echo "# Output"
-		echo "${result}" | sed 's/^# - \(.*\)\$$/# + \1 |/'
+		echo "${result}" | sed 's/# - \([^$]*\)\$/# + \d027[2m┌ \d027[0m\1\d027[2m ┐\d027[0m/'
 		echo "# Expected"
-		echo "${expectation}" | sed 's/^# - \(.*\)\$$/# + \1 |/'
+		echo "${expectation}" | sed 's/# - \([^$]*\)\$/# - \d027[2m┌ \d027[0m\1\d027[2m ┐\d027[0m/'
 		echo
 	fi
 }

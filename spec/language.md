@@ -23,9 +23,9 @@ Or write a script to execute a series of commands:
 ```sh file hello.sh
 #!/usr/bin/env sh
 
-echo # prints a new line
 printf '%s, ' "${1:-Hey}"
-printf 'how '
+echo
+printf 'How '
 printf 'are '
 printf 'you?'
 ```
@@ -35,11 +35,11 @@ Scripts can be run and reused individually:
 ```console
 $ chmod +x hello.sh
 $ ./hello.sh
-
-Hey, how are you?
+Hey, 
+How are you?
 $ ./hello.sh Alexandre
-
-Alexandre, how are you?
+Alexandre, 
+How are you?
 ```
 
 What Can It Do?
@@ -54,10 +54,54 @@ $ echo 'Hello World       ' > hello.txt
 $ # Displaying file contents
 $ cat hello.txt
 Hello World       
+```
+- Piping and interaction with other commands
+```console
 $ # Seeing non-printable characters
 $ sed -n 'l' hello.txt
 Hello World       $
+$ # Counting chars
+$ cat hello.txt | wc -c
+19
 ```
 - Text manipulation
-- Interaction with other commands
+```console
+$ # Making text uppercase
+$ cat hello.txt | tr '[a-z]' '[A-Z]'
+HELLO WORLD       
+```
+
+These and many other possibilities are available in any UNIX-like shell
+environment. 
+
+The Shell Language
+------------------
+
+Several control structures are available to develop powerful scripts.
+
+### Return Codes
+
+Every command and function execution on the shell have a return code. A `0`
+return code means success.
+
+You can access the return code of the last command executed using `$?`:
+
+```console
+$ echo 'This always works'
+This always works
+$ echo $?
+0
+```
+
+The `true` and `false` commands always return `0` and `1` respectively:
+
+```console
+$ true
+$ echo $?
+0
+$ false
+$ echo $?
+1
+```
+
 
