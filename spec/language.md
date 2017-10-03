@@ -61,7 +61,7 @@ $ # Seeing non-printable characters
 $ sed -n 'l' hello.txt
 Hello World       $
 $ # Counting chars
-$ cat hello.txt | wc -c
+$ echo $(cat hello.txt | wc -c)
 19
 ```
 - Text manipulation
