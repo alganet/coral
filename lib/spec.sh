@@ -7,15 +7,20 @@ spec()
 	local test_number=0
 	local fail_number=0
 	local test_result=0
+	local oldifs="${IFS}"
 
 	echo "# using	'${spec_shell}'"
 	echo "# "
 
-	find "${target}" -type f | while read target_file
+	IFS="$(printf \\n)"
+	for target_file in $(find "${target}" -type f)
 	do
+		IFS="${oldifs}"
 		echo "# file	'${target_file}'"
-		cat "${target_file}" | spec_parse "$(tempdir 'spec')"
+		spec_parse "$(tempdir 'spec')" "${target_file}"
+		IFS="$(printf \\n)"
 	done
+	IFS="${oldifs}"
 
 	if test "${fail_number}" -gt 0
 	then
@@ -68,7 +73,7 @@ spec_parse ()
 
 		line_number=$((line_number + 1))
 		IFS=''
-	done
+	done < "${2}"
 	IFS="${oldifs}"
 }
 
