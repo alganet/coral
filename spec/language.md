@@ -59,8 +59,8 @@ Hello World
 - Piping and interaction with other commands
 ```console
 $ # Seeing non-printable characters
-$ sed -n 'l' hello.txt
-Hello World       $
+$ cat hello.txt | sed s/Hello/Hey/
+Hey World       
 $ # Counting chars
 $ echo $(cat hello.txt | wc -c)
 19
