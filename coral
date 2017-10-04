@@ -10,6 +10,7 @@
 # Setup variables for the source folder
 entrypoint='coral'
 require_path='lib:.'
+require_loaded=' require.sh coral.sh'
 
 # Require modules from the source folder
 . 'lib/support'
