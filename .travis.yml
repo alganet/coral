@@ -16,12 +16,6 @@ before_install:
   # Install brew dependencies
   - ${BREW:+brew install ${BREW}}
 
-  # Build the library
-  - cat lib/support.sh lib/require.sh .env lib/coral.sh lib/entrypoint.sh > coral
-
-  # Make the library executable
-  - chmod +x coral
-
 script:
   - spec_shell=${spec_shell} $spec_shell ./coral spec spec/
 matrix:

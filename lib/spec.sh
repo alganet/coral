@@ -7,15 +7,19 @@ spec()
 	local test_number=0
 	local fail_number=0
 	local test_result=0
+	local tempdir="$(tempdir 'spec')"
 	local oldifs="${IFS}"
 
 	echo "# using	'${spec_shell}'"
+	echo "# on	'${tempdir}'"
 	echo "# "
+
+	cp -R "${PWD}/." "${tempdir}"
 
 	for target_file in $(find "${target}" -type f)
 	do
 		echo "# file	'${target_file}'"
-		spec_parse "$(tempdir 'spec')" "${target_file}"
+		spec_parse "${tempdir}" "${target_file}"
 	done
 
 	if test "${fail_number}" -gt 0
@@ -39,6 +43,7 @@ spec_parse ()
 	local possible_fence=
 	local line_number=1
 	local line_last_open_fence=0
+	local setup='true'
 	local oldifs="${IFS}"
 
 	IFS=''
@@ -85,9 +90,9 @@ _spec_fence_open ()
 	elif test "console" = "${language}"
 	then
 		printf '' > "${spec_directory}/console"
-	elif test "test" = "${key}"
+	elif test "setup" = "${key}" && test "${language}" != "console"
 	then
-		printf '' > "${spec_directory}/test"
+		printf '' > "${spec_directory}/setup"
 	fi
 }
 
@@ -103,9 +108,9 @@ _spec_fence_line ()
 	elif test "console" = "${language}"
 	then
 		echo "$line" >> "${spec_directory}/console"
-	elif test "test" = "${key}"
+	elif test "setup" = "${key}" && test "${language}" != "console"
 	then
-		echo "$line" >> "${spec_directory}/test"
+		echo "$line" >> "${spec_directory}/setup"
 	fi
 }
 
@@ -118,28 +123,46 @@ _spec_fence_close ()
 	if test "console" = "${language}"
 	then
 		_spec_run_console
-	elif test "test" = "${key}"
+	elif test "setup" = "${key}" && test "${language}" != "console"
 	then
-		_spec_run_script "${@:-}"
+		_spec_collect_setup
 	fi
 }
 
-_spec_run_script ()
+_spec_collect_setup ()
 {
-	cd "${spec_directory}"
-	instructions="$(cat "${spec_directory}/test")"
-	test_number=$((test_number + 1))
-	result="# - Error code: $(_spec_run_external 2>/dev/null)"
-	result_code="$(cat result | _spec_import_result)"
-	instructions="${@:-}"
-	expectation="# - Error code: ${result_code:-0}"
-	_spec_report_single_result
-	cd "${previous}"
+	setup="$(cat "${spec_directory}/setup")"
+}
+
+_spec_copy_folder ()
+{
+	local source_dir="${1:-.}"
+	local dest_dir="${2:-.}"
+	local entry=
+	local relative=
+
+	for entry in $(find "${source_dir}")
+	do
+		relative="${entry#*${source_dir}}"
+		absolute="${source_dir}${relative}"
+
+		if ! test -r "${relative}"
+		then
+			continue
+		fi
+
+		if test -d "${absolute}"
+		then
+			mkdir -p "${dest_dir}${relative}"
+		else
+			cp "${absolute}"  -- "${dest_dir}${relative}"
+		fi
+	done
 }
 
 _spec_run_console ()
 {
-	local previous="${PWD}"
+	local previous_dir="${PWD}"
 	local message=
 	local instructions=
 	local result=true
@@ -159,20 +182,6 @@ _spec_run_console ()
 		if test "\$ # ${message#*\$ # }" = "${message}"
 		then
 			_spec_report_comment
-		elif test "\$ ./${message#*\$ ./}" = "${message}" &&
-			 test -x "./${message#*\$ ./}"
-		then
-			_spec_report_single_result
-			last_command_line="${message_line}"
-			spec_file="${message#*\$ ./}"
-			instructions="$(cat "${spec_file}")"
-			test_number=$((test_number + 1))
-			result_code=$(_spec_run_external 2>/dev/null)
-			instructions="./${spec_file}"
-			spec_file=
-			result="$(cat result | _spec_import_result)"
-
-			expectation=
 		elif test "\$ ${message#*\$ }" = "${message}"
 		then
 			_spec_report_single_result
@@ -194,7 +203,7 @@ _spec_run_console ()
 	_spec_report_single_result
 	instructions="${message#*\$ }"
 
-	cd "${previous}"
+	cd "${previous_dir}"
 }
 
 _spec_import_result ()
@@ -206,8 +215,10 @@ _spec_run_external ()
 {
 	set +e
 	${spec_shell} <<-EXTERNAL > result 2>&1
-		test 'last_command_success=0' = "last_command_success=${result_code}"
-		${instructions} 2>&1
+		_spec_return () ( return "${result_code}" )
+		${setup}
+		test '0' = "${result_code}" || _spec_return
+		${instructions}
 	EXTERNAL
 	result_code="$?"
 	set -e
@@ -231,7 +242,7 @@ _spec_collect_expectation ()
 
 _spec_report_single_result ()
 {
-	local line_report="${test_number} - (${result_code}) ${instructions}"
+	local line_report="${test_number} - ${instructions}"
 
 	if test "${expectation}" = "${result}"
 	then
@@ -245,9 +256,9 @@ _spec_report_single_result ()
 		echo "not ok	${line_report}"
 		echo "# Failure on ${target_file} line ${error_line}"
 		echo "# Output"
-		echo "${result}" | sed 's/# - \([^$]*\)\$/# + ┌ \1 ┐/'
+		echo "${result}" | sed 's/# - \([^$]*\)\$/#	\1 |/'
 		echo "# Expected"
-		echo "${expectation}" | sed 's/# - \([^$]*\)\$/# - ┌ \1 ┐/'
+		echo "${expectation}" | sed 's/# - \([^$]*\)\$/#	\1 |/'
 		echo
 	fi
 }

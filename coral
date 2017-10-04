@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+
+##
+ # coral development version
+ #
+ # This will only work from the source code. For a standalone executable,
+ # check the releases.
+ ##
+
+# Setup variables for the source folder
+entrypoint='coral'
+require_path='lib:.'
+
+# Require modules from the source folder
+. 'lib/support'
+. 'lib/require.sh'
+. 'lib/coral.sh'
+. 'lib/entrypoint'

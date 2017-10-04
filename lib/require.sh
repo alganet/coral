@@ -14,7 +14,7 @@ require ()
 
 	require_loaded="${require_loaded:- }"
 
-	if _require_is_on_load_list "${dependency}" "${previous}" "${@:-}"
+	if require_is_loaded "${dependency}" "${previous}" "${@:-}"
 	then
 		return 0
 	fi
@@ -62,7 +62,7 @@ require_path ()
 	done
 }
 
-_require_is_on_load_list ()
+require_is_loaded ()
 {
 	dependency="${1}"
 	previous="${2}"
