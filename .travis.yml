@@ -5,13 +5,13 @@ services:
 
 before_install:
   # Install PPA if environment requires it
-  - ${PPA:+sudo add-apt-repository ppa:${PPA} -y}
+  - ${IMAGE:+docker run ${IMAGE} }${PPA:+${SUDO:+sudo} add-apt-repository ppa:${PPA} -y}
 
   # Update apt catalogue if going to install anything
-  - ${APTGET:+sudo apt-get update}
+  - ${IMAGE:+docker run ${IMAGE} }${APTGET:+${SUDO:+sudo} apt-get update}
 
   # Install required apt packages
-  - ${APTGET:+sudo apt-get install -y ${APTGET}}
+  - ${IMAGE:+docker run ${IMAGE} }${APTGET:+${SUDO:+sudo} apt-get install -y ${APTGET}}
 
   # Update brew catalogue if going to install anything
   - ${BREW:+brew update}
@@ -20,10 +20,13 @@ before_install:
   - ${BREW:+brew install ${BREW}}
 
 script:
-  - spec_shell=${spec_shell} ${IMAGE:+docker run -v "$(pwd)/workdir" -w /workdir -e spec_shell=${spec_shell} ${IMAGE} }${spec_shell} ./coral spec
+  - spec_shell=${spec_shell} ${IMAGE:+docker run -v "$(pwd):/workdir" -w /workdir -e spec_shell=${spec_shell} ${IMAGE} }${spec_shell} ./coral spec
 
 matrix:
   include:
+    - env: IMAGE="ubuntu" spec_shell="bash-2.05b.13" APTGET="bash-2.05b.13" PPA="team-mayhem/multishell"
+      os:  linux
+
     - env: IMAGE="alpine" spec_shell=sh
       os:  linux
 
@@ -51,49 +54,49 @@ matrix:
     - env: spec_shell="bash"
       os:  linux
 
-    - env: spec_shell="posh" APTGET="posh"
+    - env: spec_shell="posh" APTGET="posh" SUDO=1
       os:  linux
 
-    - env: spec_shell="mksh" APTGET="mksh"
+    - env: spec_shell="mksh" APTGET="mksh" SUDO=1
       os:  linux
 
-    - env: spec_shell="zsh" APTGET="zsh"
+    - env: spec_shell="zsh" APTGET="zsh" SUDO=1
       os:  linux
 
-    - env: spec_shell="pdksh" APTGET="pdksh"
+    - env: spec_shell="pdksh" APTGET="pdksh" SUDO=1
       os:  linux
 
-    - env: spec_shell="yash" APTGET="yash"
+    - env: spec_shell="yash" APTGET="yash" SUDO=1
       os:  linux
 
-    - env: spec_shell="ksh" APTGET="ksh"
+    - env: spec_shell="ksh" APTGET="ksh" SUDO=1
       os:  linux
 
-    - env: spec_shell="zsh-beta" APTGET="zsh-beta"
+    - env: spec_shell="zsh-beta" APTGET="zsh-beta" SUDO=1
       os:  linux
 
-    - env: spec_shell="busybox sh" APTGET="busybox"
+    - env: spec_shell="busybox sh" APTGET="busybox" SUDO=1
       os:  linux
 
-    - env: spec_shell="bash-2.05b.13" APTGET="bash-2.05b.13" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash-2.05b.13" APTGET="bash-2.05b.13" PPA="team-mayhem/multishell" SUDO=1
       os:  linux
 
-    - env: spec_shell="bash-3.0.16" APTGET="bash-3.0.16" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash-3.0.16" APTGET="bash-3.0.16" PPA="team-mayhem/multishell" SUDO=1
       os:  linux
 
-    - env: spec_shell="bash-3.1.9" APTGET="bash-3.1.9" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash-3.1.9" APTGET="bash-3.1.9" PPA="team-mayhem/multishell" SUDO=1
       os:  linux
 
-    - env: spec_shell="bash-3.2.9" APTGET="bash-3.2.9" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash-3.2.9" APTGET="bash-3.2.9" PPA="team-mayhem/multishell" SUDO=1
       os:  linux
 
-    - env: spec_shell="bash-4.1.9" APTGET="bash-4.1.9" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash-4.1.9" APTGET="bash-4.1.9" PPA="team-mayhem/multishell" SUDO=1
       os:  linux
 
-    - env: spec_shell="bash-4.2.53" APTGET="bash-4.2.53" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash-4.2.53" APTGET="bash-4.2.53" PPA="team-mayhem/multishell" SUDO=1
       os:  linux
 
-    - env: spec_shell="bash-4.3.9" APTGET="bash-4.3.9" PPA="team-mayhem/multishell"
+    - env: spec_shell="bash-4.3.9" APTGET="bash-4.3.9" PPA="team-mayhem/multishell" SUDO=1
       os:  linux
 
     - env: spec_shell="bash"
