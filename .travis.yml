@@ -3,37 +3,36 @@ language: bash
 services:
   - docker
 
+env:
+  - setup_prefix="docker run -v ${PWD}/workdir -w workdir -e"
+
 before_install:
-  - setup_prefix="${target:+docker run -v $(pwd)/workdir -w workdir -e spec_shell=${spec_shell} ${IMAGE}}"
-  - setup_prefix="${setup_prefix:-sudo}"
-
-  # Install PPA if environment requires it
-  - ${PPA:+${setup_prefix} add-apt-repository ppa:${PPA} -y}
-
-  # Update apt catalogue if going to install anything
-  - ${APTGET:+${setup_prefix} apt-get update}
-
   # Install required apt packages
-  - ${APTGET:+${setup_prefix} apt-get install -y ${APTGET}}
+  - ${PPA:+${setup_prefix} ${IMAGE} add-apt-repository ppa:${PPA} -y}
+  - ${APTGET:+${setup_prefix} ${IMAGE} apt-get update}
+  - ${APTGET:+${setup_prefix} ${IMAGE} apt-get install -y ${APTGET}}
 
-  # Update brew catalogue if going to install anything
-  - ${BREW:+brew update}
+  # Install required yum packages
+  - ${YUM:+${setup_prefix} ${IMAGE} yum -y update}
+  - ${YUM:+${setup_prefix} ${IMAGE} yum -y ${APTGET}}
 
   # Install brew dependencies
-  - ${BREW:+brew install ${BREW}}
-
-  # Setup docker command for docker tests
-  - target="${target:+${setup_prefix} ${spec_shell}}"
+  - ${BREW:+sudo update}
+  - ${BREW:+sudo install ${BREW}}
 
   - echo "Using Setup '${setup_prefix}'"
-  - echo "Using Target '${target}'"
   - echo "Using Shell '${spec_shell}'"
 
 script:
-  - spec_shell=${spec_shell} ${target:-${spec_shell}} ./coral spec
+  - spec_shell=${spec_shell} ${IMAGE:+${setup_prefix} }${spec_shell}} ./coral spec
 
 matrix:
   include:
+
+    - env: IMAGE="ubuntu" spec_shell="bash-2.05b.13" APTGET="bash-2.05b.13" PPA="team-mayhem/multishell"
+      os:  linux
+
+
     # Default shells in multiple distros
     - env: IMAGE="alpine" spec_shell="sh"
       os:  linux
@@ -87,8 +86,10 @@ matrix:
     - env: IMAGE="ubuntu" spec_shell="busybox sh" APTGET="busybox"
       os:  linux
 
-    - env: IMAGE="ubuntu" spec_shell="bash-2.05b.13" APTGET="bash-2.05b.13" PPA="team-mayhem/multishell"
-      os:  linux
+
+
+
+
 
     - env: IMAGE="ubuntu" spec_shell="bash-3.0.16" APTGET="bash-3.0.16" PPA="team-mayhem/multishell"
       os:  linux
