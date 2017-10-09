@@ -20,8 +20,8 @@ before_install:
   - ${BREW:+brew install ${BREW}}
 
 script:
-  - test -n "${DOCKER:-}" || docker run -v "$(pwd)/workdir" -w workdir -e spec_shell=${spec_shell} ${DOCKER} ${spec_shell}
-  - test -z "${DOCKER:-}" || spec_shell=${spec_shell} ${spec_shell} ./coral spec
+  - test -n "${IMAGE:-}" || docker run -v "$(pwd)/workdir" -w workdir -e spec_shell=${spec_shell} ${IMAGE} ${spec_shell}
+  - test -z "${IMAGE:-}" || spec_shell=${spec_shell} ${spec_shell} ./coral spec
 
 matrix:
   include:
@@ -91,17 +91,17 @@ matrix:
     - env: spec_shell="dash" BREW="dash"
       os:  osx
 
-    - env: DOCKER="alpine" spec_shell="sh"
+    - env: IMAGE="alpine" spec_shell="sh"
       os:  linux
 
-    - env: DOCKER="ubuntu" spec_shell="sh"
+    - env: IMAGE="ubuntu" spec_shell="sh"
       os:  linux
 
-    - env: DOCKER="debian" spec_shell="sh"
+    - env: IMAGE="debian" spec_shell="sh"
       os:  linux
 
-    - env: DOCKER="centos" spec_shell="sh"
+    - env: IMAGE="centos" spec_shell="sh"
       os:  linux
 
-    - env: DOCKER="amazonlinux" spec_shell="sh"
+    - env: IMAGE="amazonlinux" spec_shell="sh"
       os:  linux
