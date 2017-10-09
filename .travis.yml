@@ -5,6 +5,7 @@ services:
 
 before_install:
   # Install PPA if environment requires it
+  - ${APTGET:+${IMAGE:+docker run ${IMAGE} }${SUDO:+sudo} apt-get update}
   - ${APTGET:+${IMAGE:+docker run ${IMAGE} }${SUDO:+sudo} apt-get install -y software-properties-common}
   - ${PPA:+${IMAGE:+docker run ${IMAGE} }${SUDO:+sudo} add-apt-repository ppa:${PPA} -y}
 
@@ -20,6 +21,7 @@ before_install:
   # Install brew dependencies
   - ${BREW:+brew install ${BREW}}
 
+  - echo spec_shell=${spec_shell} ${IMAGE:+docker run -v "$(pwd):/workdir" -w /workdir -e spec_shell=${spec_shell} ${IMAGE} }${spec_shell} ./coral spec
 script:
   - spec_shell=${spec_shell} ${IMAGE:+docker run -v "$(pwd):/workdir" -w /workdir -e spec_shell=${spec_shell} ${IMAGE} }${spec_shell} ./coral spec
 
