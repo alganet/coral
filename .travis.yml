@@ -1,5 +1,8 @@
 sudo: required
 language: bash
+services:
+  - docker
+
 before_install:
   # Install PPA if environment requires it
   - ${PPA:+sudo add-apt-repository ppa:${PPA} -y}
@@ -17,17 +20,16 @@ before_install:
   - ${BREW:+brew install ${BREW}}
 
 script:
-  - spec_shell=${spec_shell} $spec_shell ./coral spec
+  - test -n "${DOCKER:-}" || docker run -v "$(pwd)/workdir" -w workdir -e spec_shell=${spec_shell} ${DOCKER} ${spec_shell}
+  - test -z "${DOCKER:-}" || spec_shell=${spec_shell} ${spec_shell} ./coral spec
+
 matrix:
   include:
-    - env: spec_shell="dash" APTGET=""
+    - env: spec_shell="dash"
       os:  linux
 
-    - env: spec_shell="bash" APTGET=""
+    - env: spec_shell="bash"
       os:  linux
-
-    - env: spec_shell="bash" APTGET=""
-      os:  osx
 
     - env: spec_shell="posh" APTGET="posh"
       os:  linux
@@ -53,18 +55,6 @@ matrix:
     - env: spec_shell="busybox sh" APTGET="busybox"
       os:  linux
 
-    - env: spec_shell="zsh" BREW="zsh"
-      os:  osx
-
-    - env: spec_shell="ksh" BREW="ksh"
-      os:  osx
-
-    - env: spec_shell="mksh" BREW="mksh"
-      os:  osx
-
-    - env: spec_shell="dash" BREW="dash"
-      os:  osx
-
     - env: spec_shell="bash-2.05b.13" APTGET="bash-2.05b.13" PPA="team-mayhem/multishell"
       os:  linux
 
@@ -84,4 +74,34 @@ matrix:
       os:  linux
 
     - env: spec_shell="bash-4.3.9" APTGET="bash-4.3.9" PPA="team-mayhem/multishell"
+      os:  linux
+
+    - env: spec_shell="bash"
+      os:  osx
+
+    - env: spec_shell="zsh" BREW="zsh"
+      os:  osx
+
+    - env: spec_shell="ksh" BREW="ksh"
+      os:  osx
+
+    - env: spec_shell="mksh" BREW="mksh"
+      os:  osx
+
+    - env: spec_shell="dash" BREW="dash"
+      os:  osx
+
+    - env: DOCKER="alpine" spec_shell="sh"
+      os:  linux
+
+    - env: DOCKER="ubuntu" spec_shell="sh"
+      os:  linux
+
+    - env: DOCKER="debian" spec_shell="sh"
+      os:  linux
+
+    - env: DOCKER="centos" spec_shell="sh"
+      os:  linux
+
+    - env: DOCKER="amazonlinux" spec_shell="sh"
       os:  linux
