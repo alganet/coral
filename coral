@@ -9,11 +9,12 @@
 
 # Setup variables for the source folder
 entrypoint='coral'
-require_path='lib:.'
-require_loaded=' require.sh coral.sh'
+require_on_search="${require_on_search:-require_path}"
+require_path="${require_path:-.}:lib:."
+require_loaded=' require.sh coral.sh '
 
 # Require modules from the source folder
-. 'lib/support'
-. 'lib/require.sh'
-. 'lib/coral.sh'
-. 'lib/entrypoint'
+. "lib/require/support"
+. "lib/require.sh"
+. "lib/coral.sh"
+. "lib/require/entrypoint"

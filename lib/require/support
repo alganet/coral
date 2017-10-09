@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+##
+ # require support — silently set sane options for all shells
+ ##
+
 # Options for all shells
 #
 # -e: Exit if any command has an uncaught error code
@@ -20,18 +24,10 @@ elif test -n "${ZSH_VERSION-}"
 then
 	# Unset options for zsh to make it more portable
 	#
-	# NO_IGNORE_BRACES: Make it ignore proprietary braces syntax
 	# NO_MATCH: Avoid expanding extra filename patterns
-	# NO_SHWORDSPLIT: Make the word split on zsh behave like POSIX
-	# BAD_PATTERN: Ignore errors for zsh-specific syntax
+	# NO_SH_WORD_SPLIT: Make the word split on zsh behave like POSIX
 	#
 	# This command is ignored in shells other than zsh.
 	#
-	unsetopt \
-		NO_IGNORE_BRACES \
-		NO_MATCH \
-		NO_SH_WORD_SPLIT \
-		NO_PROMPT_SUBST \
-		NO_EVAL_LINENO \
-		BAD_PATTERN >/dev/null 2>&1 || :
+	unsetopt GLOB NO_MATCH NO_SH_WORD_SPLIT >/dev/null 2>&1 || :
 fi

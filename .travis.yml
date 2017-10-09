@@ -17,7 +17,7 @@ before_install:
   - ${BREW:+brew install ${BREW}}
 
 script:
-  - spec_shell=${spec_shell} $spec_shell ./coral spec spec/
+  - spec_shell=${spec_shell} $spec_shell ./coral spec
 matrix:
   include:
     - env: spec_shell="dash" APTGET=""

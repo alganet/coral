@@ -1,25 +1,27 @@
-require 'tempdir.sh'
+require 'fs/tempdir.sh'
 
-spec()
+spec ()
 {
-	local target="${1:-.}"
 	local spec_shell="${spec_shell:-sh}"
+	local target="${1:-.}"
 	local test_number=0
 	local fail_number=0
 	local test_result=0
-	local tempdir="$(tempdir 'spec')"
+	local tempdir="$(fs_tempdir 'spec')"
 	local oldifs="${IFS}"
 
-	echo "# using	'${spec_shell}'"
+	echo "# using	'${spec_shell:-sh}'"
 	echo "# on	'${tempdir}'"
 	echo "# "
 
-	cp -R "${PWD}/." "${tempdir}"
+	cp -R "${PWD}" "${tempdir}/pwd"
 
-	for target_file in $(find "${target}" -type f)
+	for target_file in $(find "${target}" -type f -name "*.md")
 	do
 		echo "# file	'${target_file}'"
-		spec_parse "${tempdir}" "${target_file}"
+		mkdir -p "${tempdir}/${target_file}.workspace"
+		cp -R "${tempdir}/pwd/." "${tempdir}/${target_file}.workspace"
+		spec_parse "${tempdir}/${target_file}.workspace" "${target_file}"
 	done
 
 	if test "${fail_number}" -gt 0
@@ -45,6 +47,8 @@ spec_parse ()
 	local line_last_open_fence=0
 	local setup='true'
 	local oldifs="${IFS}"
+
+	mkdir -p "${spec_directory}/.spec"
 
 	IFS=''
 	while read -r line
@@ -83,16 +87,22 @@ _spec_fence_open ()
 	local language="${1:-}"
 	local key="${2:-}"
 	local value="${3:-}"
+	local file_path=''
 
 	if test "file" = "${key}"
 	then
-		printf '' > "${spec_directory}/${value}"
+		file_path="${spec_directory}/${value}"
+		if test "$(basename "${file_path}")" != "${file_path}"
+		then
+			mkdir -p "$(dirname "${file_path}")"
+		fi
+		printf '' > "${file_path}"
 	elif test "console" = "${language}"
 	then
-		printf '' > "${spec_directory}/console"
+		printf '' > "${spec_directory}/.spec/console"
 	elif test "setup" = "${key}" && test "${language}" != "console"
 	then
-		printf '' > "${spec_directory}/setup"
+		printf '' > "${spec_directory}/.spec/setup"
 	fi
 }
 
@@ -107,10 +117,10 @@ _spec_fence_line ()
 		echo "$line" >> "${spec_directory}/${value}"
 	elif test "console" = "${language}"
 	then
-		echo "$line" >> "${spec_directory}/console"
+		echo "$line" >> "${spec_directory}/.spec/console"
 	elif test "setup" = "${key}" && test "${language}" != "console"
 	then
-		echo "$line" >> "${spec_directory}/setup"
+		echo "$line" >> "${spec_directory}/.spec/setup"
 	fi
 }
 
@@ -131,33 +141,7 @@ _spec_fence_close ()
 
 _spec_collect_setup ()
 {
-	setup="$(cat "${spec_directory}/setup")"
-}
-
-_spec_copy_folder ()
-{
-	local source_dir="${1:-.}"
-	local dest_dir="${2:-.}"
-	local entry=
-	local relative=
-
-	for entry in $(find "${source_dir}")
-	do
-		relative="${entry#*${source_dir}}"
-		absolute="${source_dir}${relative}"
-
-		if ! test -r "${relative}"
-		then
-			continue
-		fi
-
-		if test -d "${absolute}"
-		then
-			mkdir -p "${dest_dir}${relative}"
-		else
-			cp "${absolute}"  -- "${dest_dir}${relative}"
-		fi
-	done
+	setup="$(cat "${spec_directory}/.spec/setup")"
 }
 
 _spec_run_console ()
@@ -189,7 +173,7 @@ _spec_run_console ()
 			instructions="${message#*\$ }"
 			test_number=$((test_number + 1))
 			result_code=$(_spec_run_external 2>/dev/null)
-			result="$(cat result | _spec_import_result)"
+			result="$(cat "${spec_directory}/.spec/result" | _spec_import_result)"
 
 			expectation=
 		else
@@ -197,7 +181,7 @@ _spec_run_console ()
 		fi
 		message_line=$((message_line + 1))
 		IFS=''
-	done < "console"
+	done < "${spec_directory}/.spec/console"
 	IFS="${oldifs}"
 
 	_spec_report_single_result
@@ -214,7 +198,8 @@ _spec_import_result ()
 _spec_run_external ()
 {
 	set +e
-	${spec_shell} <<-EXTERNAL > result 2>&1
+	${spec_shell:-sh} <<-EXTERNAL > "${spec_directory}/.spec/result" 2>&1
+		SHELL="${spec_shell}"
 		_spec_return () ( return "${result_code}" )
 		${setup}
 		test '0' = "${result_code}" || _spec_return

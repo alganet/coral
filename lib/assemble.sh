@@ -3,13 +3,15 @@
  ##
 
 require 'require.sh'
-require 'tempdir.sh'
+require 'require/entrypoint'
+require 'require/support'
+require 'fs/tempdir.sh'
 
 assemble ()
 {
 	local input="${1:-}"
 	local output="${2:--}"
-	local assemble_dir="$(tempdir 'assemble')"
+	local assemble_dir="$(fs_tempdir 'assemble')"
 
 	assemble_contents "${input}" > "${assemble_dir}/output"
 
@@ -25,23 +27,23 @@ assemble ()
 assemble_contents ()
 {
 	local input="${1:-}"
-	local input_name="${input%*.sh}"
+	local input_name="$(basename "${input%*.sh}")"
 	local input_file=''
 	local input_contents=''
-	local require_loaded=''
+	local require_loaded=' '
 
 	if test -f "${input}" &&
-	   test "${input_name}.sh" = "${input}"
+	   test "${input_name}.sh" = "$(basename "${input}")"
 	then
 		input_file="${input}"
 	else
 		input_file="${input}.sh"
 	fi
 
-	cat "$(require_path support)"
-	echo "entrypoint='${input}'"
+	cat "$(require_path 'require/support')"
+	echo "entrypoint='${input_name}'"
 	assemble_dependencies "${input_file}"
-	cat "$(require_path entrypoint)"
+	cat "$(require_path 'require/entrypoint')"
 }
 
 assemble_dependencies ()
@@ -65,9 +67,11 @@ assemble_dependencies ()
 
 assemble_on_include ()
 {
-	if test "$(basename ${1})" != 'require.sh'
+	local target="$(basename ${1})"
+	if test "${target}" != 'require.sh'
 	then
-		cat "${1}"
+		test "${target%*.sh}.sh" = "${target}" || return 0
 		require_on_include "${1}"
+		cat "${1}"
 	fi
 }

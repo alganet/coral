@@ -4,10 +4,6 @@
 
 require ()
 {
-	require_on_include="${require_on_include:-require_on_include}"
-	require_on_request="${require_on_request:-require_on_request}"
-	require_on_search="${require_on_search:-require_on_search}"
-
 	local previous="${dependency:-require}"
 	local dependency="${1}"
 	shift
@@ -19,7 +15,7 @@ require ()
 		return 0
 	fi
 
-	if ! _require_source "${dependency}"
+	if ! require_source "${dependency}"
 	then
 		echo "Could not find dependency '${dependency}'"
 		exit $?
@@ -29,12 +25,17 @@ require ()
 require_on_include ()
 {
 	local required_file="${1}"
+
+	test "${dependency%*.sh}.sh" = "${dependency}" || return 0
+
 	set --
 	. "${required_file}"
 }
 
 require_on_request ()
 {
+	local dependency="${1}"
+
 	if test "${require_loaded#* ${dependency} *}" = "${require_loaded}"
 	then
 		return 1
@@ -49,10 +50,10 @@ require_on_search ()
 require_path ()
 {
 	local solved
-	local require_path="${2:-.\:${require_path:-}}"
+	local target_path="${2:-${require_path:-}}"
 	local IFS=':'
 
-	for solved in ${require_path}
+	for solved in ${target_path}
 	do
 		if test -f "${solved}/${1}"
 		then
@@ -62,23 +63,24 @@ require_path ()
 	done
 }
 
+
 require_is_loaded ()
 {
 	dependency="${1}"
 	previous="${2}"
 	require_loaded="${require_loaded:- }"
 
-	${require_on_request} "${@:-}"
+	${require_on_request:-require_on_request} "${@:-}"
 }
 
-_require_source ()
+require_source ()
 {
 	local dependency="${1}"
-	local location="$(${require_on_search} "${dependency}")"
+	local location="$(${require_on_search:-require_on_search} "${dependency}")"
 
 	test -f "${location}" || return 69
 
 	require_loaded="${require_loaded:- }${dependency} "
 
-	${require_on_include} "${location}" || return 1
+	${require_on_include:-require_on_include} "${location}" || return 1
 }
