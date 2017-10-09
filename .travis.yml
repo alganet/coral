@@ -20,7 +20,7 @@ before_install:
   - ${BREW:+brew install ${BREW}}
 
 script:
-  - spec_shell=${spec_shell} ${IMAGE:+docker run -v "$(pwd)/workdir" -w /workdir -e spec_shell=${spec_shell} ${IMAGE} }${spec_shell} ./coral spec
+  - spec_shell=${spec_shell} ${IMAGE:+docker run -v "$(pwd):workdir" -w /workdir -e spec_shell=${spec_shell} ${IMAGE} }${spec_shell} ./coral spec
 
 matrix:
   include:
