@@ -19,9 +19,11 @@ before_install:
   # Install brew dependencies
   - ${BREW:+brew install ${BREW}}
 
+  # Setup docker command for docker tests
+  - target="${target:+docker run -v $(pwd)/workdir -w workdir -e spec_shell=${spec_shell} ${IMAGE} ${spec_shell}}"
+
 script:
-  - test -n "${IMAGE:-}" || docker run -v "$(pwd)/workdir" -w workdir -e spec_shell=${spec_shell} ${IMAGE} ${spec_shell}
-  - test -z "${IMAGE:-}" || spec_shell=${spec_shell} ${spec_shell} ./coral spec
+  - spec_shell=${spec_shell} ${target:-${spec_shell}} ./coral spec
 
 matrix:
   include:
@@ -91,17 +93,17 @@ matrix:
     - env: spec_shell="dash" BREW="dash"
       os:  osx
 
-    - env: IMAGE="alpine" spec_shell="sh"
+    - env: IMAGE="alpine" spec_shell=sh
       os:  linux
 
-    - env: IMAGE="ubuntu" spec_shell="sh"
+    - env: IMAGE="ubuntu" spec_shell=sh
       os:  linux
 
-    - env: IMAGE="debian" spec_shell="sh"
+    - env: IMAGE="debian" spec_shell=sh
       os:  linux
 
-    - env: IMAGE="centos" spec_shell="sh"
+    - env: IMAGE="centos" spec_shell=sh
       os:  linux
 
-    - env: IMAGE="amazonlinux" spec_shell="sh"
+    - env: IMAGE="amazonlinux" spec_shell=sh
       os:  linux
