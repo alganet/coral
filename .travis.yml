@@ -5,14 +5,14 @@ services:
 
 before_install:
   # Install PPA if environment requires it
-  - ${IMAGE:+docker run ${IMAGE} }${APTGET:+${SUDO:+sudo} apt-get install -y software-properties-common}
-  - ${IMAGE:+docker run ${IMAGE} }${PPA:+${SUDO:+sudo} add-apt-repository ppa:${PPA} -y}
+  - ${APTGET:+${IMAGE:+docker run ${IMAGE} }${SUDO:+sudo} apt-get install -y software-properties-common}
+  - ${PPA:+${IMAGE:+docker run ${IMAGE} }${SUDO:+sudo} add-apt-repository ppa:${PPA} -y}
 
   # Update apt catalogue if going to install anything
-  - ${IMAGE:+docker run ${IMAGE} }${APTGET:+${SUDO:+sudo} apt-get update}
+  - ${APTGET:+${IMAGE:+docker run ${IMAGE} }${SUDO:+sudo} apt-get update}
 
   # Install required apt packages
-  - ${IMAGE:+docker run ${IMAGE} }${APTGET:+${SUDO:+sudo} apt-get install -y ${APTGET}}
+  - ${APTGET:+${IMAGE:+docker run ${IMAGE} }${SUDO:+sudo} apt-get install -y ${APTGET}}
 
   # Update brew catalogue if going to install anything
   - ${BREW:+brew update}
