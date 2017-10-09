@@ -4,14 +4,17 @@ services:
   - docker
 
 before_install:
+  - setup_prefix="${target:+docker run -v $(pwd)/workdir -w workdir -e spec_shell=${spec_shell} ${IMAGE}}"
+  - setup_prefix="${setup_prefix:-sudo}"
+
   # Install PPA if environment requires it
-  - ${PPA:+sudo add-apt-repository ppa:${PPA} -y}
+  - ${PPA:+${setup_prefix} add-apt-repository ppa:${PPA} -y}
 
   # Update apt catalogue if going to install anything
-  - ${APTGET:+sudo apt-get update}
+  - ${APTGET:+${setup_prefix} apt-get update}
 
   # Install required apt packages
-  - ${APTGET:+sudo apt-get install -y ${APTGET}}
+  - ${APTGET:+${setup_prefix} apt-get install -y ${APTGET}}
 
   # Update brew catalogue if going to install anything
   - ${BREW:+brew update}
@@ -20,13 +23,42 @@ before_install:
   - ${BREW:+brew install ${BREW}}
 
   # Setup docker command for docker tests
-  - target="${target:+docker run -v $(pwd)/workdir -w workdir -e spec_shell=${spec_shell} ${IMAGE} ${spec_shell}}"
+  - target="${target:+${setup_prefix} ${spec_shell}}"
 
 script:
   - spec_shell=${spec_shell} ${target:-${spec_shell}} ./coral spec
 
 matrix:
   include:
+    # Default shells in multiple distros
+    - env: IMAGE="alpine" spec_shell=sh
+      os:  linux
+
+    - env: IMAGE="ubuntu" spec_shell=sh
+      os:  linux
+
+    - env: IMAGE="ubuntu" spec_shell=bash
+      os:  linux
+
+    - env: IMAGE="ubuntu" spec_shell="bash-4.3.9" APTGET="bash-4.3.9" PPA="team-mayhem/multishell"
+      os:  linux
+
+    - env: IMAGE="debian" spec_shell=sh
+      os:  linux
+
+    - env: IMAGE="centos" spec_shell=sh
+      os:  linux
+
+    - env: IMAGE="amazonlinux" spec_shell=sh
+      os:  linux
+
+    - env: IMAGE="fedora" spec_shell=sh
+      os:  linux
+
+    - env: IMAGE="opensuse" spec_shell=sh
+      os:  linux
+
+    # Bare Shell Versions on Linux
     - env: spec_shell="dash"
       os:  linux
 
@@ -78,6 +110,7 @@ matrix:
     - env: spec_shell="bash-4.3.9" APTGET="bash-4.3.9" PPA="team-mayhem/multishell"
       os:  linux
 
+    # Shells on OS X
     - env: spec_shell="bash"
       os:  osx
 
@@ -92,18 +125,3 @@ matrix:
 
     - env: spec_shell="dash" BREW="dash"
       os:  osx
-
-    - env: IMAGE="alpine" spec_shell=sh
-      os:  linux
-
-    - env: IMAGE="ubuntu" spec_shell=sh
-      os:  linux
-
-    - env: IMAGE="debian" spec_shell=sh
-      os:  linux
-
-    - env: IMAGE="centos" spec_shell=sh
-      os:  linux
-
-    - env: IMAGE="amazonlinux" spec_shell=sh
-      os:  linux
