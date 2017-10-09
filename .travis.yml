@@ -24,7 +24,7 @@ before_install:
   - echo "Using Shell '${spec_shell}'"
 
 script:
-  - spec_shell=${spec_shell} ${IMAGE:+${setup_prefix} }${spec_shell}} ./coral spec
+  - spec_shell=${spec_shell} ${IMAGE:+${setup_prefix} }${spec_shell} ./coral spec
 
 matrix:
   include:
