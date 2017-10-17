@@ -280,11 +280,11 @@ _spec_run_external ()
 		${setup}
 		_spec_set () ( cat )
 		_spec_return () ( return "${result_code}" )
-		(set | _spec_set | sort) > "${spec_directory}/.spec/varprev"
+		(set | _spec_set | sort -n) > "${spec_directory}/.spec/varprev"
 		test '0' = "${result_code}" || _spec_return
 		${instructions}
 		external_code=\$?
-		(set | _spec_set | sort) > "${spec_directory}/.spec/varnext"
+		(set | _spec_set | sort -n) > "${spec_directory}/.spec/varnext"
 		comm -3 -1 "${spec_directory}/.spec/varprev" "${spec_directory}/.spec/varnext" | sed '/^LINENO/d' >> "${spec_directory}/.spec/varset"
 		exit \${external_code}
 	EXTERNAL
