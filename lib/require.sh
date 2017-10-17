@@ -1,9 +1,10 @@
 ##
- # require.sh — a portable shell script file loader
+ # require.sh - a portable shell script file loader
  ##
 
 require ()
 {
+	local suffix=".sh"
 	local previous="${dependency:-require}"
 	local dependency="${1}"
 	shift
@@ -26,7 +27,7 @@ require_on_include ()
 {
 	local required_file="${1}"
 
-	test "${dependency%*.sh}.sh" = "${dependency}" || return 0
+	test "${dependency%*${suffix}}${suffix}" = "${dependency}" || return 0
 
 	set --
 	. "${required_file}"

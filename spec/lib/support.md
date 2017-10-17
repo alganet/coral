@@ -19,7 +19,7 @@ echo 'This is never shown'
 ```
 
 
-```console
+```console test
 $ ${SHELL} ./bail_erros.sh
 $ echo $?
 1
@@ -39,7 +39,7 @@ echo 'This is never shown'
 ```
 
 
-```console
+```console test
 $ ${SHELL} ./bail_erros.sh > out 2>&1
 $ test $? = 0
 $ echo $?
@@ -65,7 +65,7 @@ display_local_var ()
 display_local_var
 ```
 
-```console
+```console test
 $ ${SHELL} ./local_vars.sh
 123
 ```
@@ -87,7 +87,7 @@ do_not_expand_glob
 ```
 
 
-```console
+```console test
 $ mkdir -p foo/bar
 $ mkdir foo/baz
 $ mkdir foo/bat
@@ -115,7 +115,7 @@ do_split_words ()
 do_split_words
 ```
 
-```console
+```console test
 $ ${SHELL} ./split_words.sh
 here
 are

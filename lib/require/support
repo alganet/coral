@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 ##
- # require support — silently set sane options for all shells
+ # require support - silently set sane options for all shells
  ##
 
 # Options for all shells
@@ -20,6 +20,10 @@ if ( test -n "${KSH_VERSION:-}" &&
      test -n "${YASH_VERSION:-}"
 then
 	alias local=typeset
+	SHELL=yash
+elif test -n "${BASH_VERSION-}"
+then
+	set -o posix
 elif test -n "${ZSH_VERSION-}"
 then
 	# Unset options for zsh to make it more portable

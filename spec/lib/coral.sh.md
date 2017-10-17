@@ -31,9 +31,9 @@ zoo_animals ()
 }
 ```
 
-```console
-$ require_path=path2:path4:. ./coral zoo/animals
-$ require_path=path2:path4:. ./coral zoo/lion
-$ require_path=path2:path4:. ./coral zoo
+```console test
+$ require_path=path2:path4:. coral zoo/animals
+$ require_path=path2:path4:. coral zoo/lion
+$ require_path=path2:path4:. coral zoo
 zoo
 ```

@@ -1,23 +1,40 @@
 require 'fs/tempdir.sh'
+require 'pipe.sh'
 
 spec ()
 {
 	local spec_shell="${spec_shell:-sh}"
-	local target="${1:-.}"
 	local test_number=0
 	local fail_number=0
 	local test_result=0
-	local tempdir="$(fs_tempdir 'spec')"
 	local oldifs="${IFS}"
+	local target_files="${*:-}"
+	local tempdir=
 
 	echo "# using	'${spec_shell:-sh}'"
-	echo "# on	'${tempdir}'"
+
+	if test -z "${target_files}"
+	then
+		echo "# "
+		echo "# FAILURE (no .md files found)"
+		test_result=1
+		return
+	fi
+
+	target_files="$(printf %s\\n ${target_files} | sort)"
+
+	tempdir="$(fs_tempdir 'spec')"
+
 	echo "# "
 
 	cp -R "${PWD}" "${tempdir}/pwd"
 
-	for target_file in $(find "${target}" -type f -name "*.md")
+	for target_file in ${target_files}
 	do
+		if test ! -f "${target_file}"
+		then
+			continue
+		fi
 		echo "# file	'${target_file}'"
 		mkdir -p "${tempdir}/${target_file}.workspace"
 		cp -R "${tempdir}/pwd/." "${tempdir}/${target_file}.workspace"
@@ -27,12 +44,16 @@ spec ()
 	if test "${fail_number}" -gt 0
 	then
 		echo "# FAILURE (${fail_number} of ${test_number} assertions failed)"
+		echo "1..${test_number}"
 		test_result=1
-	else
+	elif test "${test_number}" -gt 0
+	then
 		echo "# SUCCESS"
+		echo "1..${test_number}"
+	else
+		echo "# FAILURE (no tests found)"
+		test_result=1
 	fi
-
-	echo "1..${test_number}"
 
 	return "${test_result}"
 }
@@ -97,7 +118,8 @@ _spec_fence_open ()
 			mkdir -p "$(dirname "${file_path}")"
 		fi
 		printf '' > "${file_path}"
-	elif test "console" = "${language}"
+	elif test "console" = "${language}" &&
+		 test ! -z "${key}"
 	then
 		printf '' > "${spec_directory}/.spec/console"
 	elif test "setup" = "${key}" && test "${language}" != "console"
@@ -115,7 +137,8 @@ _spec_fence_line ()
 	if test "file" = "${key}"
 	then
 		echo "$line" >> "${spec_directory}/${value}"
-	elif test "console" = "${language}"
+	elif test "console" = "${language}" &&
+		 test ! -z "${key}"
 	then
 		echo "$line" >> "${spec_directory}/.spec/console"
 	elif test "setup" = "${key}" && test "${language}" != "console"
@@ -130,9 +153,14 @@ _spec_fence_close ()
 	local key="${2:-}"
 	local value="${3:-}"
 
-	if test "console" = "${language}"
+	if test "console" = "${language}" &&
+	   test "test" = "${key}"
 	then
-		_spec_run_console
+		_spec_run_console _spec_report_single_result
+	elif test "console" = "${language}" &&
+	     test "task" = "${key}"
+	then
+		_spec_run_console _spec_report_code_result
 	elif test "setup" = "${key}" && test "${language}" != "console"
 	then
 		_spec_collect_setup
@@ -146,6 +174,7 @@ _spec_collect_setup ()
 
 _spec_run_console ()
 {
+	local assertion="${1:-_spec_report_single_result}"
 	local previous_dir="${PWD}"
 	local message=
 	local instructions=
@@ -158,6 +187,9 @@ _spec_run_console ()
 	local oldifs="${IFS}"
 
 	cd "${spec_directory}"
+	printf '' > "${spec_directory}/.spec/varset"
+	printf '' > "${spec_directory}/.spec/varprev"
+	printf '' > "${spec_directory}/.spec/varnext"
 
 	IFS=''
 	while read -r message
@@ -168,11 +200,16 @@ _spec_run_console ()
 			_spec_report_comment
 		elif test "\$ ${message#*\$ }" = "${message}"
 		then
-			_spec_report_single_result
+			${assertion}
 			last_command_line="${message_line}"
 			instructions="${message#*\$ }"
 			test_number=$((test_number + 1))
-			result_code=$(_spec_run_external 2>/dev/null)
+			set +e
+			pipe _spec_run_external --\
+			     tee "${spec_directory}/.spec/result" --\
+			     _spec_report_progress 2>&1
+			result_code="${pipe_status_1}"
+			set -e
 			result="$(cat "${spec_directory}/.spec/result" | _spec_import_result)"
 
 			expectation=
@@ -184,10 +221,48 @@ _spec_run_console ()
 	done < "${spec_directory}/.spec/console"
 	IFS="${oldifs}"
 
-	_spec_report_single_result
+	${assertion}
 	instructions="${message#*\$ }"
 
 	cd "${previous_dir}"
+}
+
+_spec_report_progress ()
+{
+	if test -z "${TERM:-}"
+	then
+		cat 1>/dev/null
+		return
+	fi
+
+	set --
+	local progress_line=
+	local char="."
+	local tput_el="$(tput 'el' 2>/dev/null || :)"
+	local tput_el1="$(tput 'el1' 2>/dev/null || :)"
+	local tput_dim="$(tput 'dim' 2>/dev/null || :)"
+	local tput_sgr0="$(tput 'sgr0' 2>/dev/null || :)"
+	local prefix="${tput_el}${tput_el1}${tput_dim}"
+
+	printf %s\\r \
+		"${prefix}███████ ${test_number} - Working...${tput_sgr0}" 2>&1
+
+	while read -r progress_line
+	do
+		progress_line="$(
+			printf %s "${progress_line}" |
+			sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+		)"
+		if test "$#" = 0
+		then
+			set -- " ██████" "█ █████" "██ ████" "███ ███" "████ ██" "█████ █"
+		fi
+		printf %s\\r \
+			"${prefix}${1} ${test_number} - ${progress_line}${tput_sgr0}" 2>&1
+		shift
+	done
+
+	printf \\r%s\\r "${tput_sgr0}${tput_el}${tput_el1}"  2>&1
 }
 
 _spec_import_result ()
@@ -197,17 +272,22 @@ _spec_import_result ()
 
 _spec_run_external ()
 {
-	set +e
-	${spec_shell:-sh} <<-EXTERNAL > "${spec_directory}/.spec/result" 2>&1
+	${spec_shell:-sh} <<-EXTERNAL 2>&1
+		. "${spec_directory}/.spec/varset"
+		PATH="\${PATH}:."
 		SHELL="${spec_shell}"
-		_spec_return () ( return "${result_code}" )
+		TERM=
 		${setup}
+		_spec_set () ( cat )
+		_spec_return () ( return "${result_code}" )
+		(set | _spec_set | sort) > "${spec_directory}/.spec/varprev"
 		test '0' = "${result_code}" || _spec_return
 		${instructions}
+		external_code=\$?
+		(set | _spec_set | sort) > "${spec_directory}/.spec/varnext"
+		comm -3 -1 "${spec_directory}/.spec/varprev" "${spec_directory}/.spec/varnext" | sed '/^LINENO/d' >> "${spec_directory}/.spec/varset"
+		exit \${external_code}
 	EXTERNAL
-	result_code="$?"
-	set -e
-	echo "$result_code"
 }
 
 _spec_collect_expectation ()
@@ -241,9 +321,35 @@ _spec_report_single_result ()
 		echo "not ok	${line_report}"
 		echo "# Failure on ${target_file} line ${error_line}"
 		echo "# Output"
-		echo "${result}" | sed 's/# - \([^$]*\)\$/#	\1 |/'
+		echo "${result}" | sed 's/# - \([^$]*\)\$/#	\1/'
 		echo "# Expected"
-		echo "${expectation}" | sed 's/# - \([^$]*\)\$/#	\1 |/'
+		echo "${expectation}" | sed 's/# - \([^$]*\)\$/#	\1/'
+		echo
+	fi
+}
+
+_spec_report_code_result ()
+{
+	local line_report="${test_number} - ${instructions}"
+
+	if test -z "${instructions}"
+	then
+		return
+	fi
+
+	if test '0' = "${result_code}"
+	then
+		echo "ok	${line_report}"
+		instructions=
+	else
+		fail_number=$((fail_number + 1))
+		error_line=$((${line_last_open_fence} + ${last_command_line:-}))
+		echo
+		echo "not ok	${line_report}"
+		echo "# Failure on ${target_file} line ${error_line}"
+		echo "# Output"
+		echo "${result}" | sed 's/# - \([^$]*\)\$/#	\1/'
+		echo "# Exit Code: ${result_code}"
 		echo
 	fi
 }

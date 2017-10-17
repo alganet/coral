@@ -26,7 +26,7 @@ require_test ()
 
 ```
 
-```console
+```console test
 $ chmod +x require_test
 ```
 
@@ -50,7 +50,7 @@ world ()
 
 ```
 
-```console
+```console test
 $ ./require_test world.sh
 hello
 world
@@ -68,7 +68,7 @@ loop ()
 }
 ```
 
-```console
+```console test
 $ ./require_test loop.sh
 loop
 ```
@@ -98,7 +98,7 @@ ipsum ()
 ```
 
 
-```console
+```console test
 $ ./require_test ipsum.sh
 lorem
 ipsum
@@ -136,7 +136,7 @@ hooks ()
 
 ```
 
-```console
+```console test
 $ ./require_test hooks.sh
 Request: world.sh
 Search: world.sh
@@ -187,7 +187,7 @@ hooks ()
 
 ```
 
-```console
+```console test
 $ touch always_requests.sh
 $ touch never_finds.sh
 $ touch always_errors.sh
@@ -210,7 +210,7 @@ Could not find dependency 'always_errors.sh'
 
 ### Paths
 
-```console
+```console test
 $ chmod +x require_test
 ```
 
@@ -234,7 +234,7 @@ friend ()
 }
 ```
 
-```console
+```console test
 $ require_path=path1:path2 ./require_test friend.sh
 hey
 friend

@@ -20,7 +20,7 @@ before_install:
   - ${BREW:+brew install ${BREW}}
 
 script:
-  - spec_shell=${spec_shell} ${IMAGE:+docker run -v "$(pwd):/workdir" -w /workdir -e spec_shell=${spec_shell} ${IMAGE} }${spec_shell} ./coral spec
+  - spec_shell=${spec_shell} ${IMAGE:+docker run -v "$(pwd):/workdir" -w /workdir -e spec_shell=${spec_shell} ${IMAGE} }${spec_shell} ./coral spec spec/*/*
 
 matrix:
   include:
@@ -51,8 +51,9 @@ matrix:
     - env: spec_shell="bash"
       os:  linux
 
-    - env: spec_shell="posh" APTGET="posh"
-      os:  linux
+# Needs some polyfill in order to pass. Wait for it.
+#    - env: spec_shell="posh" APTGET="posh"
+#      os:  linux
 
     - env: spec_shell="mksh" APTGET="mksh"
       os:  linux

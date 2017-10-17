@@ -9,8 +9,11 @@ mymodule ()
 ```
 
 
-```console
-$ ./coral assemble mymodule mymodule
+```console test
+$ MODULE=mymodule
+$ coral assemble $MODULE $MODULE
+$ echo $MODULE
+mymodule
 $ ./mymodule
 1
 ```

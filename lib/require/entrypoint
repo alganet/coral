@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 ##
- # require entrypoint — a modular command runner
+ # require entrypoint - a modular command runner
  ##
 
 # Run command named by the entrypoint variable or nothing (the : command)

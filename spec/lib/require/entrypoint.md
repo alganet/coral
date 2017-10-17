@@ -6,13 +6,13 @@ in the `entrypoint` variable passing along all arguments.
 
 Here's a sample using `echo` as an entrypoint:
 
-```console
+```console test
 $ entrypoint=echo ${SHELL} ./lib/require/entrypoint Hello World
 Hello World
 ```
 
 If no entrypoint is provided, it does nothing:
 
-```console
+```console test
 $ entrypoint='' ${SHELL} ./lib/require/entrypoint Hello
 ```

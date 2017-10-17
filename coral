@@ -14,7 +14,7 @@ require_path="${require_path:-.}:lib:."
 require_loaded=' require.sh coral.sh '
 
 # Require modules from the source folder
-. "lib/require/support"
-. "lib/require.sh"
-. "lib/coral.sh"
-. "lib/require/entrypoint"
+. "./lib/require/support"
+. "./lib/require.sh"
+. "./lib/coral.sh"
+. "./lib/require/entrypoint"
