@@ -249,7 +249,7 @@ _spec_run_external ()
 		set | shell_vars > "${spec_directory}/.spec/varnext"
 		comm -3 -1 \
 			"${spec_directory}/.spec/varprev" \
-			"${spec_directory}/.spec/varnext" |
+			"${spec_directory}/.spec/varnext" 2>/dev/null |
 			sed '/^LINENO/d' >> "${spec_directory}/.spec/varset"
 		exit \${external_code}
 	EXTERNAL
