@@ -11,7 +11,7 @@ mymodule ()
 
 ```console test
 $ MODULE=mymodule
-$ coral assemble $MODULE $MODULE
+$ ./coral assemble $MODULE $MODULE
 $ echo $MODULE
 mymodule
 $ ./mymodule

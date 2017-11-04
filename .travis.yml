@@ -4,15 +4,6 @@ services:
   - docker
 
 before_install:
-  # Install PPA if environment requires it
-  - ${PPA:+sudo add-apt-repository ppa:${PPA} -y}
-
-  # Update apt catalogue if going to install anything
-  - ${APTGET:+sudo apt-get update}
-
-  # Install required apt packages
-  - ${APTGET:+sudo apt-get install -y ${APTGET}}
-
   # Update brew catalogue if going to install anything
   - ${BREW:+brew update}
 
@@ -20,94 +11,24 @@ before_install:
   - ${BREW:+brew install ${BREW}}
 
 script:
-  - spec_shell=${spec_shell} ${IMAGE:+docker run -v "$(pwd):/workdir" -w /workdir -e spec_shell=${spec_shell} ${IMAGE} }${spec_shell} ./coral spec spec/*/*
+  - spec_shell=${spec_shell} ${spec_shell} ./coral spec ${TARGET}
 
 matrix:
   include:
-    - env: IMAGE="alpine" spec_shell=sh
+    - env: spec_shell=sh TARGET="spec/README.md"
       os:  linux
 
-    - env: IMAGE="ubuntu" spec_shell=sh
-      os:  linux
-
-    - env: IMAGE="debian" spec_shell=sh
-      os:  linux
-
-    - env: IMAGE="centos" spec_shell=sh
-      os:  linux
-
-    - env: IMAGE="amazonlinux" spec_shell=sh
-      os:  linux
-
-    - env: IMAGE="fedora" spec_shell=sh
-      os:  linux
-
-    - env: IMAGE="opensuse" spec_shell=sh
-      os:  linux
-
-    - env: spec_shell="dash"
-      os:  linux
-
-    - env: spec_shell="bash"
-      os:  linux
-
-# Needs some polyfill in order to pass. Wait for it.
-#    - env: spec_shell="posh" APTGET="posh"
-#      os:  linux
-
-    - env: spec_shell="mksh" APTGET="mksh"
-      os:  linux
-
-    - env: spec_shell="zsh" APTGET="zsh"
-      os:  linux
-
-    - env: spec_shell="pdksh" APTGET="pdksh"
-      os:  linux
-
-    - env: spec_shell="yash" APTGET="yash"
-      os:  linux
-
-    - env: spec_shell="ksh" APTGET="ksh"
-      os:  linux
-
-    - env: spec_shell="zsh-beta" APTGET="zsh-beta"
-      os:  linux
-
-    - env: spec_shell="busybox sh" APTGET="busybox"
-      os:  linux
-
-    - env: spec_shell="bash-2.05b.13" APTGET="bash-2.05b.13" PPA="team-mayhem/multishell"
-      os:  linux
-
-    - env: spec_shell="bash-3.0.16" APTGET="bash-3.0.16" PPA="team-mayhem/multishell"
-      os:  linux
-
-    - env: spec_shell="bash-3.1.9" APTGET="bash-3.1.9" PPA="team-mayhem/multishell"
-      os:  linux
-
-    - env: spec_shell="bash-3.2.9" APTGET="bash-3.2.9" PPA="team-mayhem/multishell"
-      os:  linux
-
-    - env: spec_shell="bash-4.1.9" APTGET="bash-4.1.9" PPA="team-mayhem/multishell"
-      os:  linux
-
-    - env: spec_shell="bash-4.2.53" APTGET="bash-4.2.53" PPA="team-mayhem/multishell"
-      os:  linux
-
-    - env: spec_shell="bash-4.3.9" APTGET="bash-4.3.9" PPA="team-mayhem/multishell"
-      os:  linux
-
-    - env: spec_shell="bash"
+    - env: spec_shell="bash" TARGET="spec/*/*"
       os:  osx
 
-    - env: spec_shell="zsh" BREW="zsh"
+    - env: spec_shell="zsh" BREW="zsh" TARGET="spec/*/*"
       os:  osx
 
-    - env: spec_shell="ksh" BREW="ksh"
+    - env: spec_shell="ksh" BREW="ksh" TARGET="spec/*/*"
       os:  osx
 
-    - env: spec_shell="mksh" BREW="mksh"
+    - env: spec_shell="mksh" BREW="mksh" TARGET="spec/*/*"
       os:  osx
 
-    - env: spec_shell="dash" BREW="dash"
+    - env: spec_shell="dash" BREW="dash" TARGET="spec/*/*"
       os:  osx

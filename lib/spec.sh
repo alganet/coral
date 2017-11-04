@@ -195,7 +195,7 @@ _spec_run_console ()
 	while read -r message
 	do
 		IFS="${oldifs}"
-		if test "\$ # ${message#*\$ # }" = "${message}"
+		if test "\$ \# ${message#*\$ \# }" = "${message}"
 		then
 			_spec_report_comment
 		elif test "\$ ${message#*\$ }" = "${message}"
@@ -207,7 +207,7 @@ _spec_run_console ()
 			set +e
 			pipe _spec_run_external --\
 			     tee "${spec_directory}/.spec/result" --\
-			     _spec_report_progress 2>&1
+			     cat 1>/dev/null 2>&1
 			result_code="${pipe_status_1}"
 			set -e
 			result="$(cat "${spec_directory}/.spec/result" | _spec_import_result)"
@@ -227,44 +227,6 @@ _spec_run_console ()
 	cd "${previous_dir}"
 }
 
-_spec_report_progress ()
-{
-	if test -z "${TERM:-}"
-	then
-		cat 1>/dev/null
-		return
-	fi
-
-	set --
-	local progress_line=
-	local char="."
-	local tput_el="$(tput 'el' 2>/dev/null || :)"
-	local tput_el1="$(tput 'el1' 2>/dev/null || :)"
-	local tput_dim="$(tput 'dim' 2>/dev/null || :)"
-	local tput_sgr0="$(tput 'sgr0' 2>/dev/null || :)"
-	local prefix="${tput_el}${tput_el1}${tput_dim}"
-
-	printf %s\\r \
-		"${prefix}███████ ${test_number} - Working...${tput_sgr0}" 2>&1
-
-	while read -r progress_line
-	do
-		progress_line="$(
-			printf %s "${progress_line}" |
-			sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
-		)"
-		if test "$#" = 0
-		then
-			set -- " ██████" "█ █████" "██ ████" "███ ███" "████ ██" "█████ █"
-		fi
-		printf %s\\r \
-			"${prefix}${1} ${test_number} - ${progress_line}${tput_sgr0}" 2>&1
-		shift
-	done
-
-	printf \\r%s\\r "${tput_sgr0}${tput_el}${tput_el1}"  2>&1
-}
-
 _spec_import_result ()
 {
 	sed 's/.*/# - &$/'
@@ -273,19 +235,22 @@ _spec_import_result ()
 _spec_run_external ()
 {
 	${spec_shell:-sh} <<-EXTERNAL 2>&1
+		. "${spec_directory}/lib/shell/vars.sh"
 		. "${spec_directory}/.spec/varset"
 		PATH="\${PATH}:."
 		SHELL="${spec_shell}"
 		TERM=
 		${setup}
-		_spec_set () ( cat )
 		_spec_return () ( return "${result_code}" )
-		(set | _spec_set | sort -n) > "${spec_directory}/.spec/varprev"
+		set | shell_vars > "${spec_directory}/.spec/varprev"
 		test '0' = "${result_code}" || _spec_return
 		${instructions}
 		external_code=\$?
-		(set | _spec_set | sort -n) > "${spec_directory}/.spec/varnext"
-		comm -3 -1 "${spec_directory}/.spec/varprev" "${spec_directory}/.spec/varnext" | sed '/^LINENO/d' >> "${spec_directory}/.spec/varset"
+		set | shell_vars > "${spec_directory}/.spec/varnext"
+		comm -3 -1 \
+			"${spec_directory}/.spec/varprev" \
+			"${spec_directory}/.spec/varnext" |
+			sed '/^LINENO/d' >> "${spec_directory}/.spec/varset"
 		exit \${external_code}
 	EXTERNAL
 }

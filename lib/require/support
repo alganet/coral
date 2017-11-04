@@ -20,7 +20,6 @@ if ( test -n "${KSH_VERSION:-}" &&
      test -n "${YASH_VERSION:-}"
 then
 	alias local=typeset
-	SHELL=yash
 elif test -n "${BASH_VERSION-}"
 then
 	set -o posix
