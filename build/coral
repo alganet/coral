@@ -1,6 +1,4 @@
 #!/usr/bin/env sh
-# --- 9326665 --- file:module/support
-#!/usr/bin/env sh
 
 ##
  # require support - silently set sane options for all shells
@@ -36,10 +34,7 @@ then
 	#
 	unsetopt GLOB NO_MATCH NO_SH_WORD_SPLIT >/dev/null 2>&1 || :
 fi
-# --- 9326665 --- env:entrypoint
 entrypoint='coral'
-# --- 9326665 --- func:require
-require () ( : )
 require_source ()
 {
     if test -z "${1:-}"
@@ -48,6 +43,10 @@ require_source ()
         elif test "${1}" = "shell/vars.sh"
     then
         cat <<'FILESOURCE_SNIPPET'
+##
+ # shell_vars.sh - normalizes shell variables
+ ##
+
 shell_vars ()
 {
 	shell_vars_fill | sort -n
@@ -160,8 +159,9 @@ require_include ()
 
 	require_loaded="${require_loaded:- }${dependency} "
 
-	${require_on_include:-require_on_include} "${location}" "${dependency}" "${@:-}" ||
-		return 1
+	${require_on_include:-require_on_include} \
+		"${location}" "${dependency}" "${@:-}" ||
+			return 1
 }
 
 require_is_loaded ()
@@ -234,7 +234,8 @@ FILESOURCE_SNIPPET
         cat "$(require_path "${1}")"
     fi
 }
-# --- 9326665 --- file:lib/require.sh
+require_loaded=' coral.sh require.sh spec.sh fs/tempdir.sh math/random.sh shell/pipe.sh shell/route.sh shell/vars.sh assemble.sh module/entrypoint module/support '
+require_path='.:lib:.:.'
 ##
  # require.sh - a portable shell script file loader
  ##
@@ -313,8 +314,9 @@ require_include ()
 
 	require_loaded="${require_loaded:- }${dependency} "
 
-	${require_on_include:-require_on_include} "${location}" "${dependency}" "${@:-}" ||
-		return 1
+	${require_on_include:-require_on_include} \
+		"${location}" "${dependency}" "${@:-}" ||
+			return 1
 }
 
 require_is_loaded ()
@@ -330,13 +332,17 @@ require_source ()
 {
 	cat "$(require_path "${1}")"
 }
-# --- 9326665 --- file:lib/math/random.sh
+##
+ # math_random.sh - generates random numbers
+ ##
 
 math_random ()
 {
 	echo ${RANDOM:-$(od -An -N3 -i /dev/random)}
 }
-# --- 9326665 --- file:lib/fs/tempdir.sh
+##
+ # fs_tempdir.sh - creates temporary directories
+ ##
 
 require 'math/random.sh'
 
@@ -354,7 +360,10 @@ fs_tempdir ()
 
 	echo "${tempdir}"
 }
-# --- 9326665 --- file:lib/shell/pipe.sh
+##
+ # shell_pipe.sh - executes pipes capturing their status
+ ##
+
 # https://unix.stackexchange.com/questions/76162/how-do-i-capture-the-return-status-and-use-tee-at-the-same-time-in-korn-shell
 
 shell_pipe ()
@@ -400,7 +409,10 @@ shell_pipe ()
 
 	return "${shell_pipe_status}"
 }
-# --- 9326665 --- file:lib/shell/route.sh
+##
+ # shell_route.sh - dispatches commands and options to shell functions
+ ##
+
 shell_route ()
 {
 	local namespace="${1}"
@@ -455,9 +467,11 @@ shell_route ()
 
 	"${@:-}"
 }
-# --- 9326665 --- file:lib/shell/vars.sh
-eval "$(require_source shell/vars.sh)"
-# --- 9326665 --- file:lib/spec.sh
+eval "$(require_source 'shell/vars.sh')"
+##
+ # spec.sh - a literate test runner
+ ##
+
 require 'fs/tempdir.sh'
 require 'shell/pipe.sh'
 require 'shell/route.sh'
@@ -816,48 +830,16 @@ _spec_report_comment ()
 {
 	:
 }
-# --- 9326665 --- file:lib/require.sh
-eval "$(require_source require.sh)"
-# --- 9326665 --- file:lib/math/random.sh
-
-math_random ()
-{
-	echo ${RANDOM:-$(od -An -N3 -i /dev/random)}
-}
-# --- 9326665 --- file:lib/math/random.sh
-
-math_random ()
-{
-	echo ${RANDOM:-$(od -An -N3 -i /dev/random)}
-}
-# --- 9326665 --- file:lib/fs/tempdir.sh
-
-require 'math/random.sh'
-
-fs_tempdir ()
-{
-	local prefix="${1:-tempdir.sh}"
-	local systmp="${TMPDIR:-/tmp}"
-    local tempdir="$(mktemp -d "${systmp}/${prefix}.XXXXXX" 2>/dev/null || :)"
-
-    if test -z "${tempdir:-}"
-	then
-		tempdir="${systmp}/${prefix}.$(math_random)"
-	    mkdir -m 'u+rwx' "${tempdir}"
-	fi
-
-	echo "${tempdir}"
-}
-# --- 9326665 --- file:lib/assemble.sh
 ##
- # assemble.sh
+ # assemble.sh - bundles modules into standalone executables
  ##
 
 require 'require.sh' --assemble-source
 require 'module/entrypoint' --assemble-source
 require 'module/support' --assemble-source
-require 'math/random.sh'
 require 'fs/tempdir.sh'
+require 'math/random.sh'
+require 'shell/route.sh'
 
 assemble ()
 {
@@ -909,17 +891,9 @@ assemble_contents ()
 	local input_contents=''
 	local require_loaded=' '
 
-	echo "#!/usr/bin/env sh"
-
-	echo "# --- ${assemble_key} --- file:module/support"
 	require_source 'module/support'
-
-	echo "# --- ${assemble_key} --- env:entrypoint"
 	echo "entrypoint='${input}'"
-
 	assemble_dependencies "${input_file}"
-
-	echo "# --- ${assemble_key} --- file:module/entrypoint"
 	require_source 'module/entrypoint'
 }
 
@@ -929,21 +903,10 @@ assemble_dependencies ()
 	local require_on_request='assemble_on_request'
 	local input_file="${1:-}"
 	local require_sources=
+	local require_is_sourced=0
 
+	printf 'require () ( : )' > "${assemble_dir}/require"
 	require "${input_file}" > "${assemble_dir}/required_modules"
-
-	if require_is_loaded "require.sh" ""
-	then
-		echo "# --- ${assemble_key} --- env:require_loaded"
-		echo "require_loaded='${require_loaded}'"
-		echo "# --- ${assemble_key} --- env:require_path"
-		echo "require_path='${assemble_path:-${require_path}}'"
-		echo "# --- ${assemble_key} --- file:require.sh"
-		require_source 'require.sh'
-	else
-		echo "# --- ${assemble_key} --- func:require"
-		echo 'require () ( : )'
-	fi
 
 	require_sources="$(cat "${assemble_dir}/sources")"
 
@@ -962,6 +925,16 @@ assemble_dependencies ()
 			}
 		SOURCES_SNIPPET
 	fi
+
+	echo "require_loaded='${require_loaded}'"
+	echo "require_path='${assemble_path:-${require_path}}'"
+
+	if require_is_loaded "require.sh" ""
+	then
+		require_source 'require.sh' > "${assemble_dir}/require"
+	fi
+
+	cat "${assemble_dir}/require"
 	cat "${assemble_dir}/required_modules"
 }
 
@@ -979,12 +952,10 @@ assemble_on_include ()
 	test "${target_name%*.sh}.sh" = "${target_name}" || return 0
 
 	require_on_include "${target}"
-	echo "# --- ${assemble_key} --- file:${target}"
 
-	if test "${#}" -gt 0 && test "${*#*--assemble-source*}" != "${*:-}"
+	if test "${*#*--assemble-source*}" = "${*:-}" &&
+	   test "${dependency}" != "require.sh"
 	then
-		echo "eval \"\$(require_source ${dependency})\""
-	else
 		printf %s\\n "${contents}"
 	fi
 }
@@ -998,6 +969,7 @@ assemble_on_request ()
 
 	if test "${#}" -gt 0 && test "${*#*--assemble-source*}" != "${*:-}"
 	then
+
 		cat <<-SOURCES_SNIPPET >> "${assemble_dir}/sources"
 			    elif test "\${1}" = "${dependency}"
 			    then
@@ -1005,68 +977,19 @@ assemble_on_request ()
 						$(require_source "${dependency}")
 					FILESOURCE_SNIPPET
 		SOURCES_SNIPPET
-	fi
 
-	require_on_request "${target}" "${@:-}"
-}
-# --- 9326665 --- file:lib/shell/route.sh
-shell_route ()
-{
-	local namespace="${1}"
-	local argument="${2:-}"
-	local short
-	local long
-	local long_name
-	local long_value
-	local target
-	local returned
-
-	if test "" = "${argument}"
-	then
-		"${namespace}_${shell_route_default:-empty_command}"
-		return $?
-	fi
-
-	short="${argument#*-}"
-	long="${short#*-}"
-
-	shift 2
-
-	if test "${argument}" = "--${long}"
-	then
-		long_name="${long%%=*}"
-
-		if test "${long}" != "${long_name}"
+		if test "${dependency%*.sh}.sh" = "${dependency}" &&
+		   test "${dependency}" != "require.sh"
 		then
-			long_value="${long#*=}"
-			long="${long_name}"
-			set -- "${long_value}" "${@:-}"
+			echo "eval \"\$(require_source '${dependency}')\""
 		fi
-
-		target="${namespace}_${shell_route_option:-option_}${long}"
-	elif test "${argument}" = "-${short}"
-	then
-		target="${namespace}_${shell_route_option:-option}_${short}"
-	elif test -z "${shell_route_options_only:-}"
-	then
-		target="${namespace}_${shell_route_command:-command}_${long}"
-	else
-		return 1
 	fi
 
-	set -- "${target:-:}" "${@:-}"
 
-	if test -n "${shell_route_name:-}"
-	then
-		echo "${@:-}"
-		return
-	fi
-
-	"${@:-}"
+	require_on_request "${dependency}" "${previous}" "${@:-}"
 }
-# --- 9326665 --- file:lib/coral.sh
 ##
- # coral.sh
+ # coral.sh - a shell script ecosystem
  ##
 
 require 'require.sh'
@@ -1118,7 +1041,6 @@ coral_option_help ()
 
 	HELPTEXT
 }
-# --- 9326665 --- file:module/entrypoint
 #!/usr/bin/env sh
 
 ##

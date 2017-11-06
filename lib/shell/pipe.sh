@@ -1,3 +1,7 @@
+##
+ # shell_pipe.sh - executes pipes capturing their status
+ ##
+
 # https://unix.stackexchange.com/questions/76162/how-do-i-capture-the-return-status-and-use-tee-at-the-same-time-in-korn-shell
 
 shell_pipe ()

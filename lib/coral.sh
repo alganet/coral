@@ -1,5 +1,5 @@
 ##
- # coral.sh
+ # coral.sh - a shell script ecosystem
  ##
 
 require 'require.sh'

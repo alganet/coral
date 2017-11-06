@@ -1,3 +1,7 @@
+##
+ # spec.sh - a literate test runner
+ ##
+
 require 'fs/tempdir.sh'
 require 'shell/pipe.sh'
 require 'shell/route.sh'

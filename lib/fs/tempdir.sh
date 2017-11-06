@@ -1,3 +1,6 @@
+##
+ # fs_tempdir.sh - creates temporary directories
+ ##
 
 require 'math/random.sh'
 

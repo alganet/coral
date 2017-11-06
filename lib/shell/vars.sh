@@ -1,3 +1,7 @@
+##
+ # shell_vars.sh - normalizes shell variables
+ ##
+
 shell_vars ()
 {
 	shell_vars_fill | sort -n

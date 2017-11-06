@@ -1,3 +1,6 @@
+##
+ # math_random.sh - generates random numbers
+ ##
 
 math_random ()
 {

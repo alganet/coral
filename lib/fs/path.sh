@@ -1,3 +1,6 @@
+##
+ # fs_path.sh - solves filesystem paths
+ ##
 
 fs_path ()
 {

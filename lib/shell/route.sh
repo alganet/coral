@@ -1,3 +1,7 @@
+##
+ # shell_route.sh - dispatches commands and options to shell functions
+ ##
+
 shell_route ()
 {
 	local namespace="${1}"

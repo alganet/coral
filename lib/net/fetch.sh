@@ -1,3 +1,7 @@
+##
+ # net_fetch.sh - obtains files from the network
+ ##
+
 net_fetch ()
 {
 	local net_fetch_command

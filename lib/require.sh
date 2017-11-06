@@ -76,8 +76,9 @@ require_include ()
 
 	require_loaded="${require_loaded:- }${dependency} "
 
-	${require_on_include:-require_on_include} "${location}" "${dependency}" "${@:-}" ||
-		return 1
+	${require_on_include:-require_on_include} \
+		"${location}" "${dependency}" "${@:-}" ||
+			return 1
 }
 
 require_is_loaded ()
