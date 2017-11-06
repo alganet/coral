@@ -10,6 +10,30 @@ require 'fs/tempdir.sh'
 
 assemble ()
 {
+	shell_route_options_only=true \
+		shell_route 'assemble' "${@:-}" ||
+			assemble_bundle "${@:-}"
+}
+
+assemble_option_help ()
+{
+	cat <<-HELPTEXT
+		Usage: assemble [ARGUMENTS] MODULE OUTPUT_FILE
+
+		Options:
+		  --help     Displays this help
+		  --version  Displays version information
+
+		MODULE can be any require.sh compatible module in the current
+		require_path.
+
+		OUTPUT_FILE must be a path for the output executable file.
+
+	HELPTEXT
+}
+
+assemble_bundle ()
+{
 	local assemble_key="$(math_random)"
 	local input="${1:-}"
 	local output="${2:--}"

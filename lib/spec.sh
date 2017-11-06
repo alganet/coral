@@ -1,8 +1,35 @@
 require 'fs/tempdir.sh'
 require 'shell/pipe.sh'
+require 'shell/route.sh'
 require 'shell/vars.sh' --assemble-source
 
 spec ()
+{
+	if test -n "${1:-}" && test -f "${1}"
+	then
+		spec_command_run "${@:-}"
+		return
+	fi
+
+	shell_route 'spec' "${@:-}"
+}
+
+spec_option_help ()
+{
+	cat <<-HELPTEXT
+		Usage: spec [ARGUMENTS] FILES...
+
+		Options:
+		  --help     Displays this help
+		  --version  Displays version information
+
+		FILES... must be one or more Markdown files containing shell code
+		examples.
+
+	HELPTEXT
+}
+
+spec_command_run ()
 {
 	local spec_shell="${spec_shell:-sh}"
 	local test_number=0

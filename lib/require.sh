@@ -19,7 +19,7 @@ require ()
 	if ! require_include "${dependency}" "${@:-}"
 	then
 		echo "Could not find dependency '${dependency}'"
-		exit $?
+		return $?
 	fi
 }
 
