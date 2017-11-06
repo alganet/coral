@@ -106,7 +106,7 @@ assemble_on_include ()
 	require_on_include "${target}"
 	echo "# --- ${assemble_key} --- file:${target}"
 
-	if test "${#}" -gt 0 && test "${@#*--assemble-source*}" != "${@:-}"
+	if test "${#}" -gt 0 && test "${*#*--assemble-source*}" != "${*:-}"
 	then
 		echo "eval \"\$(require_source ${dependency})\""
 	else
