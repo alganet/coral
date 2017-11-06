@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# --- 7975477 --- file:module/support
+# --- 14614585 --- file:module/support
 #!/usr/bin/env sh
 
 ##
@@ -36,11 +36,11 @@ then
 	#
 	unsetopt GLOB NO_MATCH NO_SH_WORD_SPLIT >/dev/null 2>&1 || :
 fi
-# --- 7975477 --- env:entrypoint
+# --- 14614585 --- env:entrypoint
 entrypoint='net_fetch'
-# --- 7975477 --- func:require
+# --- 14614585 --- func:require
 require () ( : )
-# --- 7975477 --- file:lib/net/fetch.sh
+# --- 14614585 --- file:lib/net/fetch.sh
 net_fetch ()
 {
 	local net_fetch_command
@@ -66,7 +66,7 @@ net_fetch ()
 
 	${net_fetch_command} "${1}" 2>/dev/null
 }
-# --- 7975477 --- file:module/entrypoint
+# --- 14614585 --- file:module/entrypoint
 #!/usr/bin/env sh
 
 ##

@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# --- 3037980 --- file:module/support
+# --- 9242301 --- file:module/support
 #!/usr/bin/env sh
 
 ##
@@ -36,9 +36,9 @@ then
 	#
 	unsetopt GLOB NO_MATCH NO_SH_WORD_SPLIT >/dev/null 2>&1 || :
 fi
-# --- 3037980 --- env:entrypoint
+# --- 9242301 --- env:entrypoint
 entrypoint='assemble'
-# --- 3037980 --- func:require
+# --- 9242301 --- func:require
 require () ( : )
 require_source ()
 {
@@ -200,21 +200,21 @@ FILESOURCE_SNIPPET
         cat "$(require_path "${1}")"
     fi
 }
-# --- 3037980 --- file:lib/require.sh
+# --- 9242301 --- file:lib/require.sh
 eval "$(require_source require.sh)"
-# --- 3037980 --- file:lib/math/random.sh
+# --- 9242301 --- file:lib/math/random.sh
 
 math_random ()
 {
 	echo ${RANDOM:-$(od -An -N3 -i /dev/random)}
 }
-# --- 3037980 --- file:lib/math/random.sh
+# --- 9242301 --- file:lib/math/random.sh
 
 math_random ()
 {
 	echo ${RANDOM:-$(od -An -N3 -i /dev/random)}
 }
-# --- 3037980 --- file:lib/fs/tempdir.sh
+# --- 9242301 --- file:lib/fs/tempdir.sh
 
 require 'math/random.sh'
 
@@ -232,7 +232,7 @@ fs_tempdir ()
 
 	echo "${tempdir}"
 }
-# --- 3037980 --- file:lib/assemble.sh
+# --- 9242301 --- file:lib/assemble.sh
 ##
  # assemble.sh
  ##
@@ -244,6 +244,30 @@ require 'math/random.sh'
 require 'fs/tempdir.sh'
 
 assemble ()
+{
+	shell_route_options_only=true \
+		shell_route 'assemble' "${@:-}" ||
+			assemble_bundle "${@:-}"
+}
+
+assemble_option_help ()
+{
+	cat <<-HELPTEXT
+		Usage: assemble [ARGUMENTS] MODULE OUTPUT_FILE
+
+		Options:
+		  --help     Displays this help
+		  --version  Displays version information
+
+		MODULE can be any require.sh compatible module in the current
+		require_path.
+
+		OUTPUT_FILE must be a path for the output executable file.
+
+	HELPTEXT
+}
+
+assemble_bundle ()
 {
 	local assemble_key="$(math_random)"
 	local input="${1:-}"
@@ -341,7 +365,7 @@ assemble_on_include ()
 	require_on_include "${target}"
 	echo "# --- ${assemble_key} --- file:${target}"
 
-	if test "${#}" -gt 0 && test "${@#*--assemble-source*}" != "${@:-}"
+	if test "${#}" -gt 0 && test "${*#*--assemble-source*}" != "${*:-}"
 	then
 		echo "eval \"\$(require_source ${dependency})\""
 	else
@@ -356,7 +380,7 @@ assemble_on_request ()
 	local previous="${2}"
 	shift 2
 
-	if test "${#}" -gt 0 && test "${@#*--assemble-source*}" != "${@:-}"
+	if test "${#}" -gt 0 && test "${*#*--assemble-source*}" != "${*:-}"
 	then
 		cat <<-SOURCES_SNIPPET >> "${assemble_dir}/sources"
 			    elif test "\${1}" = "${dependency}"
@@ -369,7 +393,7 @@ assemble_on_request ()
 
 	require_on_request "${target}" "${@:-}"
 }
-# --- 3037980 --- file:module/entrypoint
+# --- 9242301 --- file:module/entrypoint
 #!/usr/bin/env sh
 
 ##
