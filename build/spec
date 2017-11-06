@@ -1,3 +1,161 @@
+#!/usr/bin/env sh
+# --- 7420622 --- file:module/support
+#!/usr/bin/env sh
+
+##
+ # require support - silently set sane options for all shells
+ ##
+
+# Options for all shells
+#
+# -e: Exit if any command has an uncaught error code
+# -u: Exit on any use of an undefined variable
+# -f: Do not expand glob patterns
+set -euf
+
+# Mimic local variables on ksh by aliasing it to typeset
+#
+# This command is ignored by shells other than ksh
+#
+if ( test -n "${KSH_VERSION:-}" &&
+     test -z "${KSH_VERSION##*Version AJM*}" ) ||
+     test -n "${YASH_VERSION:-}"
+then
+	alias local=typeset
+elif test -n "${BASH_VERSION-}"
+then
+	set -o posix
+elif test -n "${ZSH_VERSION-}"
+then
+	# Unset options for zsh to make it more portable
+	#
+	# NO_MATCH: Avoid expanding extra filename patterns
+	# NO_SH_WORD_SPLIT: Make the word split on zsh behave like POSIX
+	#
+	# This command is ignored in shells other than zsh.
+	#
+	unsetopt GLOB NO_MATCH NO_SH_WORD_SPLIT >/dev/null 2>&1 || :
+fi
+# --- 7420622 --- env:entrypoint
+entrypoint='spec'
+# --- 7420622 --- func:require
+require () ( : )
+require_source ()
+{
+    if test -z "${1:-}"
+    then
+        return
+        elif test "${1}" = "shell/vars.sh"
+    then
+        cat <<'FILESOURCE_SNIPPET'
+shell_vars ()
+{
+	shell_vars_fill | sort -n
+}
+
+shell_vars_fill ()
+{
+	shell_var_line=''
+	shell_var_value=''
+
+	if test -n "${POSH_VERSION-}"
+	then
+		while read -r shell_var_line
+		do
+			shell_var_value="$(eval printf %s "\${${shell_var_line}}")"
+			printf %s\\n "${shell_var_line}='${shell_var_value}'"
+		done
+		return
+	fi
+
+	while read -r shell_var_line
+	do
+		if test "${shell_var_line%% ()} ()" = "${shell_var_line}" &&
+		   test "${shell_var_line#*=}" != "${shell_var_line}"
+		then
+			return
+		fi
+		printf %s\\n "${shell_var_line}"
+	done
+}
+FILESOURCE_SNIPPET
+    else
+        cat "$(require_path "${1}")"
+    fi
+}
+# --- 7420622 --- file:lib/math/random.sh
+
+math_random ()
+{
+	echo ${RANDOM:-$(od -An -N3 -i /dev/random)}
+}
+# --- 7420622 --- file:lib/fs/tempdir.sh
+
+require 'math/random.sh'
+
+fs_tempdir ()
+{
+	local prefix="${1:-tempdir.sh}"
+	local systmp="${TMPDIR:-/tmp}"
+    local tempdir="$(mktemp -d "${systmp}/${prefix}.XXXXXX" 2>/dev/null || :)"
+
+    if test -z "${tempdir:-}"
+	then
+		tempdir="${systmp}/${prefix}.$(math_random)"
+	    mkdir -m 'u+rwx' "${tempdir}"
+	fi
+
+	echo "${tempdir}"
+}
+# --- 7420622 --- file:lib/shell/pipe.sh
+# https://unix.stackexchange.com/questions/76162/how-do-i-capture-the-return-status-and-use-tee-at-the-same-time-in-korn-shell
+
+shell_pipe ()
+{
+	local argument
+	local cursor=1
+	local position=1
+	local shell_pipe_status=0
+	local callback=
+	local current_chunk=
+
+	# Creates the code to nest redirects between the commands
+	for argument in "${@:-}"
+	do
+		case ${argument} in
+			( '--' )
+				callback="
+					${callback} {
+						${current_chunk} 3>&-
+						echo shell_pipe_status_${cursor}=\$? >&3
+					} 4>&- |
+				"
+				cursor=$((${cursor}+1))
+				current_chunk=
+				;;
+			( * )
+				current_chunk="${current_chunk} \"\${${position}}\""
+				;;
+		esac
+
+		position=$((${position}+1))
+	done
+
+	# Runs the pipes
+	{ eval "$(
+			exec 3>&1
+			eval "
+				${callback} ${current_chunk} 3>&- >&4 4>&-
+				echo shell_pipe_status=\$?
+			"
+		)"
+	} 4>&1
+
+	return "${shell_pipe_status}"
+}
+# --- 7420622 --- file:lib/shell/vars.sh
+eval "$(require_source shell/vars.sh)"
+# --- 7420622 --- file:lib/spec.sh
 require 'fs/tempdir.sh'
 require 'shell/pipe.sh'
 require 'shell/vars.sh' --assemble-source
@@ -329,4 +487,12 @@ _spec_report_comment ()
 {
 	:
 }
+# --- 7420622 --- file:module/entrypoint
+#!/usr/bin/env sh
 
+##
+ # require entrypoint - a modular command runner
+ ##
+
+# Run command named by the entrypoint variable or nothing (the : command)
+${entrypoint:-:} "${@:-}"

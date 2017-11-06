@@ -20,9 +20,9 @@ require_test ()
 }
 
 # Require modules from the source folder
-. 'lib/require/support'
+. 'lib/module/support'
 . 'lib/require.sh'
-. 'lib/require/entrypoint'
+. 'lib/module/entrypoint'
 
 ```
 

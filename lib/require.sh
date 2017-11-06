@@ -16,7 +16,7 @@ require ()
 		return 0
 	fi
 
-	if ! require_source "${dependency}"
+	if ! require_include "${dependency}" "${@:-}"
 	then
 		echo "Could not find dependency '${dependency}'"
 		exit $?
@@ -64,6 +64,21 @@ require_path ()
 	done
 }
 
+require_include ()
+{
+	local dependency="${1}"
+	shift
+	local location="$(
+		${require_on_search:-require_on_search} "${dependency}" "${@:-}"
+	)"
+
+	test -f "${location}" || return 69
+
+	require_loaded="${require_loaded:- }${dependency} "
+
+	${require_on_include:-require_on_include} "${location}" "${dependency}" "${@:-}" ||
+		return 1
+}
 
 require_is_loaded ()
 {
@@ -76,12 +91,5 @@ require_is_loaded ()
 
 require_source ()
 {
-	local dependency="${1}"
-	local location="$(${require_on_search:-require_on_search} "${dependency}")"
-
-	test -f "${location}" || return 69
-
-	require_loaded="${require_loaded:- }${dependency} "
-
-	${require_on_include:-require_on_include} "${location}" || return 1
+	cat "$(require_path "${1}")"
 }

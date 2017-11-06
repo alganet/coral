@@ -1,11 +1,11 @@
 # https://unix.stackexchange.com/questions/76162/how-do-i-capture-the-return-status-and-use-tee-at-the-same-time-in-korn-shell
 
-pipe ()
+shell_pipe ()
 {
 	local argument
 	local cursor=1
 	local position=1
-	local pipe_last_status=0
+	local shell_pipe_status=0
 	local callback=
 	local current_chunk=
 
@@ -17,7 +17,7 @@ pipe ()
 				callback="
 					${callback} {
 						${current_chunk} 3>&-
-						echo pipe_status_${cursor}=\$? >&3
+						echo shell_pipe_status_${cursor}=\$? >&3
 					} 4>&- |
 				"
 				cursor=$((${cursor}+1))
@@ -36,10 +36,10 @@ pipe ()
 			exec 3>&1
 			eval "
 				${callback} ${current_chunk} 3>&- >&4 4>&-
-				echo pipe_last_status=\$?
+				echo shell_pipe_status=\$?
 			"
 		)"
 	} 4>&1
 
-	return "${pipe_last_status}"
+	return "${shell_pipe_status}"
 }
