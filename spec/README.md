@@ -12,7 +12,7 @@ Basic Run
 The basic test suite should run all document and library tests.
 
 ```console task
-$ ./coral spec spec/*/*
+$ ./coral spec $(find spec/*/*)
 ```
 
 Testing Other Shells

@@ -11,7 +11,7 @@ before_install:
   - ${BREW:+brew install ${BREW}}
 
 script:
-  - spec_shell=${spec_shell} ${spec_shell} ./coral spec ${TARGET}
+  - spec_shell=${spec_shell} ${spec_shell} ./coral spec $(find ${TARGET})
 
 matrix:
   include:

@@ -12,7 +12,7 @@ install:
   - cmd: call %SHELLENV% -lc "${PACMAN:+pacman --noconfirm -S $PACMAN}"
 
 test_script:
-  - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; spec_shell=${spec_shell} ./coral spec spec/*/*"
+  - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; spec_shell=${spec_shell} ./coral spec $(find spec/*/*)"
 
 environment:
   matrix:
