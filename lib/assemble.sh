@@ -2,6 +2,7 @@
  # assemble.sh - bundles modules into standalone executables
  ##
 
+require --channel 'https://raw.githubusercontent.com/alganet/coral/master/lib'
 require 'require.sh' --assemble-source
 require 'module/entrypoint' --assemble-source
 require 'module/support' --assemble-source
@@ -73,7 +74,7 @@ assemble_dependencies ()
 	local require_sources=
 	local require_is_sourced=0
 
-	printf 'require () ( : )' > "${assemble_dir}/require"
+	echo 'require () ( : )' > "${assemble_dir}/require"
 	require "${input_file}" > "${assemble_dir}/required_modules"
 
 	require_sources="$(cat "${assemble_dir}/sources")"
@@ -121,10 +122,9 @@ assemble_on_include ()
 
 	require_on_include "${target}"
 
-	if test "${*#*--assemble-source*}" = "${*:-}" &&
-	   test "${dependency}" != "require.sh"
+	if test "${dependency}" != "require.sh"
 	then
-		printf %s\\n "${contents}"
+		printf %s\\n\\n "${contents}"
 	fi
 }
 
@@ -137,7 +137,6 @@ assemble_on_request ()
 
 	if test "${#}" -gt 0 && test "${*#*--assemble-source*}" != "${*:-}"
 	then
-
 		cat <<-SOURCES_SNIPPET >> "${assemble_dir}/sources"
 			    elif test "\${1}" = "${dependency}"
 			    then
@@ -145,14 +144,7 @@ assemble_on_request ()
 						$(require_source "${dependency}")
 					FILESOURCE_SNIPPET
 		SOURCES_SNIPPET
-
-		if test "${dependency%*.sh}.sh" = "${dependency}" &&
-		   test "${dependency}" != "require.sh"
-		then
-			echo "eval \"\$(require_source '${dependency}')\""
-		fi
 	fi
-
 
 	require_on_request "${dependency}" "${previous}" "${@:-}"
 }

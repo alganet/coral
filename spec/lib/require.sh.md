@@ -8,7 +8,6 @@ require.sh Module
 
 entrypoint='require_test'
 require_path="${require_path:-.}"
-require_loaded=' require.sh  '
 
 require_test ()
 {

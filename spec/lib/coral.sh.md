@@ -32,13 +32,13 @@ zoo_animals ()
 ```
 
 ```console test
-$ require_path=path2:path4:. coral zoo_animals
+$ require_path=path2:path4:lib:. coral zoo_animals
 animals
 zoo
 lion
-$ require_path=path2:path4:. coral zoo_lion
+$ require_path=path2:path4:lib:. coral zoo_lion
 zoo
 lion
-$ require_path=path2:path4:. coral zoo
+$ require_path=path2:path4:lib:. coral zoo
 zoo
 ```

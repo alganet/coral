@@ -37,6 +37,11 @@ require_on_request ()
 {
 	local dependency="${1}"
 
+	if test "--${dependency#*--}" = "${dependency}"
+	then
+		return 0
+	fi
+
 	if test "${require_loaded#* ${dependency} *}" = "${require_loaded}"
 	then
 		return 1
