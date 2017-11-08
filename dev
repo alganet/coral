@@ -2,26 +2,19 @@
 
 ##
  # coral development version
- #
- # This script works from the source folder by manually requiring the library
- # components and setting configuration by hand.
- #
- # You can use this script to build a real coral version by running:
- #
- # $ ./dev assemble coral coral
- #
- # You can also download coral from one of our releases instead of building
- # it by source.
  ##
 
-# Setup variables for the source folder
-entrypoint='coral'
-require_on_search="${require_on_search:-require_on_search}"
+# Portability options
+. "./lib/module/support"
+
+# require.sh variables and source
 require_path="${require_path:-.:lib}"
 require_loaded=' require.sh coral.sh '
-
-# Require modules from the source folder
-. "./lib/module/support"
 . "./lib/require.sh"
+
+# coral.sh source
 . "./lib/coral.sh"
+
+# module/entrypoint vairables and source
+entrypoint='coral'
 . "./lib/module/entrypoint"

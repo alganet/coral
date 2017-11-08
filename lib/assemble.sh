@@ -134,8 +134,9 @@ assemble_on_request ()
 	local dependency="${1}"
 	local previous="${2}"
 	shift 2
+	local params="${*}"
 
-	if test "${#}" -gt 0 && test "${*#*--source*}" != "${*:-}"
+	if test "${#}" -gt 0 && test "${params#*--source*}" != "${*:-}"
 	then
 		cat <<-SOURCES_SNIPPET >> "${assemble_dir}/sources"
 			    elif test "\${1}" = "${dependency}"
