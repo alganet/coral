@@ -5,7 +5,7 @@
 require 'fs/tempdir.sh'
 require 'shell/pipe.sh'
 require 'shell/route.sh'
-require 'shell/vars.sh' --assemble-source
+require 'shell/vars.sh' --source
 
 spec ()
 {

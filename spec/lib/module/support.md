@@ -89,8 +89,8 @@ do_not_expand_glob
 
 ```console test
 $ mkdir -p foo/bar
-$ mkdir foo/baz
-$ mkdir foo/bat
+$ mkdir -p foo/baz
+$ mkdir -p foo/bat
 $ ${SHELL} ./expand_glob.sh
 foo/*
 ```

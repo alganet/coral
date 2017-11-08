@@ -3,9 +3,9 @@
  ##
 
 require --channel 'https://raw.githubusercontent.com/alganet/coral/master/lib'
-require 'require.sh' --assemble-source
-require 'module/entrypoint' --assemble-source
-require 'module/support' --assemble-source
+require 'require.sh'        --source
+require 'module/entrypoint' --source
+require 'module/support'    --source
 require 'fs/tempdir.sh'
 require 'math/random.sh'
 require 'shell/route.sh'
@@ -96,7 +96,7 @@ assemble_dependencies ()
 	fi
 
 	echo "require_loaded='${require_loaded}'"
-	echo "require_path='${assemble_path:-${require_path}}'"
+	echo "require_path=\"\${require_path:-${assemble_path:-${require_path}}}\""
 
 	if require_is_loaded "require.sh" ""
 	then
@@ -135,7 +135,7 @@ assemble_on_request ()
 	local previous="${2}"
 	shift 2
 
-	if test "${#}" -gt 0 && test "${*#*--assemble-source*}" != "${*:-}"
+	if test "${#}" -gt 0 && test "${*#*--source*}" != "${*:-}"
 	then
 		cat <<-SOURCES_SNIPPET >> "${assemble_dir}/sources"
 			    elif test "\${1}" = "${dependency}"

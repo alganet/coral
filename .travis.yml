@@ -10,6 +10,8 @@ before_install:
   # Install brew dependencies
   - ${BREW:+brew install ${BREW}}
 
+  - ${spec_shell} ./dev assemble coral coral
+
 script:
   - spec_shell=${spec_shell} ${spec_shell} ./coral spec $(find ${TARGET})
 
