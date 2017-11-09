@@ -10,27 +10,29 @@ install:
 
   # Install pacman dependencies
   - cmd: call %SHELLENV% -lc "${PACMAN:+pacman --noconfirm -S $PACMAN}"
-  - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; ${spec_shell} ./dev assemble coral coral"
+
+  # Build spec_doc module
+  - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; ${spec_doc_shell} ./script/dev module_assemble spec_doc spec_doc"
 
 test_script:
-  - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; spec_shell=${spec_shell} ${spec_shell} ./coral spec $(find spec/*/*)"
+  - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; spec_doc_shell=${spec_doc_shell} ${spec_doc_shell} ./spec_doc $(find . -name 'README.md')"
 
 environment:
   matrix:
-    - spec_shell: bash
+    - spec_doc_shell: bash
       PACMAN: bash
       SHELLENV: C:\msys64\usr\bin\bash
-    - spec_shell: dash
+    - spec_doc_shell: dash
       PACMAN: dash
       SHELLENV: C:\msys64\usr\bin\bash
-    - spec_shell: mksh
+    - spec_doc_shell: mksh
       PACMAN: mksh
       SHELLENV: C:\msys64\usr\bin\bash
-    - spec_shell: ksh
+    - spec_doc_shell: ksh
       PACMAN: ksh
       SHELLENV: C:\msys64\usr\bin\bash
-    - spec_shell: busybox sh
+    - spec_doc_shell: busybox sh
       PACMAN: busybox
       SHELLENV: C:\msys64\usr\bin\bash
-    - spec_shell: bash
+    - spec_doc_shell: bash
       SHELLENV: C:\MinGW\msys\1.0\bin\sh

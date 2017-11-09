@@ -1,48 +1,25 @@
 ##
- # assemble.sh - bundles modules into standalone executables
+ # module_assemble.sh - bundles modules into standalone executables
  ##
 
-require --channel 'https://raw.githubusercontent.com/alganet/coral/master/lib'
-require 'require.sh'        --source
-require 'module/entrypoint' --source
-require 'module/support'    --source
+require --channel 'https://raw.githubusercontent.com/alganet/coral/master'
+require 'module/require.sh' --source
+require 'script/entrypoint' --source
+require 'script/support'    --source
 require 'fs/tempdir.sh'
 require 'math/random.sh'
-require 'shell/route.sh'
 
-assemble ()
-{
-	shell_route_options_only=true \
-		shell_route 'assemble' "${@:-}" ||
-			assemble_bundle "${@:-}"
-}
-
-assemble_option_help ()
-{
-	cat <<-HELPTEXT
-		Usage: assemble [ARGUMENTS] MODULE OUTPUT_FILE
-
-		Options:
-		  --help     Displays this help
-		  --version  Displays version information
-
-		MODULE can be any require.sh compatible module in the current
-		require_path.
-
-		OUTPUT_FILE must be a path for the output executable file.
-
-	HELPTEXT
-}
-
-assemble_bundle ()
+module_assemble ()
 {
 	local assemble_key="$(math_random)"
 	local input="${1:-}"
 	local output="${2:--}"
-	local assemble_dir="$(fs_tempdir 'assemble')"
+	local assemble_dir="$(fs_tempdir 'module_assemble')"
+
+	trap 'module_assemble_clean' 2
 
 	printf '' > "${assemble_dir}/sources"
-	assemble_contents "${input}" > "${assemble_dir}/output"
+	module_assemble_contents "${input}" > "${assemble_dir}/output"
 
 	if test "-" = "${output}"
 	then
@@ -51,25 +28,33 @@ assemble_bundle ()
 		chmod +x "${assemble_dir}/output"
 		cp "${assemble_dir}/output" "${output}"
 	fi
+
+	module_assemble_clean return 0
 }
 
-assemble_contents ()
+module_assemble_clean ()
+{
+	rm -Rf "${assemble_dir}"
+	${@:-exit 1}
+}
+
+module_assemble_contents ()
 {
 	local input="${1:-}"
 	local input_file="$(echo "${input}" | tr '_' '/').sh"
 	local input_contents=''
 	local require_loaded=' '
 
-	require_source 'module/support'
+	require_source 'script/support'
 	echo "entrypoint='${input}'"
-	assemble_dependencies "${input_file}"
-	require_source 'module/entrypoint'
+	module_assemble_dependencies "${input_file}"
+	require_source 'script/entrypoint'
 }
 
-assemble_dependencies ()
+module_assemble_dependencies ()
 {
-	local require_on_include='assemble_on_include'
-	local require_on_request='assemble_on_request'
+	local require_on_include='module_assemble_on_include'
+	local require_on_request='module_assemble_on_request'
 	local input_file="${1:-}"
 	local require_sources=
 	local require_is_sourced=0
@@ -98,9 +83,9 @@ assemble_dependencies ()
 	echo "require_loaded='${require_loaded}'"
 	echo "require_path=\"\${require_path:-${assemble_path:-${require_path}}}\""
 
-	if require_is_loaded "require.sh" ""
+	if require_is_loaded "module/require.sh" ""
 	then
-		require_source 'require.sh' > "${assemble_dir}/require"
+		require_source 'module/require.sh' > "${assemble_dir}/require"
 	fi
 
 	cat "${assemble_dir}/require"
@@ -108,7 +93,7 @@ assemble_dependencies ()
 }
 
 
-assemble_on_include ()
+module_assemble_on_include ()
 {
 	local target="${1}"
 	local target_name="$(basename ${target})"
@@ -122,14 +107,14 @@ assemble_on_include ()
 
 	require_on_include "${target}"
 
-	if test "${dependency}" != "require.sh"
+	if test "${dependency}" != "module/require.sh"
 	then
 		printf %s\\n\\n "${contents}"
 	fi
 }
 
 
-assemble_on_request ()
+module_assemble_on_request ()
 {
 	local dependency="${1}"
 	local previous="${2}"

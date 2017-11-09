@@ -17,7 +17,6 @@ net_server_http_buffer ()
 	local buffer_dir="${1}"
 	if test -z "${buffer_name:-}"
 	then
-		local temp_dir="$(fs_tempdir)"
 		local buffer_name="$(od -N4 -tu /dev/random | tr " " "-" | tr -d '\n' )"
 		local buffer_file="${buffer_dir}/${buffer_name}"
 
@@ -106,7 +105,7 @@ net_server_http ()
 	local rootdir="${1:-$PWD}"
 	local CR="$(printf '\r')"
 	local callback="net_server_http_response"
-	local buffer_dir="$(fs_tempdir)"
+	local buffer_dir="$(fs_tempdir 'net_server_http')"
 	local connector1="nc -v -p ${2:-9999} -l 127.0.0.1"
 	local connector2="nc -v -l 127.0.0.1:${2:-9999}"
 	local connector3="nc -v -l 127.0.0.1 ${2:-9999}"

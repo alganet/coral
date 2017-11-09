@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 ##
- # require support - silently set sane options for all shells
+ # script/support - silently set sane options for all shells
  ##
 
 # Options for all shells

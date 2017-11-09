@@ -99,3 +99,8 @@ require_source ()
 {
 	cat "$(require_path "${1}")"
 }
+
+module_require ()
+{
+	require "${@:-}"
+}

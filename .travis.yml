@@ -10,27 +10,28 @@ before_install:
   # Install brew dependencies
   - ${BREW:+brew install ${BREW}}
 
-  - ${spec_shell} ./dev assemble coral coral
+  # Build spec_doc module
+  - ${spec_doc_shell} ./script/dev module_assemble spec_doc spec_doc
 
 script:
-  - spec_shell=${spec_shell} ${spec_shell} ./coral spec $(find ${TARGET})
+  - spec_doc_shell=${spec_doc_shell} ${spec_doc_shell} ./spec_doc spec_doc $(find ${TARGET})
 
 matrix:
   include:
-    - env: spec_shell=sh TARGET="spec/README.md"
+    - env: spec_doc_shell=sh TARGET="TESTING.md"
       os:  linux
 
-    - env: spec_shell="bash" TARGET="spec/*/*"
+    - env: spec_doc_shell="bash" TARGET=". -name 'README.md'"
       os:  osx
 
-    - env: spec_shell="zsh" BREW="zsh" TARGET="spec/*/*"
+    - env: spec_doc_shell="zsh" BREW="zsh" TARGET=". -name 'README.md'"
       os:  osx
 
-    - env: spec_shell="ksh" BREW="ksh" TARGET="spec/*/*"
+    - env: spec_doc_shell="ksh" BREW="ksh" TARGET=". -name 'README.md'"
       os:  osx
 
-    - env: spec_shell="mksh" BREW="mksh" TARGET="spec/*/*"
+    - env: spec_doc_shell="mksh" BREW="mksh" TARGET=". -name 'README.md'"
       os:  osx
 
-    - env: spec_shell="dash" BREW="dash" TARGET="spec/*/*"
+    - env: spec_doc_shell="dash" BREW="dash" TARGET=". -name 'README.md'"
       os:  osx

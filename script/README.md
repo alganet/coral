@@ -10,7 +10,7 @@ error code.
 
 ```sh file bail_erros.sh
 
-. "./lib/module/support"
+. "./script/support"
 
 # This command should fail before echo is sent
 false
@@ -31,7 +31,7 @@ Using undefined variables will also lead to an error.
 
 ```sh file bail_erros.sh
 
-. "./lib/module/support"
+. "./script/support"
 
 # This command should fail before echo is sent
 echo $zoid
@@ -53,7 +53,7 @@ aliasing it to `typeset`.
 
 ```sh file local_vars.sh
 
-. "./lib/module/support"
+. "./script/support"
 
 display_local_var ()
 {
@@ -76,7 +76,7 @@ The module ensures no glob patterns are expanded acidentally.
 
 ```sh file expand_glob.sh
 
-. "./lib/module/support"
+. "./script/support"
 
 do_not_expand_glob ()
 {
@@ -102,7 +102,7 @@ module configures this automatically.
 
 ```sh file split_words.sh
 
-. "./lib/module/support"
+. "./script/support"
 
 do_split_words ()
 {
@@ -123,3 +123,22 @@ some
 words
 ```
 
+
+entrypoint Module
+=================
+
+The entrypoint is a simple shell script that runs the command stored
+in the `entrypoint` variable passing along all arguments.
+
+Here's a sample using `echo` as an entrypoint:
+
+```console test
+$ entrypoint=echo ${SHELL} ./script/entrypoint Hello World
+Hello World
+```
+
+If no entrypoint is provided, it does nothing:
+
+```console test
+$ entrypoint='' ${SHELL} ./script/entrypoint Hello
+```

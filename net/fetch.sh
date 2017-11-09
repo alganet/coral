@@ -25,7 +25,7 @@ net_fetch ()
 
 	if test -n "${2:-}"
 	then
-		tempdir="$(fs_tempdir)"
+		tempdir="$(fs_tempdir 'net_fetch')"
 		mkdir -p "$(dirname "${tempdir}/${2}")"
 		trap 'net_fetch_clear' 2
 

@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+
+##
+ # script/dev - Bootstraps and runs modules
+ ##
+
+dev_library_dir="$(cd "$(dirname "${0}")/..";pwd)"
+
+. "${dev_library_dir}/script/support"
+. "${dev_library_dir}/module/require.sh"
+
+entrypoint="${1:-false}"
+dev_library_file="$(echo "${entrypoint}" | tr '_' '/').sh"
+require_path="${require_path:-.:${dev_library_dir}}"
+shift
+
+require "${dev_library_file}"
+
+. "${dev_library_dir}/script/entrypoint"

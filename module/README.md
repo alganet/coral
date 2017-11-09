@@ -19,9 +19,9 @@ require_test ()
 }
 
 # Require modules from the source folder
-. 'lib/module/support'
-. 'lib/require.sh'
-. 'lib/module/entrypoint'
+. 'script/support'
+. 'module/require.sh'
+. 'script/entrypoint'
 
 ```
 
@@ -239,3 +239,22 @@ hey
 friend
 ```
 
+assemble.sh Module
+==================
+
+```sh file mymodule.sh
+mymodule ()
+{
+	echo 1
+}
+```
+
+
+```console test
+$ MODULE=mymodule
+$ ./script/dev module_assemble $MODULE $MODULE
+$ echo $MODULE
+mymodule
+$ ./mymodule
+1
+```
