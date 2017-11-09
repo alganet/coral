@@ -11,8 +11,13 @@ dev_library_dir="$(cd "$(dirname "${0}")/..";pwd)"
 
 entrypoint="${1:-false}"
 dev_library_file="$(echo "${entrypoint}" | tr '_' '/').sh"
-require_path="${require_path:-.:${dev_library_dir}}"
+module_require_path="${module_require_path:-.:${dev_library_dir}}"
 shift
+
+require ()
+{
+	module_require "${@:-}"
+}
 
 require "${dev_library_file}"
 

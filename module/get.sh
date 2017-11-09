@@ -9,15 +9,14 @@ module_get ()
 {
 	local repo='https://raw.githubusercontent.com/alganet/coral/master'
 	local module_get_channel="${module_get_channel:-${repo}}"
-	local require_on_search='module_get_on_search'
-	local require_on_request='module_get_on_request'
-	local require_on_include='module_get_on_include'
+	local module_require_on_search='module_get_on_search'
+	local module_require_on_request='module_get_on_request'
+	local module_require_on_include='module_get_on_include'
 	local target="${1:-}"
 	local target_file="$(echo "${target}" | tr '_' '/').sh"
 	shift
 
 	require "${target_file}"
-	"${target}" "${@:-}"
 }
 
 module_get_on_request ()
@@ -28,19 +27,19 @@ module_get_on_request ()
 		return 0
 	fi
 
-	require_on_request "${@:-}"
+	module_require_on_request "${@:-}"
 }
 
 module_get_on_include ()
 {
 	module_get_channel="${repo}"
-	require_on_include "${@:-}"
+	module_require_on_include "${@:-}"
 }
 
 module_get_on_search ()
 {
 	local vendor="${HOME}/.coral"
-	local found="$(require_on_search "${@:-}")"
+	local found="$(module_require_on_search "${@:-}")"
 
 	if test -z "${found}"
 	then

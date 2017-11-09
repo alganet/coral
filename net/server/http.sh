@@ -17,7 +17,9 @@ net_server_http_buffer ()
 	local buffer_dir="${1}"
 	if test -z "${buffer_name:-}"
 	then
-		local buffer_name="$(od -N4 -tu /dev/random | tr " " "-" | tr -d '\n' )"
+		local buffer_name="$(
+			od -N4 -tu /dev/random | tr " " "-" | tr -d '\n'
+		)"
 		local buffer_file="${buffer_dir}/${buffer_name}"
 
 		mkfifo "${buffer_file}"

@@ -2,7 +2,6 @@
  # module_assemble.sh - bundles modules into standalone executables
  ##
 
-require --channel 'https://raw.githubusercontent.com/alganet/coral/master'
 require 'module/require.sh' --source
 require 'script/entrypoint' --source
 require 'script/support'    --source
@@ -43,18 +42,18 @@ module_assemble_contents ()
 	local input="${1:-}"
 	local input_file="$(echo "${input}" | tr '_' '/').sh"
 	local input_contents=''
-	local require_loaded=' '
+	local module_require_loaded=' '
 
-	require_source 'script/support'
+	module_require_source 'script/support'
 	echo "entrypoint='${input}'"
 	module_assemble_dependencies "${input_file}"
-	require_source 'script/entrypoint'
+	module_require_source 'script/entrypoint'
 }
 
 module_assemble_dependencies ()
 {
-	local require_on_include='module_assemble_on_include'
-	local require_on_request='module_assemble_on_request'
+	local module_require_on_include='module_assemble_on_include'
+	local module_require_on_request='module_assemble_on_request'
 	local input_file="${1:-}"
 	local require_sources=
 	local require_is_sourced=0
@@ -67,25 +66,27 @@ module_assemble_dependencies ()
 	if test -n "${require_sources}"
 	then
 		cat <<-SOURCES_SNIPPET
-			require_source ()
+			module_require_source ()
 			{
 			    if test -z "\${1:-}"
 			    then
 			        return
 			    ${require_sources}
 			    else
-			        cat "\$(require_path "\${1}")"
+			        cat "\$(module_require_path "\${1}")"
 			    fi
 			}
 		SOURCES_SNIPPET
 	fi
 
-	echo "require_loaded='${require_loaded}'"
-	echo "require_path=\"\${require_path:-${assemble_path:-${require_path}}}\""
+	echo "module_require_loaded='${module_require_loaded}'"
+	echo "module_require_path=\"\${assemble_path:-${module_require_path:-}}\""
 
-	if require_is_loaded "module/require.sh" ""
+	if module_require_is_loaded "module/require.sh" ""
 	then
-		require_source 'module/require.sh' > "${assemble_dir}/require"
+		module_require_source 'module/require.sh' > "${assemble_dir}/require"
+		echo 'require () { module_require "${@:-}"; }' >> \
+			"${assemble_dir}/require"
 	fi
 
 	cat "${assemble_dir}/require"
@@ -105,7 +106,7 @@ module_assemble_on_include ()
 
 	test "${target_name%*.sh}.sh" = "${target_name}" || return 0
 
-	require_on_include "${target}"
+	module_require_on_include "${target}"
 
 	if test "${dependency}" != "module/require.sh"
 	then
@@ -127,10 +128,10 @@ module_assemble_on_request ()
 			    elif test "\${1}" = "${dependency}"
 			    then
 			        cat <<'FILESOURCE_SNIPPET'
-						$(require_source "${dependency}")
+						$(module_require_source "${dependency}")
 					FILESOURCE_SNIPPET
 		SOURCES_SNIPPET
 	fi
 
-	require_on_request "${dependency}" "${previous}" "${@:-}"
+	module_require_on_request "${dependency}" "${previous}" "${@:-}"
 }

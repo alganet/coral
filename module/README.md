@@ -7,7 +7,12 @@ require.sh Module
 #!/usr/bin/env sh
 
 entrypoint='require_test'
-require_path="${require_path:-.}"
+module_require_path="${module_require_path:-.}"
+
+require ()
+{
+	module_require "${@:-}"
+}
 
 require_test ()
 {
@@ -110,25 +115,25 @@ ipsum
 hook_on_request ()
 {
 	echo 'Request:' "${1:-}" 1>&2
-	require_on_request "${1:-}"
+	module_require_on_request "${1:-}"
 }
 hook_on_search ()
 {
 	echo 'Search:' "${1:-}" 1>&2
-	require_on_search "${1:-}"
+	module_require_on_search "${1:-}"
 }
 hook_on_include ()
 {
 	echo 'Include:' "${1:-}" 1>&2
-	require_on_include "${1:-}"
+	module_require_on_include "${1:-}"
 }
 
 hooks () 
 {
-	local require_on_request='hook_on_request'
-	local require_on_search='hook_on_search'
-	local require_on_include='hook_on_include'
-	local require_loaded=''
+	local module_require_on_request='hook_on_request'
+	local module_require_on_search='hook_on_search'
+	local module_require_on_include='hook_on_include'
+	local module_require_loaded=''
 
 	require 'world.sh'
 }
@@ -154,27 +159,27 @@ hook_on_request ()
 	echo 'Request:' "${1:-}" 1>&2
 	test "${1:-}" = "never_finds.sh" && return 0
 	test "${1:-}" = "always_requests.sh" && return 1
-	require_on_request "${1:-}"
+	module_require_on_request "${1:-}"
 }
 hook_on_search ()
 {
 	echo 'Search:' "${1:-}" 1>&2
 	test "${1:-}" = "always_errors.sh" && return 0
-	require_on_search "${1:-}"
+	module_require_on_search "${1:-}"
 }
 hook_on_include ()
 {
 	test "${1:-}" = "never_includes.sh" && return 0
 	echo 'Include:' "${1:-}" 1>&2
-	require_on_include "${1:-}"
+	module_require_on_include "${1:-}"
 }
 
 hooks () 
 {
-	local require_on_request='hook_on_request'
-	local require_on_search='hook_on_search'
-	local require_on_include='hook_on_include'
-	local require_loaded=''
+	local module_require_on_request='hook_on_request'
+	local module_require_on_search='hook_on_search'
+	local module_require_on_include='hook_on_include'
+	local module_require_loaded=''
 
 	require 'always_requests.sh'
 	require 'always_requests.sh'
@@ -234,7 +239,7 @@ friend ()
 ```
 
 ```console test
-$ require_path=path1:path2 ./require_test friend.sh
+$ module_require_path=path1:path2 ./require_test friend.sh
 hey
 friend
 ```
