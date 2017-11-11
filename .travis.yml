@@ -14,7 +14,7 @@ before_install:
   - ${spec_doc_shell} ./lib/dev module_assemble spec_doc spec_doc
 
 script:
-  - spec_doc_shell=${spec_doc_shell} ${spec_doc_shell} ./spec_doc $(find ${TARGET})
+  - spec_doc_shell=${spec_doc_shell} ${spec_doc_shell} ${DO_DEBUG:-} ./spec_doc $(find ${TARGET})
 
 matrix:
   include:
@@ -27,7 +27,7 @@ matrix:
     - env: spec_doc_shell="zsh" BREW="zsh" TARGET="doc/spec/*"
       os:  osx
 
-    - env: spec_doc_shell="ksh" BREW="ksh" TARGET="doc/spec/*"
+    - env: spec_doc_shell="ksh" BREW="ksh" TARGET="doc/spec/*" DO_DEBUG="-x"
       os:  osx
 
     - env: spec_doc_shell="mksh" BREW="mksh" TARGET="doc/spec/*"
