@@ -3,7 +3,6 @@
  ##
 
 require 'fs/tempdir.sh'
-require 'shell/pipe.sh'
 require 'shell/assertion.sh'
 
 spec_doc ()

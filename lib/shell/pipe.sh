@@ -9,9 +9,9 @@ shell_pipe ()
 	local argument
 	local cursor=1
 	local position=1
-	local shell_pipe_status=0
 	local callback=
 	local current_chunk=
+	shell_pipe_status=0
 
 	# Creates the code to nest redirects between the commands
 	for argument in "${@:-}"
@@ -45,5 +45,5 @@ shell_pipe ()
 		)"
 	} 4>&1
 
-	return "${shell_pipe_status}"
+	return ${shell_pipe_status}
 }

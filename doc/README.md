@@ -54,6 +54,143 @@ WORKDIR /usr/local/share/coral
 This image will allow us to install multiple shells to test their 
 compatibility:
 
+### Default Busybox
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" busybox:latest sh -c './spec_doc $(find doc/spec/*)'
+```
+
+### Default Tinycore
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" tatsushid/tinycore:latest sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" tatsushid/tinycore:6.4-x86 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" tatsushid/tinycore:7.2-x86 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" tatsushid/tinycore:8.0-x86 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+### Default Alpine sh
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:3.5 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:3.6 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:3.4 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:3.3 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:3.2 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:3.1 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:edge sh -c './spec_doc $(find doc/spec/*)'
+```
+
+### Default Amazon Linux sh
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" amazonlinux:2017.09 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" amazonlinux:2017.03 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" amazonlinux:2016.09 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+### Default CentOS sh
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" centos:latest sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" centos:7.4.1708 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" centos:7.3.1611 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" centos:7.2.1511 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" centos:7.1.1503 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" centos:7.0.1406 sh -c './spec_doc $(find doc/spec/*)'
+```
+
+### Default Fedora sh
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" fedora:latest sh -c './spec_doc $(find doc/spec/*)'
+```
+
+### Default Debian sh
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" debian:latest sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" debian:buster sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" debian:jessie sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" debian:sid sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" debian:stable sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" debian:testing sh -c './spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" debian:unstable sh -c './spec_doc $(find doc/spec/*)'
+```
+
+### Default OpenSuse sh
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" opensuse:latest sh -c './spec_doc $(find doc/spec/*)'
+```
+
+
 ### Default Ubuntu dash
 
 ```console task
@@ -175,40 +312,4 @@ $ docker run --rm -e spec_shell="bash-4.2.53" -t bash42 bash-4.2.53 -c './spec_d
 ```console task
 $ docker build --build-arg "PPA=team-mayhem/multishell" --build-arg "APT=bash-4.3.9" -t bash43 .
 $ docker run --rm -e spec_shell="bash-4.3.9" -t bash43 bash-4.3.9 -c './spec_doc $(find doc/spec/*)'
-```
-
-### Default Alpine sh
-
-```console task
-$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:latest sh -c './spec_doc $(find doc/spec/*)'
-```
-
-### Default Amazon Linux sh
-
-```console task
-$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" amazonlinux:latest sh -c './spec_doc $(find doc/spec/*)'
-```
-
-### Default CentOS sh
-
-```console task
-$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" centos:latest sh -c './spec_doc $(find doc/spec/*)'
-```
-
-### Default Fedora sh
-
-```console task
-$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" fedora:latest sh -c './spec_doc $(find doc/spec/*)'
-```
-
-### Default Debian sh
-
-```console task
-$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" debian:latest sh -c './spec_doc $(find doc/spec/*)'
-```
-
-### Default OpenSuse sh
-
-```console task
-$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" opensuse:latest sh -c './spec_doc $(find doc/spec/*)'
 ```

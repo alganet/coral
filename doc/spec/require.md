@@ -4,7 +4,7 @@ require
 ### Simple Module Requiring
 
 ```sh file require_test
-#!/usr/bin/env sh
+#!/bin/sh
 
 entrypoint='require_test'
 require_path="${require_path:-.}"
