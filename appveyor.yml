@@ -12,7 +12,8 @@ install:
   - cmd: call %SHELLENV% -lc "${PACMAN:+pacman --noconfirm -S $PACMAN}"
 
   # Build spec_doc module
-  - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; ${spec_doc_shell} ./lib/dev module_assemble spec_doc spec_doc"
+  - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; ${spec_doc_shell} ./lib/dev module_assemble module_assemble module_assemble"
+  - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; ${spec_doc_shell} ./module_assemble spec_doc spec_doc"
 
 test_script:
   - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; spec_doc_shell=${spec_doc_shell} ${spec_doc_shell} ./spec_doc $(find doc/spec/*)"

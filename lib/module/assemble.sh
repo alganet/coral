@@ -11,21 +11,24 @@ require 'math/random.sh'
 module_assemble ()
 {
 	local assemble_key="$(math_random)"
-	local input="${1:-}"
-	local output="${2:--}"
+	local assemble_input="${1:-}"
+	local assemble_output="${2:--}"
 	local assemble_dir="$(fs_tempdir 'module_assemble')"
+	local require_on_include='module_assemble_on_include'
+	local require_on_request='module_assemble_on_request'
+	local require_loaded=' '
 
 	trap 'module_assemble_clean' 2
 
 	printf '' > "${assemble_dir}/sources"
-	module_assemble_contents "${input}" > "${assemble_dir}/output"
+	module_assemble_contents "${assemble_input}" > "${assemble_dir}/output"
 
-	if test "-" = "${output}"
+	if test "-" = "${assemble_output}"
 	then
 		cat "${assemble_dir}/output"
 	else
 		chmod +x "${assemble_dir}/output"
-		cp "${assemble_dir}/output" "${output}"
+		cp "${assemble_dir}/output" "${assemble_output}"
 	fi
 
 	module_assemble_clean return 0
@@ -40,26 +43,24 @@ module_assemble_clean ()
 module_assemble_contents ()
 {
 	local input="${1:-}"
-	local input_file="$(echo "${input}" | tr '_' '/').sh"
+	local input_file="$(echo "${assemble_input}" | tr '_' '/').sh"
 	local input_contents=''
-	local require_loaded=' '
 
 	require_source 'script/support'
-	echo "entrypoint='${input}'"
+	echo "entrypoint='${assemble_input}'"
 	module_assemble_dependencies "${input_file}"
 	require_source 'script/entrypoint'
 }
 
 module_assemble_dependencies ()
 {
-	local require_on_include='module_assemble_on_include'
-	local require_on_request='module_assemble_on_request'
 	local input_file="${1:-}"
 	local require_sources=
 	local require_is_sourced=0
 
+	printf '' > "${assemble_dir}/required_modules"
 	echo 'require () ( : )' > "${assemble_dir}/require"
-	require "${input_file}" > "${assemble_dir}/required_modules"
+	require "${input_file}"
 
 	require_sources="$(cat "${assemble_dir}/sources")"
 
@@ -94,42 +95,39 @@ module_assemble_dependencies ()
 
 module_assemble_on_include ()
 {
-	local target="${1}"
-	local target_name="$(basename ${target})"
-	local dependency="${2:-}"
-	shift 2
+	local script_target="${1}"
+	local script_target_name="$(basename ${script_target})"
+	local assemble_dependency="${2:-}"
 	local contents
 
-	contents="$(cat "${target}")"
+	contents="$(cat "${script_target}")"
 
-	test "${target_name%*.sh}.sh" = "${target_name}" || return 0
+	test "${script_target_name%*.sh}.sh" = "${script_target_name}" || return 0
 
-	require_on_include "${target}"
-
-	if test "${dependency}" != "require.sh"
+	if test "${assemble_dependency}" != "require.sh"
 	then
-		printf %s\\n\\n "${contents}"
+		printf %s\\n\\n "${contents}" >> "${assemble_dir}/required_modules"
+		require_on_include "${@:-}"
 	fi
 }
 
 
 module_assemble_on_request ()
 {
-	local dependency="${1}"
-	local previous="${2}"
-	shift 2
-	local params="${*:-}"
+	local assemble_dependency="${1}"
+	shift
+	local remaining_params="${*:-}"
 
-	if test "${#}" -gt 0 && test "${params#*--source*}" != "${*:-}"
+	if test "${#}" -gt 0 && test "${remaining_params#*--source*}" != "${*:-}"
 	then
 		cat <<-SOURCES_SNIPPET >> "${assemble_dir}/sources"
-			    elif test "\${1}" = "${dependency}"
+			    elif test "\${1}" = "${assemble_dependency}"
 			    then
 			        cat <<'FILESOURCE_SNIPPET'
-						$(require_source "${dependency}")
+						$(require_source "${assemble_dependency}")
 					FILESOURCE_SNIPPET
 		SOURCES_SNIPPET
 	fi
 
-	require_on_request "${dependency}" "${previous}" "${@:-}"
+	require_on_request "${assemble_dependency}" "${@:-}"
 }

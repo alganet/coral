@@ -14,6 +14,6 @@ dev_library_file="$(echo "${entrypoint}" | tr '_' '/').sh"
 require_path="${require_path:-.:${dev_library_dir}}"
 shift
 
-require "${dev_library_file}"
-
+. "${dev_library_dir}/${dev_library_file}"
+require_loaded=' require.sh '
 . "${dev_library_dir}/script/entrypoint"
