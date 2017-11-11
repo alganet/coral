@@ -11,27 +11,27 @@ before_install:
   - ${BREW:+brew install ${BREW}}
 
   # Build spec_doc module
-  - ${spec_doc_shell} ./script/dev module_assemble spec_doc spec_doc
+  - ${spec_doc_shell} ./lib/dev module_assemble spec_doc spec_doc
 
 script:
   - spec_doc_shell=${spec_doc_shell} ${spec_doc_shell} ./spec_doc spec_doc $(find ${TARGET})
 
 matrix:
   include:
-    - env: spec_doc_shell=sh TARGET="TESTING.md"
+    - env: spec_doc_shell=sh TARGET="doc/README.md"
       os:  linux
 
-    - env: spec_doc_shell="bash" TARGET=". -name 'README.md'"
+    - env: spec_doc_shell="bash" TARGET="doc/spec/*"
       os:  osx
 
-    - env: spec_doc_shell="zsh" BREW="zsh" TARGET=". -name 'README.md'"
+    - env: spec_doc_shell="zsh" BREW="zsh" TARGET="doc/spec/*"
       os:  osx
 
-    - env: spec_doc_shell="ksh" BREW="ksh" TARGET=". -name 'README.md'"
+    - env: spec_doc_shell="ksh" BREW="ksh" TARGET="doc/spec/*"
       os:  osx
 
-    - env: spec_doc_shell="mksh" BREW="mksh" TARGET=". -name 'README.md'"
+    - env: spec_doc_shell="mksh" BREW="mksh" TARGET="doc/spec/*"
       os:  osx
 
-    - env: spec_doc_shell="dash" BREW="dash" TARGET=". -name 'README.md'"
+    - env: spec_doc_shell="dash" BREW="dash" TARGET="doc/spec/*"
       os:  osx

@@ -1,5 +1,5 @@
-require.sh Module
-=================
+require
+=======
 
 ### Simple Module Requiring
 
@@ -7,11 +7,11 @@ require.sh Module
 #!/usr/bin/env sh
 
 entrypoint='require_test'
-module_require_path="${module_require_path:-.}"
+require_path="${require_path:-.}"
 
 require ()
 {
-	module_require "${@:-}"
+	require "${@:-}"
 }
 
 require_test ()
@@ -24,9 +24,9 @@ require_test ()
 }
 
 # Require modules from the source folder
-. 'script/support'
-. 'module/require.sh'
-. 'script/entrypoint'
+. 'lib/script/support'
+. 'lib/require.sh'
+. 'lib/script/entrypoint'
 
 ```
 
@@ -115,25 +115,25 @@ ipsum
 hook_on_request ()
 {
 	echo 'Request:' "${1:-}" 1>&2
-	module_require_on_request "${1:-}"
+	require_on_request "${1:-}"
 }
 hook_on_search ()
 {
 	echo 'Search:' "${1:-}" 1>&2
-	module_require_on_search "${1:-}"
+	require_on_search "${1:-}"
 }
 hook_on_include ()
 {
 	echo 'Include:' "${1:-}" 1>&2
-	module_require_on_include "${1:-}"
+	require_on_include "${1:-}"
 }
 
 hooks () 
 {
-	local module_require_on_request='hook_on_request'
-	local module_require_on_search='hook_on_search'
-	local module_require_on_include='hook_on_include'
-	local module_require_loaded=''
+	local require_on_request='hook_on_request'
+	local require_on_search='hook_on_search'
+	local require_on_include='hook_on_include'
+	local require_loaded=''
 
 	require 'world.sh'
 }
@@ -159,27 +159,27 @@ hook_on_request ()
 	echo 'Request:' "${1:-}" 1>&2
 	test "${1:-}" = "never_finds.sh" && return 0
 	test "${1:-}" = "always_requests.sh" && return 1
-	module_require_on_request "${1:-}"
+	require_on_request "${1:-}"
 }
 hook_on_search ()
 {
 	echo 'Search:' "${1:-}" 1>&2
 	test "${1:-}" = "always_errors.sh" && return 0
-	module_require_on_search "${1:-}"
+	require_on_search "${1:-}"
 }
 hook_on_include ()
 {
 	test "${1:-}" = "never_includes.sh" && return 0
 	echo 'Include:' "${1:-}" 1>&2
-	module_require_on_include "${1:-}"
+	require_on_include "${1:-}"
 }
 
 hooks () 
 {
-	local module_require_on_request='hook_on_request'
-	local module_require_on_search='hook_on_search'
-	local module_require_on_include='hook_on_include'
-	local module_require_loaded=''
+	local require_on_request='hook_on_request'
+	local require_on_search='hook_on_search'
+	local require_on_include='hook_on_include'
+	local require_loaded=''
 
 	require 'always_requests.sh'
 	require 'always_requests.sh'
@@ -239,27 +239,7 @@ friend ()
 ```
 
 ```console test
-$ module_require_path=path1:path2 ./require_test friend.sh
+$ require_path=path1:path2:lib ./require_test friend.sh
 hey
 friend
-```
-
-assemble.sh Module
-==================
-
-```sh file mymodule.sh
-mymodule ()
-{
-	echo 1
-}
-```
-
-
-```console test
-$ MODULE=mymodule
-$ ./script/dev module_assemble $MODULE $MODULE
-$ echo $MODULE
-mymodule
-$ ./mymodule
-1
 ```

@@ -16,7 +16,7 @@ shell_sandbox ()
 	test -f "${sandbox_file}" || printf '' > "${sandbox_file}" || return 1
 
 	${shell_sandbox_shell:-sh} <<-EXTERNAL && return_code=$? || return_code=$?
-		$(module_require_source 'shell/vars.sh')
+		$(require_source 'shell/vars.sh')
 		. "${sandbox_file}"
 
 		PATH="\${PATH}:."

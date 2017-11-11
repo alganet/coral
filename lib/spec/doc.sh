@@ -95,15 +95,15 @@ spec_doc_parse ()
 			then
 				open_fence="${possible_fence}"
 				line_last_open_fence="${line_number}"
-				_spec_doc_fence_open ${open_fence}
+				spec_doc_fence_open ${open_fence}
 			fi
 		else
 			if test "${line}" = "\`\`\`${possible_fence}"
 			then
-				_spec_doc_fence_close ${open_fence}
+				spec_doc_fence_close ${open_fence}
 				open_fence=
 			else
-				_spec_doc_fence_line ${open_fence}
+				spec_doc_fence_line ${open_fence}
 			fi
 		fi
 
@@ -113,7 +113,7 @@ spec_doc_parse ()
 	IFS="${oldifs}"
 }
 
-_spec_doc_fence_open ()
+spec_doc_fence_open ()
 {
 	local language="${1:-}"
 	local key="${2:-}"
@@ -138,7 +138,7 @@ _spec_doc_fence_open ()
 	fi
 }
 
-_spec_doc_fence_line ()
+spec_doc_fence_line ()
 {
 	local language="${1:-}"
 	local key="${2:-}"
@@ -157,7 +157,7 @@ _spec_doc_fence_line ()
 	fi
 }
 
-_spec_doc_fence_close ()
+spec_doc_fence_close ()
 {
 	local language="${1:-}"
 	local key="${2:-}"
@@ -166,30 +166,30 @@ _spec_doc_fence_close ()
 	if test "console" = "${language}" &&
 	   test "test" = "${key}"
 	then
-		_spec_doc_run_console _spec_doc_report_single_result
+		spec_doc_run_console spec_doc_report_single_result
 	elif test "console" = "${language}" &&
 	     test "task" = "${key}"
 	then
-		_spec_doc_run_console _spec_doc_report_code_result
+		spec_doc_run_console spec_doc_report_code_result
 	elif test "setup" = "${key}" && test "${language}" != "console"
 	then
-		_spec_doc_collect_setup
+		spec_doc_collect_setup
 	fi
 }
 
-_spec_doc_collect_setup ()
+spec_doc_collect_setup ()
 {
 	setup="$(cat "${spec_directory}/.spec/setup")"
 }
 
-_spec_doc_run_console ()
+spec_doc_run_console ()
 {
 	shell_sandbox_shell="${spec_doc_shell:-}" \
 		shell_assertion \
 			"${spec_directory}/.spec/console" "${spec_directory}" "${@:-}"
 }
 
-_spec_doc_report_single_result ()
+spec_doc_report_single_result ()
 {
 	local line_report="${test_number} - ${1}"
 
@@ -213,7 +213,7 @@ _spec_doc_report_single_result ()
 	fi
 }
 
-_spec_doc_report_code_result ()
+spec_doc_report_code_result ()
 {
 	local line_report="${test_number} - ${1}"
 
