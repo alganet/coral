@@ -14,7 +14,7 @@ before_install:
   - ${spec_doc_shell} ./lib/dev module_assemble spec_doc spec_doc
 
 script:
-  - spec_doc_shell=${spec_doc_shell} ${spec_doc_shell} ./spec_doc spec_doc $(find ${TARGET})
+  - spec_doc_shell=${spec_doc_shell} ${spec_doc_shell} ./spec_doc $(find ${TARGET})
 
 matrix:
   include:
