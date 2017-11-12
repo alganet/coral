@@ -30,10 +30,6 @@ require_test ()
 
 ```
 
-```console test
-$ chmod +x require_test
-```
-
 ```sh file hello.sh
 
 hello () 
@@ -55,7 +51,7 @@ world ()
 ```
 
 ```console test
-$ ./require_test world.sh
+$ sh ./require_test world.sh
 hello
 world
 ```
@@ -73,7 +69,7 @@ loop ()
 ```
 
 ```console test
-$ ./require_test loop.sh
+$ sh ./require_test loop.sh
 loop
 ```
 
@@ -103,7 +99,7 @@ ipsum ()
 
 
 ```console test
-$ ./require_test ipsum.sh
+$ sh ./require_test ipsum.sh
 lorem
 ipsum
 ```
@@ -141,7 +137,7 @@ hooks ()
 ```
 
 ```console test
-$ ./require_test hooks.sh
+$ sh ./require_test hooks.sh
 Request: world.sh
 Search: world.sh
 Include: ./world.sh
@@ -192,11 +188,11 @@ hooks ()
 ```
 
 ```console test
-$ touch always_requests.sh
-$ touch never_finds.sh
-$ touch always_errors.sh
-$ touch never_includes.sh
-$ ./require_test hooks.sh
+$ printf '' > always_requests.sh
+$ printf '' > never_finds.sh
+$ printf '' > always_errors.sh
+$ printf '' > never_includes.sh
+$ sh ./require_test hooks.sh
 Request: always_requests.sh
 Search: always_requests.sh
 Include: ./always_requests.sh
@@ -213,11 +209,6 @@ Could not find dependency 'always_errors.sh'
 ```
 
 ### Paths
-
-```console test
-$ chmod +x require_test
-```
-
 
 ```sh file path1/hey.sh
 
@@ -239,7 +230,7 @@ friend ()
 ```
 
 ```console test
-$ require_path=path1:path2:lib ./require_test friend.sh
+$ require_path=path1:path2:lib sh ./require_test friend.sh
 hey
 friend
 ```

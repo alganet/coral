@@ -20,7 +20,7 @@ echo 'This is never shown'
 
 
 ```console test
-$ ${SHELL} ./bail_erros.sh
+$ sh ./bail_erros.sh
 $ echo $?
 1
 ```
@@ -40,7 +40,7 @@ echo 'This is never shown'
 
 
 ```console test
-$ ${SHELL} ./bail_erros.sh > out 2>&1
+$ sh ./bail_erros.sh > out 2>&1
 $ test $? = 0
 $ echo $?
 1
@@ -66,7 +66,7 @@ display_local_var
 ```
 
 ```console test
-$ ${SHELL} ./local_vars.sh
+$ sh ./local_vars.sh
 123
 ```
 
@@ -91,7 +91,7 @@ do_not_expand_glob
 $ mkdir -p foo/bar
 $ mkdir -p foo/baz
 $ mkdir -p foo/bat
-$ ${SHELL} ./expand_glob.sh
+$ sh ./expand_glob.sh
 foo/*
 ```
 
@@ -116,7 +116,7 @@ do_split_words
 ```
 
 ```console test
-$ ${SHELL} ./split_words.sh
+$ sh ./split_words.sh
 here
 are
 some

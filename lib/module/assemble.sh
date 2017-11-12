@@ -7,38 +7,44 @@ require 'script/entrypoint' --source
 require 'script/support'    --source
 require 'fs/basename.sh'
 require 'fs/tempdir.sh'
-require 'math/random.sh'
+require 'fs/get.sh'
 
 module_assemble ()
 {
-	local assemble_key="$(math_random)"
 	local assemble_input="${1:-}"
 	local assemble_output="${2:--}"
-	local assemble_dir="$(fs_tempdir 'module_assemble')"
+	local assemble_dir
 	export require_on_include='module_assemble_on_include'
 	export require_on_request='module_assemble_on_request'
 	export require_loaded=' '
 
-	trap 'module_assemble_clean' 2
+	assemble_dir="$(fs_tempdir 'module_assemble')"
+
+	trap 'module_assemble_exit' 2
 
 	printf '' > "${assemble_dir}/sources"
 	module_assemble_contents "${assemble_input}" > "${assemble_dir}/output"
 
 	if test "-" = "${assemble_output}"
 	then
-		cat "${assemble_dir}/output"
+		fs_get "${assemble_dir}/output"
 	else
-		chmod +x "${assemble_dir}/output"
 		cp "${assemble_dir}/output" "${assemble_output}"
 	fi
 
-	module_assemble_clean 'return 0'
+	module_assemble_clean
 }
 
 module_assemble_clean ()
 {
 	rm -Rf "${assemble_dir}"
-	${1:-exit 1}
+	return 0
+}
+
+module_assemble_exit ()
+{
+	rm -Rf "${assemble_dir}"
+	exit 1
 }
 
 module_assemble_contents ()
@@ -63,11 +69,15 @@ module_assemble_dependencies ()
 	echo 'require () ( : )' > "${assemble_dir}/require"
 	require "${input_file}"
 
-	require_sources="$(cat "${assemble_dir}/sources")"
+	require_sources="$(fs_get "${assemble_dir}/sources")"
 
 	if test -n "${require_sources}"
 	then
-		cat <<-SOURCES_SNIPPET
+		if ! require_is_loaded 'fs/get.sh' ''
+		then
+			require_source 'fs/get.sh' >> "${assemble_dir}/required_modules"
+		fi
+		fs_get <<-SOURCES_SNIPPET >> "${assemble_dir}/required_modules"
 			require_source ()
 			{
 			    if test -z "\${1:-}"
@@ -75,7 +85,7 @@ module_assemble_dependencies ()
 			        return
 			    ${require_sources}
 			    else
-			        cat "\$(require_path "\${1}")"
+			        fs_get "\$(require_path "\${1}")"
 			    fi
 			}
 		SOURCES_SNIPPET
@@ -89,8 +99,8 @@ module_assemble_dependencies ()
 		require_source 'require.sh' > "${assemble_dir}/require"
 	fi
 
-	cat "${assemble_dir}/require"
-	cat "${assemble_dir}/required_modules"
+	fs_get "${assemble_dir}/require"
+	fs_get "${assemble_dir}/required_modules"
 }
 
 
@@ -102,7 +112,7 @@ module_assemble_on_include ()
 	local contents
 
 	script_target_name="$(fs_basename "${script_target}")"
-	contents="$(cat "${script_target}")"
+	contents="$(fs_get "${script_target}")"
 
 	test "${script_target_name%*.sh}.sh" = "${script_target_name}" || return 0
 
@@ -122,10 +132,10 @@ module_assemble_on_request ()
 
 	if test "${#}" -gt 0 && test "${remaining_params#*--source*}" != "${*:-}"
 	then
-		cat <<-SOURCES_SNIPPET >> "${assemble_dir}/sources"
+		fs_get <<-SOURCES_SNIPPET >> "${assemble_dir}/sources"
 			    elif test "\${1}" = "${assemble_dependency}"
 			    then
-			        cat <<'FILESOURCE_SNIPPET'
+			        fs_get <<'FILESOURCE_SNIPPET'
 						$(require_source "${assemble_dependency}")
 					FILESOURCE_SNIPPET
 		SOURCES_SNIPPET

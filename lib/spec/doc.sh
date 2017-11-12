@@ -5,6 +5,7 @@
 require 'fs/basename.sh'
 require 'fs/dirname.sh'
 require 'fs/tempdir.sh'
+require 'fs/get.sh'
 require 'shell/assertion.sh'
 
 spec_doc ()
@@ -27,7 +28,7 @@ spec_doc ()
 		return
 	fi
 
-	target_files="$(printf %s\\n "${@:-}" | sort)"
+	target_files="$(printf %s\\n "${@:-}")"
 
 	tempdir="$(fs_tempdir 'spec_doc')"
 
@@ -95,16 +96,19 @@ spec_doc_parse ()
 			then
 				open_fence="${possible_fence}"
 				line_last_open_fence="${line_number}"
+				# Intentionally splitting arguments in variable here
 				# shellcheck disable=SC2086
 				spec_doc_fence_open ${open_fence}
 			fi
 		else
 			if test "${line}" = "\`\`\`${possible_fence}"
 			then
+				# Intentionally splitting arguments in variable here
 				# shellcheck disable=SC2086
 				spec_doc_fence_close ${open_fence}
 				open_fence=
 			else
+				# Intentionally splitting arguments in variable here
 				# shellcheck disable=SC2086
 				spec_doc_fence_line ${open_fence}
 			fi
@@ -182,7 +186,7 @@ spec_doc_fence_close ()
 
 spec_doc_collect_setup ()
 {
-	setup="$(cat "${spec_directory}/.spec/setup")"
+	setup="$(fs_get "${spec_directory}/.spec/setup")"
 }
 
 spec_doc_run_console ()

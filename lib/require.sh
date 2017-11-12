@@ -101,5 +101,10 @@ require_is_loaded ()
 
 require_source ()
 {
-	cat "$(require_path "${1}")"
+	IFS=
+
+	while read -r line
+	do
+		printf %s\\n "${line}"
+	done < "$(require_path "${1}")"
 }

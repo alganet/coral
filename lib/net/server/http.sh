@@ -3,6 +3,7 @@
  ##
 
 require 'fs/tempdir.sh'
+require 'math/random.sh'
 
 net_server_http_abort ()
 {
@@ -23,9 +24,7 @@ net_server_http_buffer ()
 
 	if test -z "${buffer_name:-}"
 	then
-		buffer_name="$(
-			od -N4 -tu /dev/random | sed -n '1 {s#[^0-9]\|\s#-#;p;q}'
-		)"
+		buffer_name="$(math_random)"
 		buffer_file="${buffer_dir}/${buffer_name}"
 
 		mkfifo "${buffer_file}"

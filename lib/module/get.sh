@@ -13,8 +13,11 @@ module_get ()
 	export require_on_request='module_get_on_request'
 	export require_on_include='module_get_on_include'
 	local target="${1:-}"
-	local target_file="$(echo "${target}" | sed 's|_|/|g').sh"
+	local target_file
 	shift
+
+	target_file="$(echo "${target}" | sed 's|_|/|g').sh"
+
 
 	require "${target_file}"
 }
@@ -39,7 +42,9 @@ module_get_on_include ()
 module_get_on_search ()
 {
 	local vendor="${HOME}/.coral"
-	local found="$(require_on_search "${@:-}")"
+	local found
+
+	found="$(require_on_search "${@:-}")"
 
 	if test -z "${found}"
 	then

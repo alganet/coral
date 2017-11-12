@@ -14,6 +14,6 @@ $ MODULE=mymodule
 $ ./lib/dev module_assemble $MODULE $MODULE
 $ echo $MODULE
 mymodule
-$ ./mymodule
+$ sh ./mymodule
 1
 ```
