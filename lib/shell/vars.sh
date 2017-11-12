@@ -27,7 +27,7 @@ shell_vars_fill ()
 		if test "${shell_var_line#*=}" != "${shell_var_line}" &&
 		   test "${shell_var_line#BASHOPTS=*}" = "${shell_var_line}" &&
 		   test "${shell_var_line#PATH=*}" = "${shell_var_line}" &&
-		   test "${shell_var_line#LINEO=*}" = "${shell_var_line}" &&
+		   test "${shell_var_line#LINENO=*}" = "${shell_var_line}" &&
 		   test "${shell_var_line#IFS=*}" = "${shell_var_line}"
 		then
 			printf %s\\n "${shell_var_line}"
