@@ -5,6 +5,7 @@
 require 'require.sh'        --source
 require 'script/entrypoint' --source
 require 'script/support'    --source
+require 'fs/basename.sh'
 require 'fs/tempdir.sh'
 require 'math/random.sh'
 
@@ -14,9 +15,9 @@ module_assemble ()
 	local assemble_input="${1:-}"
 	local assemble_output="${2:--}"
 	local assemble_dir="$(fs_tempdir 'module_assemble')"
-	local require_on_include='module_assemble_on_include'
-	local require_on_request='module_assemble_on_request'
-	local require_loaded=' '
+	export require_on_include='module_assemble_on_include'
+	export require_on_request='module_assemble_on_request'
+	export require_loaded=' '
 
 	trap 'module_assemble_clean' 2
 
@@ -31,23 +32,24 @@ module_assemble ()
 		cp "${assemble_dir}/output" "${assemble_output}"
 	fi
 
-	module_assemble_clean return 0
+	module_assemble_clean 'return 0'
 }
 
 module_assemble_clean ()
 {
 	rm -Rf "${assemble_dir}"
-	${@:-exit 1}
+	${1:-exit 1}
 }
 
 module_assemble_contents ()
 {
 	local input="${1:-}"
-	local input_file="$(echo "${assemble_input}" | tr '_' '/').sh"
-	local input_contents=''
+	local input_file
+
+	input_file="$(echo "${input}" | sed 's|_|/|g').sh"
 
 	require_source 'script/support'
-	echo "entrypoint='${assemble_input}'"
+	echo "entrypoint='${input}'"
 	module_assemble_dependencies "${input_file}"
 	require_source 'script/entrypoint'
 }
@@ -56,7 +58,6 @@ module_assemble_dependencies ()
 {
 	local input_file="${1:-}"
 	local require_sources=
-	local require_is_sourced=0
 
 	printf '' > "${assemble_dir}/required_modules"
 	echo 'require () ( : )' > "${assemble_dir}/require"
@@ -96,10 +97,11 @@ module_assemble_dependencies ()
 module_assemble_on_include ()
 {
 	local script_target="${1}"
-	local script_target_name="$(basename ${script_target})"
+	local script_target_name
 	local assemble_dependency="${2:-}"
 	local contents
 
+	script_target_name="$(fs_basename "${script_target}")"
 	contents="$(cat "${script_target}")"
 
 	test "${script_target_name%*.sh}.sh" = "${script_target_name}" || return 0

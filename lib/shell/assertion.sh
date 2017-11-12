@@ -16,7 +16,6 @@ shell_assertion ()
 	local expectation=
 	local expectation_lines=0
 	local message_line=1
-	local last_command_line=0
 	local oldifs="${IFS}"
 
 	cd "${assertion_dir}"
@@ -28,18 +27,16 @@ shell_assertion ()
 		if test "\$ ${message#*\$ }" = "${message}"
 		then
 			${assertion} "${instructions}" "${expectation}" "${result}"
-			last_command_line="${message_line}"
 			instructions="${message#*\$ }"
 			set +e
-			shell_sandbox_setup="${setup:-}" \
 			shell_sandbox_previous_code="${sandbox_code}" \
 				shell_sandbox "${assertion_dir}/.sandbox" "${instructions}" \
 				> "${assertion_dir}/.assertion_result" 2>&1
 			sandbox_code="${?}"
 			set -e
 			result="$(
-				cat "${assertion_dir}/.assertion_result" |
-					_shell_assertion_import_result
+				_shell_assertion_import_result \
+					< "${assertion_dir}/.assertion_result"
 			)"
 
 			expectation=

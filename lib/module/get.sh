@@ -9,11 +9,11 @@ module_get ()
 {
 	local repo='https://raw.githubusercontent.com/alganet/coral/master'
 	local module_get_channel="${module_get_channel:-${repo}}"
-	local require_on_search='module_get_on_search'
-	local require_on_request='module_get_on_request'
-	local require_on_include='module_get_on_include'
+	export require_on_search='module_get_on_search'
+	export require_on_request='module_get_on_request'
+	export require_on_include='module_get_on_include'
 	local target="${1:-}"
-	local target_file="$(echo "${target}" | tr '_' '/').sh"
+	local target_file="$(echo "${target}" | sed 's|_|/|g').sh"
 	shift
 
 	require "${target_file}"

@@ -24,7 +24,7 @@ shell_pipe ()
 						echo shell_pipe_status_${cursor}=\$? >&3
 					} 4>&- |
 				"
-				cursor=$((${cursor}+1))
+				cursor=$((cursor+1))
 				current_chunk=
 				;;
 			( * )
@@ -32,7 +32,7 @@ shell_pipe ()
 				;;
 		esac
 
-		position=$((${position}+1))
+		position=$((position+1))
 	done
 
 	# Runs the pipes

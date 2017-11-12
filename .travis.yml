@@ -19,7 +19,7 @@ script:
 
 matrix:
   include:
-    - env: spec_doc_shell=sh TARGET="doc/README.md"
+    - env: spec_doc_shell=sh TARGET="doc/test/*"
       os:  linux
 
     - env: spec_doc_shell="bash" TARGET="doc/spec/*"

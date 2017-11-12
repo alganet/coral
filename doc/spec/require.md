@@ -130,10 +130,10 @@ hook_on_include ()
 
 hooks () 
 {
-	local require_on_request='hook_on_request'
-	local require_on_search='hook_on_search'
-	local require_on_include='hook_on_include'
-	local require_loaded=''
+	export require_on_request='hook_on_request'
+	export require_on_search='hook_on_search'
+	export require_on_include='hook_on_include'
+	export require_loaded=''
 
 	require 'world.sh'
 }

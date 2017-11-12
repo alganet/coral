@@ -4,13 +4,13 @@
  # script/dev - Bootstraps and runs modules
  ##
 
-dev_library_dir="$(cd "$(dirname "${0}")";pwd)"
+dev_library_dir="$(cd "${0%/*}";pwd)"
 
 . "${dev_library_dir}/script/support"
 . "${dev_library_dir}/require.sh"
 
 entrypoint="${1:-false}"
-dev_library_file="$(echo "${entrypoint}" | tr '_' '/').sh"
+dev_library_file="$(echo "${entrypoint}" | sed 's|_|/|g').sh"
 require_path="${require_path:-.:${dev_library_dir}}"
 shift
 

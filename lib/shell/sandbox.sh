@@ -8,14 +8,17 @@ require 'math/random.sh'
 shell_sandbox ()
 {
 	local sandbox_file="${1:-./.shell_sandbox}"
-	local signature="$(math_random)"
 	local sandbox_instructions="${2:-:}"
 	local shell_sandbox_previous_code="${shell_sandbox_previous_code:-}"
 	local return_code=0
+	local shell_sandbox_shell="${shell_sandbox_shell:-sh}"
+	local signature
+
+	signature="$(math_random)"
 
 	test -f "${sandbox_file}" || printf '' > "${sandbox_file}" || return 1
 
-	${shell_sandbox_shell:-sh} <<-EXTERNAL && return_code=$? || return_code=$?
+	${shell_sandbox_shell} <<-EXTERNAL && return_code=$? || return_code=$?
 		$(require_source 'shell/vars.sh')
 		. "${sandbox_file}"
 

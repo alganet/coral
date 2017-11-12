@@ -74,7 +74,9 @@ require_include ()
 {
 	local dependency="${1}"
 	shift
-	local location="$(
+	local location
+
+	location="$(
 		${require_on_search:-require_on_search} \
 			"${dependency}" "${@:-}"
 	)"

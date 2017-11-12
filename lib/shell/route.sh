@@ -11,7 +11,6 @@ shell_route ()
 	local long_name
 	local long_value
 	local target
-	local returned
 
 	if test "" = "${argument}"
 	then

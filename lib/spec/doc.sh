@@ -2,6 +2,8 @@
  # spec_doc.sh - a literate test runner
  ##
 
+require 'fs/basename.sh'
+require 'fs/dirname.sh'
 require 'fs/tempdir.sh'
 require 'shell/assertion.sh'
 
@@ -12,13 +14,12 @@ spec_doc ()
 	local fail_number=0
 	local test_result=0
 	local oldifs="${IFS}"
-	local target_files="${*:-}"
 	local tempdir=
 	trap 'spec_doc_clean' 2
 
 	echo "# using	'${spec_doc_shell:-sh}'"
 
-	if test -z "${target_files}"
+	if test -z "${*:-}"
 	then
 		echo "# "
 		echo "# FAILURE (no .md files found)"
@@ -26,7 +27,7 @@ spec_doc ()
 		return
 	fi
 
-	target_files="$(printf %s\\n ${target_files} | sort)"
+	target_files="$(printf %s\\n "${@:-}" | sort)"
 
 	tempdir="$(fs_tempdir 'spec_doc')"
 
@@ -60,13 +61,13 @@ spec_doc ()
 		test_result=1
 	fi
 
-	spec_doc_clean return "${test_result}"
+	spec_doc_clean "return ${test_result}"
 }
 
 spec_doc_clean ()
 {
 	rm -Rf "${tempdir}"
-	${@:-exit 1}
+	${1:-exit 1}
 }
 
 spec_doc_parse ()
@@ -94,14 +95,17 @@ spec_doc_parse ()
 			then
 				open_fence="${possible_fence}"
 				line_last_open_fence="${line_number}"
+				# shellcheck disable=SC2086
 				spec_doc_fence_open ${open_fence}
 			fi
 		else
 			if test "${line}" = "\`\`\`${possible_fence}"
 			then
+				# shellcheck disable=SC2086
 				spec_doc_fence_close ${open_fence}
 				open_fence=
 			else
+				# shellcheck disable=SC2086
 				spec_doc_fence_line ${open_fence}
 			fi
 		fi
@@ -122,9 +126,9 @@ spec_doc_fence_open ()
 	if test "file" = "${key}"
 	then
 		file_path="${spec_directory}/${value}"
-		if test "$(basename "${file_path}")" != "${file_path}"
+		if test "$(fs_basename "${file_path}")" != "${file_path}"
 		then
-			mkdir -p "$(dirname "${file_path}")"
+			mkdir -p "$(fs_dirname "${file_path}")"
 		fi
 		printf '' > "${file_path}"
 	elif test "console" = "${language}" &&
@@ -183,9 +187,14 @@ spec_doc_collect_setup ()
 
 spec_doc_run_console ()
 {
+	local sandbox_code
+
+	shell_sandbox_setup="${setup:-}" \
 	shell_sandbox_shell="${spec_doc_shell:-}" \
 		shell_assertion \
-			"${spec_directory}/.spec/console" "${spec_directory}" "${@:-}"
+			"${spec_directory}/.spec/console" "${spec_directory}" "${@:-}" &&
+			sandbox_code=$? ||
+			sandbox_code=$?
 }
 
 spec_doc_report_single_result ()
@@ -200,7 +209,7 @@ spec_doc_report_single_result ()
 	then
 		test_number=$((test_number + 1))
 		fail_number=$((fail_number + 1))
-		error_line=$((${line_last_open_fence} + ${last_command_line:-}))
+		error_line="${line_last_open_fence}"
 		echo
 		echo "not ok	${line_report}"
 		echo "# Failure on ${target_file} line ${error_line}"
@@ -228,7 +237,7 @@ spec_doc_report_code_result ()
 		echo "ok	${line_report}"
 	else
 		fail_number=$((fail_number + 1))
-		error_line=$((${line_last_open_fence} + ${last_command_line:-}))
+		error_line="${line_last_open_fence}"
 		echo
 		echo "not ok	${line_report}"
 		echo "# Failure on ${target_file} line ${error_line}"

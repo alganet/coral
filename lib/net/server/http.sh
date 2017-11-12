@@ -7,7 +7,10 @@ require 'fs/tempdir.sh'
 net_server_http_abort ()
 {
 	local buffer_dir="${1}"
-	kill $(jobs -p) 2>/dev/null
+	for job in $(jobs -p)
+	do
+		kill "${job}" 2>/dev/null
+	done
 	rm -rf "${buffer_dir}"
 	return 1
 }
@@ -15,12 +18,15 @@ net_server_http_abort ()
 net_server_http_buffer ()
 {
 	local buffer_dir="${1}"
+	local buffer_name
+	local buffer_file
+
 	if test -z "${buffer_name:-}"
 	then
-		local buffer_name="$(
-			od -N4 -tu /dev/random | tr " " "-" | tr -d '\n'
+		buffer_name="$(
+			od -N4 -tu /dev/random | sed -n '1 {s#[^0-9]\|\s#-#;p;q}'
 		)"
-		local buffer_file="${buffer_dir}/${buffer_name}"
+		buffer_file="${buffer_dir}/${buffer_name}"
 
 		mkfifo "${buffer_file}"
 	fi
@@ -91,11 +97,11 @@ net_server_http_parse_request ()
 	local REQUEST_URI
 	local SERVER_PROTOCOL
 
-	while test -e "${buffer_in}" &&
-		 read -r REQUEST_METHOD REQUEST_URI SERVER_PROTOCOL
+	while read -r REQUEST_METHOD REQUEST_URI SERVER_PROTOCOL
 	do
-		if test "${SERVER_PROTOCOL:-}" = "HTTP/1.1${CR}" ||
-			test "${SERVER_PROTOCOL:-}" = "HTTP/1.1"
+		if ( test "${SERVER_PROTOCOL:-}" = "HTTP/1.1${CR}" ||
+			test "${SERVER_PROTOCOL:-}" = "HTTP/1.1" ) &&
+			test -n "${REQUEST_METHOD:-}"
 		then
 			"${callback}"
 		fi
@@ -105,23 +111,29 @@ net_server_http_parse_request ()
 net_server_http ()
 {
 	local rootdir="${1:-$PWD}"
-	local CR="$(printf '\r')"
+	local CR
 	local callback="net_server_http_response"
-	local buffer_dir="$(fs_tempdir 'net_server_http')"
 	local connector1="nc -v -p ${2:-9999} -l 127.0.0.1"
 	local connector2="nc -v -l 127.0.0.1:${2:-9999}"
 	local connector3="nc -v -l 127.0.0.1 ${2:-9999}"
+	local buffer_in
+	local buffer_out
+	local buffer_dir
 	trap 'net_server_http_abort "${buffer_dir}"' 2
+
+	CR="$(printf '\r')"
+	buffer_dir="$(fs_tempdir 'net_server_http')"
 
 	while true
 	do
-		local buffer_in="$(net_server_http_buffer "${buffer_dir}")"
-		local buffer_out="$(net_server_http_buffer "${buffer_dir}")"
+		buffer_in="$(net_server_http_buffer "${buffer_dir}")"
+		buffer_out="$(net_server_http_buffer "${buffer_dir}")"
 		(
 			${connector1} 2>/dev/null ||
 			${connector2} 2>/dev/null ||
 			${connector3} 2>/dev/null || net_server_http_abort "${buffer_dir}"
 		) < "${buffer_out}" > "${buffer_in}" &
+
 		net_server_http_parse_request > "${buffer_out}" &
 		wait
 	done

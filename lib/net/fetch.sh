@@ -2,6 +2,7 @@
  # net_fetch.sh - obtains files from the network
  ##
 
+require 'fs/dirname.sh'
 require 'fs/tempdir.sh'
 
 net_fetch ()
@@ -26,12 +27,12 @@ net_fetch ()
 	if test -n "${2:-}"
 	then
 		tempdir="$(fs_tempdir 'net_fetch')"
-		mkdir -p "$(dirname "${tempdir}/${2}")"
+		mkdir -p "$(fs_dirname "${tempdir}/${2}")"
 		trap 'net_fetch_clear' 2
 
 		if ${net_fetch_command} "${1}" 2>/dev/null  > "${tempdir}/${2}"
 		then
-			download_dir="$(dirname "${2}")"
+			download_dir="$(fs_dirname "${2}")"
 			mkdir -p "${download_dir}"
 			mv "${tempdir}/${2}" "${download_dir}"
 			net_fetch_clear
