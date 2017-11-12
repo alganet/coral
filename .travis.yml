@@ -13,6 +13,7 @@ before_install:
   # Build spec_doc module
   - ${spec_doc_shell} ./lib/dev module_assemble module_assemble module_assemble
   - ${spec_doc_shell} ./module_assemble spec_doc spec_doc
+  - chmod +x spec_doc
 
 script:
   - spec_doc_shell=${spec_doc_shell} ${spec_doc_shell} ./spec_doc $(find ${TARGET})

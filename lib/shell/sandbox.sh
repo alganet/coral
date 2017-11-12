@@ -41,15 +41,10 @@ shell_sandbox ()
 		exit \${external_code}
 	EXTERNAL
 
-	if comm --help  >/dev/null 2>&1
-	then
-		comm -3 -1 \
-			"${sandbox_file}${signature}.prev" \
-			"${sandbox_file}${signature}.next" 2>/dev/null |
-			sed '/^external_code/d' >> "${sandbox_file}"
-	else
-		fs_get "${sandbox_file}${signature}.next" > "${sandbox_file}"
-	fi
+	comm -3 -1 \
+		"${sandbox_file}${signature}.prev" \
+		"${sandbox_file}${signature}.next" 2>/dev/null |
+		sed '/^external_code/d' >> "${sandbox_file}"
 
 	rm "${sandbox_file}${signature}.next" "${sandbox_file}${signature}.prev"
 
