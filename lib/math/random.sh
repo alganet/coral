@@ -9,7 +9,6 @@ math_random ()
 	# We are checking if random is empty here, so it is OK to use it.
 	#shellcheck disable=SC2039
 	(
-		unset RANDOM > /dev/null 2>&1
 		echo ${RANDOM:-$(math_random_device)}
 	)
 }

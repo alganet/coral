@@ -9,7 +9,7 @@ shell_sandbox ()
 {
 	local sandbox_file="${1:-./.shell_sandbox}"
 	local sandbox_instructions="${2:-:}"
-	local shell_sandbox_previous_code="${shell_sandbox_previous_code:-}"
+	local shell_sandbox_previous_code="${shell_sandbox_previous_code:-0}"
 	local return_code=0
 	local shell_sandbox_shell="${shell_sandbox_shell:-sh}"
 	local signature
