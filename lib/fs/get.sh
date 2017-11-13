@@ -9,10 +9,18 @@ fs_get ()
 	local oldifs="${IFS}"
 	local IFS=
 
-	while read -r line
-	do
-		printf %s\\n "${line}"
-	done < "${1:-/dev/stdin}"
+	if test -e "${1}"
+	then
+		while read -r line
+		do
+			printf %s\\n "${line}"
+		done < "${1}"
+	else
+		while read -r line
+		do
+			printf %s\\n "${line}"
+		done
+	fi
 
 	IFS="${oldifs}"
 	return 0
