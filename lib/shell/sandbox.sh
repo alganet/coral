@@ -20,6 +20,7 @@ shell_sandbox ()
 
 	${shell_sandbox_shell} <<-EXTERNAL && return_code=$? || return_code=$?
 		$(require_source 'shell/vars.sh')
+
 		. "${sandbox_file}"
 
 		PATH="\${PATH}:."
