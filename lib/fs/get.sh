@@ -9,7 +9,7 @@ fs_get ()
 	local oldifs="${IFS}"
 	local IFS=
 
-	if test -e "${1}"
+	if test -e "${1:-}"
 	then
 		while read -r line
 		do
