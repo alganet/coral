@@ -37,4 +37,14 @@ environment:
       PACMAN: busybox
       SHELLENV: C:\msys64\usr\bin\bash
     - spec_doc_shell: bash
-      SHELLENV: C:\MinGW\msys\1.0\bin\sh
+      SHELLENV: C:\MinGW\msys\1.0\bin\bash
+    - spec_doc_shell: bash
+      SHELLENV: C:\mingw-w64\i686-5.3.0-posix-dwarf-rt_v4-rev0\mingw32\bin\bash
+    - spec_doc_shell: bash
+      SHELLENV:  C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin\bash
+    - spec_doc_shell: bash
+      SHELLENV: C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw32\bin\bash
+    - spec_doc_shell: bash
+      SHELLENV: C:\cygwin\bin\bash
+    - spec_doc_shell: bash
+      SHELLENV: C:\cygwin64\bin\bash
