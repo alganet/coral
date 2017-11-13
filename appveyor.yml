@@ -11,12 +11,6 @@ install:
   # Install pacman dependencies
   - cmd: call %SHELLENV% -lc "${PACMAN:+pacman --noconfirm -S $PACMAN}"
 
-  # Update mingw-get if going to install anything
-  - cmd: call %SHELLENV% -lc "${MINGWGET:+mingw-get update}"
-
-  # Install mingw-get dependencies
-  - cmd: call %SHELLENV% -lc "${MINGWGET:+mingw-get install $MINGWGET}"
-
   # Build spec_doc module
   - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; ${spec_doc_shell} ./lib/dev module_assemble module_assemble module_assemble"
   - cmd: call %SHELLENV% -lc "cd $APPVEYOR_BUILD_FOLDER; ${spec_doc_shell} ./module_assemble spec_doc spec_doc"
@@ -49,10 +43,6 @@ environment:
 
     - spec_doc_shell: bash
       SHELLENV: C:\MinGW\msys\1.0\bin\bash
-
-    - spec_doc_shell: mksh
-      MINGWGET: mksh
-      SHELLENV: C:\MinGW\msys\1.0\bin\mksh
 
     - spec_doc_shell: bash
       SHELLENV: C:\cygwin\bin\bash
