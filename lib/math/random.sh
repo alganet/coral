@@ -22,7 +22,7 @@ math_random_device ()
 	od '/dev/random' | while read -r random_integers
 	do
 		printf %s "${random_integers}" |
-			sed "s/\s//g;s/^0*//;s/^\(${num_bytes}\).*$/\1/"
+			sed "s/[^0-9]//g;s/^0*//;s/^\(${num_bytes}\).*$/\1/"
 		return 0
 	done
 }

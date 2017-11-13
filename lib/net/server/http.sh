@@ -2,6 +2,7 @@
  # net_server_http.sh - creates http servers
  ##
 
+require 'fs/get.sh'
 require 'fs/tempdir.sh'
 require 'math/random.sh'
 
@@ -66,17 +67,17 @@ net_server_http_response ()
 				;;
 		esac
 		length=$(wc -c < "${target}")
-		cat <<-MSG
+		fs_get <<-MSG
 			HTTP/1.1 200 OK
 			Connection: keep-alive
 			Content-Type: ${type}
 			Content-Length: ${length}
 			${CR}
-			$(cat "${target}")
+			$(fs_get "${target}")
 			${CR}
 		MSG
 	else
-		cat <<-MSG
+		fs_get <<-MSG
 			HTTP/1.1 404 Not Found
 			Connection: keep-alive
 			Content-Length: 0

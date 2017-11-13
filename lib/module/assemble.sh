@@ -77,7 +77,7 @@ module_assemble_dependencies ()
 		then
 			require_source 'fs/get.sh' >> "${assemble_dir}/required_modules"
 		fi
-		cat <<-SOURCES_SNIPPET >> "${assemble_dir}/required_modules"
+		fs_get <<-SOURCES_SNIPPET >> "${assemble_dir}/required_modules"
 			require_source ()
 			{
 			    if test -z "\${1:-}"
