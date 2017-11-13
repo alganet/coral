@@ -29,7 +29,7 @@ shell_sandbox ()
 
 		${shell_sandbox_setup:-}
 
-		_sandbox_${signature} () ( return "${shell_sandbox_previous_code}" )
+		_sandbox_${signature} () { return "${shell_sandbox_previous_code}"; }
 
 		set | shell_vars > "${sandbox_file}${signature}.prev"
 
