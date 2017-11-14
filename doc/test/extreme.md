@@ -78,7 +78,6 @@ RUN set -ex; \
 		CONFIG_OD=y \
 		CONFIG_RM=y \
 		CONFIG_SED=y \
-		CONFIG_WGET=y \
 		CONFIG_SORT=y \
 		CONFIG_SH_IS_ASH=y \
 		CONFIG_ASH=y \

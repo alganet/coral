@@ -11,16 +11,13 @@ fs_get ()
 
 	if test -e "${1:-}"
 	then
-		while read -r line
-		do
-			printf %s\\n "${line}"
-		done < "${1}"
-	else
-		while read -r line
-		do
-			printf %s\\n "${line}"
-		done
+		exec < "${1}"
 	fi
+
+	while read -r line
+	do
+		printf %s\\n "${line}"
+	done
 
 	IFS="${oldifs}"
 	return 0

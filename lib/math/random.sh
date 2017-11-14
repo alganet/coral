@@ -15,14 +15,26 @@ math_random ()
 
 math_random_device ()
 {
-	local random_integers
-	local num_bytes
-	num_bytes="$(string_repeat '.' 20)"
+	if ! command -v od >/dev/null 2>&1 &&
+	   ! : | od 2>&1
+	then
+		echo 'fail (math_random_device) cannot find od' 1>&2
+		return 1
+	elif ! test -e '/dev/random'
+	then
+		echo 'fail (math_random_device) cannot find /dev/random' 1>&2
+		return 2
+	fi
 
-	od '/dev/random' | while read -r random_integers
-	do
+	od '/dev/random' | {
+		local random_integers
+		read -r random_integers
 		printf %s "${random_integers}" |
-			sed "s/[^0-9]//g;s/^0*//;s/^\(${num_bytes}\).*$/\1/"
+			sed "
+				s/[^0-9]//g
+				s/^0*//
+				s/^\($(string_repeat '.' 20)\).*$/\1/
+			"
 		return 0
-	done
+	}
 }
