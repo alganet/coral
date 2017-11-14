@@ -1,12 +1,28 @@
 fs_dirname
 ==========
 
-```console test 
-$ my_dirname="$(./lib/dev fs_dirname foo/bar)"
-$ test "${my_dirname}" = "foo" || echo 'Fail'
-```
+Extracts the directory name portion of a path.
+
+            dirname           filename    
+               |                 |
+       __________________   ____________
+     /some/example/path/to/this_is_a_file
+
+Let's try some examples:
 
 ```console test 
-$ my_dirname="$(./lib/dev fs_dirname foo/bar/baz)"
-$ test "${my_dirname}" = "foo/bar" || echo 'Fail'
+$ ./lib/dev fs_dirname foo/bar
+foo
+$ ./lib/dev fs_dirname foo/bar/baz
+foo/bar
+$ ./lib/dev fs_dirname foo/bar/baz.lorem
+foo/bar
+$ ./lib/dev fs_dirname foo/bar/.ipsum
+foo/bar
+$ ./lib/dev fs_dirname foo/bar//.ipsum
+foo/bar
+$ ./lib/dev fs_dirname foo/bar/////.ipsum
+foo/bar
+$ ./lib/dev fs_dirname /some/example/path/to/this_is_a_file
+/some/example/path/to
 ```
