@@ -22,7 +22,7 @@ module_assemble ()
 
 	trap 'module_assemble_exit' 2
 
-	printf '' > "${assemble_dir}/sources"
+	> "${assemble_dir}/sources"
 	module_assemble_contents "${assemble_input}" > "${assemble_dir}/output"
 
 	if test "-" = "${assemble_output}"
@@ -65,7 +65,7 @@ module_assemble_dependencies ()
 	local input_file="${1:-}"
 	local require_sources=
 
-	printf '' > "${assemble_dir}/required_modules"
+	> "${assemble_dir}/required_modules"
 	echo 'require () ( : )' > "${assemble_dir}/require"
 	require "${input_file}"
 

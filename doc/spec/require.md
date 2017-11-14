@@ -188,10 +188,10 @@ hooks ()
 ```
 
 ```console test
-$ printf '' > always_requests.sh
-$ printf '' > never_finds.sh
-$ printf '' > always_errors.sh
-$ printf '' > never_includes.sh
+$ > always_requests.sh
+$ > never_finds.sh
+$ > always_errors.sh
+$ > never_includes.sh
 $ sh ./require_test hooks.sh
 Request: always_requests.sh
 Search: always_requests.sh

@@ -158,5 +158,5 @@ $ ./lib/dev module_assemble spec_doc spec_doc
 $ docker build -t coral-builder -f Dockerfile.builder .
 $ docker run --rm "coral-builder" tar cC rootfs . | xz -z9 > "busybox.tar.xz"
 $ docker build -t "coral" .
-$ docker run --rm -v "$(pwd):/coral" -w "/coral" coral sh -c './spec_doc $(find doc/spec/*)'
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" coral sh -c 'sh ./spec_doc $(find doc/spec/*)'
 ```
