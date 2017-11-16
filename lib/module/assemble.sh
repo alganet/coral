@@ -85,7 +85,7 @@ module_assemble_dependencies ()
 			        return
 			    ${require_sources}
 			    else
-			        cat "\$(require_path "\${1}")"
+			        fs_get "\$(require_path "\${1}")"
 			    fi
 			}
 		SOURCES_SNIPPET
@@ -135,9 +135,12 @@ module_assemble_on_request ()
 		fs_get <<-SOURCES_SNIPPET >> "${assemble_dir}/sources"
 			    elif test "\${1}" = "${assemble_dependency}"
 			    then
-			        fs_get <<'FILESOURCE_SNIPPET'
-						$(require_source "${assemble_dependency}")
-					FILESOURCE_SNIPPET
+			        fs_get <<-'FILESOURCE_SNIPPET'
+						$(
+							require_source "${assemble_dependency}" |
+							sed 's/^./			&/';
+							printf \\t\\t%s 'FILESOURCE_SNIPPET'
+						)
 		SOURCES_SNIPPET
 	fi
 

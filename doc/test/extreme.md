@@ -1,36 +1,3 @@
-
-
-```txt file passwd.txt
-root:x:0:0:root:/root:/bin/sh
-daemon:x:1:1:daemon:/usr/sbin:/bin/false
-bin:x:2:2:bin:/bin:/bin/false
-sys:x:3:3:sys:/dev:/bin/false
-nobody:x:65534:65534:nobody:/home:/bin/false
-```
-
-```txt file shadow.txt
-root::10933:0:99999:7:::
-daemon:*:10933:0:99999:7:::
-bin:*:10933:0:99999:7:::
-sys:*:10933:0:99999:7:::
-nobody:*:10933:0:99999:7:::
-```
-
-```txt file group.txt
-root:x:0:
-daemon:x:1:
-bin:x:2:
-sys:x:3:
-adm:x:4:
-tty:x:5:
-disk:x:6:
-wheel:x:10:root
-staff:x:50:
-users:x:100:
-nogroup:x:65534:
-```
-
-
 ```Dockerfile file Dockerfile.builder
 FROM alpine:latest
 
@@ -55,10 +22,6 @@ RUN set -ex; \
 
 WORKDIR /usr/src/busybox
 
-ADD passwd.txt /tmp/passwd.txt
-ADD shadow.txt /tmp/shadow.txt
-ADD group.txt /tmp/group.txt
-
 # https://www.mail-archive.com/toybox@lists.landley.net/msg02528.html
 # https://www.mail-archive.com/toybox@lists.landley.net/msg02526.html
 RUN sed -i 's/^struct kconf_id \*$/static &/g' scripts/kconfig/zconf.hash.c_shipped
@@ -75,7 +38,6 @@ RUN set -ex; \
 		CONFIG_FIND=y \
 		CONFIG_MKDIR=y \
 		CONFIG_MV=y \
-		CONFIG_OD=y \
 		CONFIG_RM=y \
 		CONFIG_SED=y \
 		CONFIG_SORT=y \
@@ -84,9 +46,9 @@ RUN set -ex; \
 		CONFIG_BASH_IS_NONE=y \
 		CONFIG_ASH_OPTIMIZE_FOR_SIZE=y \
 		CONFIG_ASH_ECHO=y \
+		CONFIG_ASH_RANDOM_SUPPORT=y \
 		CONFIG_ASH_TEST=y \
 		CONFIG_ASH_PRINTF=y \
-		CONFIG_ASH_JOB_CONTROL=y \
 		CONFIG_FEATURE_SH_MATH=y \
 		CONFIG_FEATURE_SH_EXTRA_QUIET=y \
 	'; \

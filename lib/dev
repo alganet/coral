@@ -4,7 +4,7 @@
  # script/dev - Bootstraps and runs modules
  ##
 
-dev_library_dir="$(cd "${0%/*}";pwd)"
+dev_library_dir="$(cd "${0%/*}";printf %s "${PWD}")"
 
 . "${dev_library_dir}/script/support"
 . "${dev_library_dir}/require.sh"

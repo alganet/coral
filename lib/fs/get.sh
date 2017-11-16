@@ -23,5 +23,6 @@ fs_get ()
 	fi
 
 	IFS="${oldifs}"
-return 0
+
+	return 0
 }
