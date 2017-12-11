@@ -5,7 +5,7 @@
 require 'fs/basename.sh'
 require 'fs/dirname.sh'
 require 'fs/tempdir.sh'
-require 'fs/get.sh'
+require 'fs/lines.sh'
 require 'shell/assertion.sh'
 
 spec_doc ()
@@ -186,7 +186,7 @@ spec_doc_fence_close ()
 
 spec_doc_collect_setup ()
 {
-	setup="$(fs_get "${spec_directory}/.spec/setup")"
+	setup="$(fs_lines "${spec_directory}/.spec/setup")"
 }
 
 spec_doc_run_console ()

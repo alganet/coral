@@ -1,8 +1,8 @@
 ##
- # fs_get.sh - writes contents of files to stdout
+ # fs_lines.sh - writes contents of files to stdout
  ##
 
-fs_get ()
+fs_lines ()
 {
 	local line
 

@@ -7,7 +7,7 @@ require 'script/entrypoint' --source
 require 'script/support'    --source
 require 'fs/basename.sh'
 require 'fs/tempdir.sh'
-require 'fs/get.sh'
+require 'fs/lines.sh'
 
 module_assemble ()
 {
@@ -27,7 +27,7 @@ module_assemble ()
 
 	if test "-" = "${assemble_output}"
 	then
-		fs_get "${assemble_dir}/output"
+		fs_lines "${assemble_dir}/output"
 	else
 		cp "${assemble_dir}/output" "${assemble_output}"
 	fi
@@ -69,15 +69,15 @@ module_assemble_dependencies ()
 	echo 'require () ( : )' > "${assemble_dir}/require"
 	require "${input_file}"
 
-	require_sources="$(fs_get "${assemble_dir}/sources")"
+	require_sources="$(fs_lines "${assemble_dir}/sources")"
 
 	if test -n "${require_sources}"
 	then
-		if ! require_is_loaded 'fs/get.sh' ''
+		if ! require_is_loaded 'fs/lines.sh' ''
 		then
-			require_source 'fs/get.sh' >> "${assemble_dir}/required_modules"
+			require_source 'fs/lines.sh' >> "${assemble_dir}/required_modules"
 		fi
-		fs_get <<-SOURCES_SNIPPET >> "${assemble_dir}/required_modules"
+		fs_lines <<-SOURCES_SNIPPET >> "${assemble_dir}/required_modules"
 			require_source ()
 			{
 			    if test -z "\${1:-}"
@@ -85,7 +85,7 @@ module_assemble_dependencies ()
 			        return
 			    ${require_sources}
 			    else
-			        fs_get "\$(require_path "\${1}")"
+			        fs_lines "\$(require_path "\${1}")"
 			    fi
 			}
 		SOURCES_SNIPPET
@@ -99,8 +99,8 @@ module_assemble_dependencies ()
 		require_source 'require.sh' > "${assemble_dir}/require"
 	fi
 
-	fs_get "${assemble_dir}/require"
-	fs_get "${assemble_dir}/required_modules"
+	fs_lines "${assemble_dir}/require"
+	fs_lines "${assemble_dir}/required_modules"
 }
 
 
@@ -112,7 +112,7 @@ module_assemble_on_include ()
 	local contents
 
 	script_target_name="$(fs_basename "${script_target}")"
-	contents="$(fs_get "${script_target}")"
+	contents="$(fs_lines "${script_target}")"
 
 	test "${script_target_name%*.sh}.sh" = "${script_target_name}" || return 0
 
@@ -132,10 +132,10 @@ module_assemble_on_request ()
 
 	if test "${#}" -gt 0 && test "${remaining_params#*--source*}" != "${*:-}"
 	then
-		fs_get <<-SOURCES_SNIPPET >> "${assemble_dir}/sources"
+		fs_lines <<-SOURCES_SNIPPET >> "${assemble_dir}/sources"
 			    elif test "\${1}" = "${assemble_dependency}"
 			    then
-			        fs_get <<-'FILESOURCE_SNIPPET'
+			        fs_lines <<-'FILESOURCE_SNIPPET'
 						$(
 							require_source "${assemble_dependency}" |
 							sed 's/^./			&/';

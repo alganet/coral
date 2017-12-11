@@ -26,6 +26,6 @@ $ ./lib/dev fs_path DUPLICATE.txt .:./some_dir
 
 ```console test
 $ ./lib/dev fs_path sh | sed -n '/sh/p' > ./fs_path_for_sh
-$ test -n "$(./lib/dev fs_get ./fs_path_for_sh)" || echo 'Fail'
+$ test -n "$(./lib/dev fs_lines ./fs_path_for_sh)" || echo 'Fail'
 ```
 
