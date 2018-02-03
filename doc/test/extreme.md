@@ -102,10 +102,10 @@ RUN mkdir -p rootfs/tmp \
 
 # test and make sure it works
 RUN chroot rootfs /bin/sh -xc 'busybox'
-RUN tar cC rootfs . | xz -z9 > "busybox.tar.xz"
+RUN tar cC rootfs . | bzip2 > "busybox.tar.bz2"
 
 FROM scratch
-ADD --from=builder "busybox.tar.xz" /
+ADD --from=builder "busybox.tar.bz2" /
 CMD ["sh"]
 ```
 
@@ -115,7 +115,7 @@ $ ./lib/dev module_assemble spec_doc spec_doc
 
 ```console task
 $ docker build -t coral-builder -f Dockerfile.builder .
-$ docker run --rm "coral-builder" tar cC rootfs . | xz -z9 > "busybox.tar.xz"
+$ docker run --rm "coral-builder" tar cC rootfs . | bzip2 > "busybox.tar.bz2"
 $ docker build -t "coral" .
 $ docker run --rm -v "$(pwd):/coral" -w "/coral" coral sh -c 'sh ./spec_doc $(find doc/spec/*)'
 ```
