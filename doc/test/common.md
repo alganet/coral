@@ -51,7 +51,7 @@ COPY [".", "/usr/local/share/coral"]
 WORKDIR /usr/local/share/coral
 ```
 
-This image will allow us to install multiple shells to test their 
+This image will allow us to install multiple shells to test their
 compatibility:
 
 ### Default Busybox
@@ -63,11 +63,19 @@ $ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" busybox:late
 ### Default Alpine sh
 
 ```console task
-$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:3.5 sh -c 'sh ./spec_doc $(find doc/spec/*)'
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:latest sh -c 'sh ./spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:edge sh -c 'sh ./spec_doc $(find doc/spec/*)'
 ```
 
 ```console task
 $ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:3.6 sh -c 'sh ./spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:3.5 sh -c 'sh ./spec_doc $(find doc/spec/*)'
 ```
 
 ```console task
@@ -86,11 +94,15 @@ $ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:3.2 s
 $ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:3.1 sh -c 'sh ./spec_doc $(find doc/spec/*)'
 ```
 
+### Default Amazon Linux sh
+
 ```console task
-$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" alpine:edge sh -c 'sh ./spec_doc $(find doc/spec/*)'
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" amazonlinux:latest sh -c 'sh ./spec_doc $(find doc/spec/*)'
 ```
 
-### Default Amazon Linux sh
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" amazonlinux:2017.12 sh -c 'sh ./spec_doc $(find doc/spec/*)'
+```
 
 ```console task
 $ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" amazonlinux:2017.09 sh -c 'sh ./spec_doc $(find doc/spec/*)'
@@ -130,10 +142,22 @@ $ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" centos:7.1.1
 $ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" centos:7.0.1406 sh -c 'sh ./spec_doc $(find doc/spec/*)'
 ```
 
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" centos:6 sh -c 'sh ./spec_doc $(find doc/spec/*)'
+```
+
 ### Default Fedora sh
 
 ```console task
 $ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" fedora:latest sh -c 'sh ./spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" fedora:27 sh -c 'sh ./spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" fedora:26 sh -c 'sh ./spec_doc $(find doc/spec/*)'
 ```
 
 ### Default Debian sh
@@ -170,6 +194,25 @@ $ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" debian:unsta
 
 ```console task
 $ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" opensuse:latest sh -c 'sh ./spec_doc $(find doc/spec/*)'
+```
+
+
+### Default Ubuntu sh
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" ubuntu:latest sh -c 'sh ./spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" ubuntu:artful sh -c 'sh ./spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" ubuntu:xenial sh -c 'sh ./spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" ubuntu:trusty sh -c 'sh ./spec_doc $(find doc/spec/*)'
 ```
 
 

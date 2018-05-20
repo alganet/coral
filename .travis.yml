@@ -10,8 +10,10 @@ before_install:
   # Install brew dependencies
   - ${BREW:+brew install ${BREW}}
 
+  - ${APT:+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -}
+  - ${APT:+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"}
   - ${APT:+sudo apt-get update}
-  - ${APT:+sudo apt-get -y -o Dpkg::Options::="--force-confnew" install ${APT}}
+  - ${APT:+sudo apt-get -y install docker-ce}
 
   # Build spec_doc module
   - ${spec_doc_shell} ./lib/dev module_assemble module_assemble module_assemble
@@ -23,7 +25,7 @@ script:
 
 matrix:
   include:
-    - env: spec_doc_shell=sh APT="docker-ce" TARGET="doc/test/*"
+    - env: spec_doc_shell=sh APT=docker-ce" TARGET="doc/test/*"
       os:  linux
 
     - env: spec_doc_shell="bash" TARGET="doc/spec/*"
