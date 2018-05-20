@@ -18,54 +18,54 @@ script:
 matrix:
   include:
     # All Linux builds as docker images
-    - env: spec_doc_shell=sh DOCKER="yes" TARGET="doc/test/*"
+    - env: LINUX_DOCKER= spec_doc_shell=sh TARGET="doc/test/*"
       os:  linux
 
     # OS X Targeted Builds
-    - env: spec_doc_shell="bash" TARGET="doc/spec/*"
+    - env: HIGH_SIERRA= spec_doc_shell="bash" TARGET="doc/spec/*"
       os:  osx
       osx_image: xcode9.3
 
-    - env: spec_doc_shell="bash" TARGET="doc/spec/*"
+    - env: SIERRA= spec_doc_shell="bash" TARGET="doc/spec/*"
       os:  osx
       osx_image: xcode9.2
 
-    - env: spec_doc_shell="bash" TARGET="doc/spec/*"
+    - env: SIERRA= spec_doc_shell="bash" TARGET="doc/spec/*"
       os:  osx
       osx_image: xcode9.1
 
-    - env: spec_doc_shell="bash" TARGET="doc/spec/*"
+    - env: SIERRA= spec_doc_shell="bash" TARGET="doc/spec/*"
       os:  osx
       osx_image: xcode9
 
-    - env: spec_doc_shell="bash" TARGET="doc/spec/*"
+    - env: SIERRA= spec_doc_shell="bash" TARGET="doc/spec/*"
       os:  osx
       osx_image: xcode8.3
 
-    - env: spec_doc_shell="bash" TARGET="doc/spec/*"
+    - env: EL_CAPITAN= spec_doc_shell="bash" TARGET="doc/spec/*"
       os:  osx
       osx_image: xcode8
 
-    - env: spec_doc_shell="bash" TARGET="doc/spec/*"
+    - env: EL_CAPITAN= spec_doc_shell="bash" TARGET="doc/spec/*"
       os:  osx
       osx_image: xcode7.3
 
-    - env: spec_doc_shell="bash" TARGET="doc/spec/*"
+    - env: YOSEMITE= spec_doc_shell="bash" TARGET="doc/spec/*"
       os:  osx
       osx_image: xcode6.4
 
     # BREW BUILDS
-    - env: spec_doc_shell="bash" TARGET="doc/spec/*"
+    - env: BREW="bash" spec_doc_shell="bash" TARGET="doc/spec/*"
       os:  osx
 
-    - env: spec_doc_shell="zsh" BREW="zsh" TARGET="doc/spec/*"
+    - env: BREW="zsh" spec_doc_shell="zsh" TARGET="doc/spec/*"
       os:  osx
 
-    - env: spec_doc_shell="ksh" BREW="ksh" TARGET="doc/spec/*"
+    - env: BREW="ksh" spec_doc_shell="ksh" TARGET="doc/spec/*"
       os:  osx
 
-    - env: spec_doc_shell="mksh" BREW="mksh" TARGET="doc/spec/*"
+    - env: BREW="mksh"spec_doc_shell="mksh"  TARGET="doc/spec/*"
       os:  osx
 
-    - env: spec_doc_shell="dash" BREW="dash" TARGET="doc/spec/*"
+    - env: BREW="dash" spec_doc_shell="dash"  TARGET="doc/spec/*"
       os:  osx
