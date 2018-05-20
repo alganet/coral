@@ -102,10 +102,11 @@ RUN mkdir -p rootfs/tmp \
 
 # test and make sure it works
 RUN chroot rootfs /bin/sh -xc 'busybox'
-RUN tar cC rootfs . | bzip2 > "busybox.tar.bz2"
+```
 
+```Dockerfile file Dockerfile
 FROM scratch
-ADD --from=builder "busybox.tar.bz2" /
+ADD "busybox.tar.bz2" /
 CMD ["sh"]
 ```
 

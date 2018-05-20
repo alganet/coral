@@ -1,19 +1,11 @@
 language: bash
-sudo: required
 services:
   - docker
 
 before_install:
   # Update brew catalogue if going to install anything
   - ${BREW:+brew update}
-
-  # Install brew dependencies
   - ${BREW:+brew install ${BREW}}
-
-  - ${APT:+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -}
-  - ${APT:+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"}
-  - ${APT:+sudo apt-get update}
-  - ${APT:+sudo apt-get -y. install docker-ce}
 
   # Build spec_doc module
   - ${spec_doc_shell} ./lib/dev module_assemble module_assemble module_assemble
@@ -26,7 +18,7 @@ script:
 matrix:
   include:
     # All Linux builds as docker images
-    - env: spec_doc_shell=sh APT="docker-ce" TARGET="doc/test/*"
+    - env: spec_doc_shell=sh DOCKER="yes" TARGET="doc/test/*"
       os:  linux
 
     # OS X Targeted Builds
