@@ -31,7 +31,7 @@ shell_assertion ()
 			set +e
 			shell_sandbox_previous_code="${sandbox_code}" \
 				shell_sandbox "${assertion_dir}/.sandbox" "${instructions}" \
-				> "${assertion_dir}/.assertion_result" 2>&1
+				printf '' > "${assertion_dir}/.assertion_result" 2>&1
 			sandbox_code="${?}"
 			set -e
 			result="$(

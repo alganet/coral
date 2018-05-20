@@ -16,7 +16,7 @@ shell_sandbox ()
 
 	signature="$(math_random)"
 
-	test -f "${sandbox_file}" || > "${sandbox_file}" || return 1
+	test -f "${sandbox_file}" || printf '' > "${sandbox_file}" || return 1
 
 	${shell_sandbox_shell} <<-EXTERNAL && return_code=$? || return_code=$?
 		$(require_source 'shell/vars.sh')

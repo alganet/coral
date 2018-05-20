@@ -134,14 +134,14 @@ spec_doc_fence_open ()
 		then
 			mkdir -p "$(fs_dirname "${file_path}")"
 		fi
-		> "${file_path}"
+		printf '' > "${file_path}"
 	elif test "console" = "${language}" &&
 		 test ! -z "${key}"
 	then
-		> "${spec_directory}/.spec/console"
+		printf '' > "${spec_directory}/.spec/console"
 	elif test "setup" = "${key}" && test "${language}" != "console"
 	then
-		> "${spec_directory}/.spec/setup"
+		printf '' > "${spec_directory}/.spec/setup"
 	fi
 }
 
