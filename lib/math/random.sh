@@ -16,7 +16,7 @@ math_random ()
 math_random_device ()
 {
 	if ! command -v od >/dev/null 2>&1 &&
-	   ! : | od 2>&1
+	   ! : | od | : 2>&1
 	then
 		echo 'fail (math_random_device) cannot find od' 1>&2
 		return 1
