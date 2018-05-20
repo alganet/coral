@@ -32,9 +32,9 @@ require_test ()
 
 ```sh file hello.sh
 
-hello () 
-{ 
-	echo hello 
+hello ()
+{
+	echo hello
 }
 ```
 
@@ -42,10 +42,10 @@ hello ()
 
 require 'hello.sh'
 
-world () 
-{ 
+world ()
+{
 	hello
-	echo world 
+	echo world
 }
 
 ```
@@ -62,9 +62,9 @@ world
 
 require 'loop.sh'
 
-loop () 
-{ 
-	echo loop 
+loop ()
+{
+	echo loop
 }
 ```
 
@@ -79,9 +79,9 @@ loop
 
 require 'ipsum.sh'
 
-lorem () 
-{ 
-	echo lorem 
+lorem ()
+{
+	echo lorem
 }
 ```
 
@@ -89,10 +89,10 @@ lorem ()
 
 require 'lorem.sh'
 
-ipsum () 
-{ 
+ipsum ()
+{
 	lorem
-	echo ipsum 
+	echo ipsum
 }
 
 ```
@@ -124,7 +124,7 @@ hook_on_include ()
 	require_on_include "${1:-}"
 }
 
-hooks () 
+hooks ()
 {
 	export require_on_request='hook_on_request'
 	export require_on_search='hook_on_search'
@@ -170,7 +170,7 @@ hook_on_include ()
 	require_on_include "${1:-}"
 }
 
-hooks () 
+hooks ()
 {
 	local require_on_request='hook_on_request'
 	local require_on_search='hook_on_search'
@@ -188,10 +188,10 @@ hooks ()
 ```
 
 ```console test
-$ > always_requests.sh
-$ > never_finds.sh
-$ > always_errors.sh
-$ > never_includes.sh
+$ printf '' > always_requests.sh
+$ printf '' > never_finds.sh
+$ printf '' > always_errors.sh
+$ printf '' > never_includes.sh
 $ sh ./require_test hooks.sh
 Request: always_requests.sh
 Search: always_requests.sh
@@ -212,9 +212,9 @@ Could not find dependency 'always_errors.sh'
 
 ```sh file path1/hey.sh
 
-hey () 
-{ 
-	echo hey 
+hey ()
+{
+	echo hey
 }
 ```
 
@@ -222,8 +222,8 @@ hey ()
 
 require 'hey.sh'
 
-friend () 
-{ 
+friend ()
+{
 	hey
 	echo friend
 }

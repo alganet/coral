@@ -2,22 +2,22 @@ fs_path
 =======
 
 ```console test
-$ > ./SOME_FILE.txt
+$ printf '' > ./SOME_FILE.txt
 $ ./lib/dev fs_path SOME_FILE.txt .
 ./SOME_FILE.txt
 ```
 
 ```console test
 $ mkdir -p some_dir
-$ > ./some_dir/ANOTHER_FILE.txt
+$ printf '' > ./some_dir/ANOTHER_FILE.txt
 $ ./lib/dev fs_path ANOTHER_FILE.txt ./some_dir:.
 ./some_dir/ANOTHER_FILE.txt
 ```
 
 ```console test
 $ mkdir -p some_dir
-$ > ./some_dir/DUPLICATE.txt
-$ > ./DUPLICATE.txt
+$ printf '' > ./some_dir/DUPLICATE.txt
+$ printf '' > ./DUPLICATE.txt
 $ ./lib/dev fs_path DUPLICATE.txt ./some_dir:.
 ./some_dir/DUPLICATE.txt
 $ ./lib/dev fs_path DUPLICATE.txt .:./some_dir
