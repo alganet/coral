@@ -153,14 +153,14 @@ spec_doc_fence_line ()
 
 	if test "file" = "${key}"
 	then
-		echo "$line" >> "${spec_directory}/${value}"
+		printf %s\\n "$line" >> "${spec_directory}/${value}"
 	elif test "console" = "${language}" &&
 		 test ! -z "${key}"
 	then
-		echo "$line" >> "${spec_directory}/.spec/console"
+		printf %s\\n "$line" >> "${spec_directory}/.spec/console"
 	elif test "setup" = "${key}" && test "${language}" != "console"
 	then
-		echo "$line" >> "${spec_directory}/.spec/setup"
+		printf %s\\n "$line" >> "${spec_directory}/.spec/setup"
 	fi
 }
 
@@ -214,14 +214,12 @@ spec_doc_report_single_result ()
 		test_number=$((test_number + 1))
 		fail_number=$((fail_number + 1))
 		error_line="${line_last_open_fence}"
-		echo
-		echo "not ok	${line_report}"
-		echo "# Failure on ${target_file} line ${error_line}"
-		echo "# Output"
-		echo "${3}" | sed 's/# - \([^$]*\)\$/#	\1/'
-		echo "# Expected"
-		echo "${2}" | sed 's/# - \([^$]*\)\$/#	\1/'
-		echo
+		printf %s\\n ''
+		printf %s\\n "not ok	${line_report}"
+		printf %s\\n "# Failure on ${target_file} line ${error_line}"
+		printf %s\\n "${3}" | sed 's/# - \(.*\)/\1/' > "${spec_directory}/.assertion_output"
+		printf %s\\n "${2}" | sed 's/# - \(.*\)/\1/' > "${spec_directory}/.assertion_expectation"
+		diff "${spec_directory}/.assertion_expectation" "${spec_directory}/.assertion_output"
 	fi
 }
 
@@ -246,7 +244,7 @@ spec_doc_report_code_result ()
 		echo "not ok	${line_report}"
 		echo "# Failure on ${target_file} line ${error_line}"
 		echo "# Output"
-		echo "${3}" | sed 's/# - \([^$]*\)\$/#	\1/'
+		echo "${3}" | sed 's/# - \(.*\)/#	\1/'
 		echo "# Exit Code: ${sandbox_code}"
 		echo
 	fi

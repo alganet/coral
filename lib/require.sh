@@ -101,7 +101,7 @@ require_is_loaded ()
 
 require_source ()
 {
-	IFS=
+	IFS=''
 
 	while read -r line
 	do

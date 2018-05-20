@@ -4,9 +4,13 @@
 
 fs_path ()
 {
+	local oldifs
 	local solved
-	local target_path="${2:-${PATH:-}}"
-	local IFS=':'
+	local target_path
+
+	target_path="${2:-${PATH:-}}"
+	oldifs="${IFS}"
+	IFS=':'
 
 	for solved in ${target_path}
 	do
@@ -16,4 +20,8 @@ fs_path ()
 			return
 		fi
 	done
+
+	IFS="${oldifs}"
+
+	return 0
 }

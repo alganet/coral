@@ -1,16 +1,16 @@
 fs_basename
 ===========
 
-Extracts the file name portion of a path.
+Extracts the file name portion of a path and prints it out.
 
-	        dirname           filename    
+	        dirname           filename
 	           |                 |
        __________________   ____________
 	 /some/example/path/to/this_is_a_file
 
 Let's try some examples:
 
-```console test 
+```console test
 $ ./lib/dev fs_basename foo/bar
 bar
 $ ./lib/dev fs_basename foo/bar/baz

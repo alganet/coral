@@ -57,7 +57,7 @@ shell_assertion ()
 
 _shell_assertion_import_result ()
 {
-	sed 's/.*/# - &$/'
+	sed 's/^.*$/# - &/'
 }
 
 
@@ -65,12 +65,15 @@ _shell_assertion_collect_expectation ()
 {
 	if test -z "${expectation}" && test -z "${message}"
 	then
-		expectation="# - $(printf \\n)$"
+		expectation="# - $(printf \\n)"
 	elif test -z "${expectation}"
 	then
-		expectation="$(printf %s\\n "# - ${message}$")"
+		expectation="$(printf %s\\n "# - ${message}")"
 	else
-		expectation="$(printf %s\\n "${expectation}" "# - ${message}$")"
+		expectation="$(
+			printf %s\\n "${expectation}"
+			printf %s\\n "# - ${message}"
+		)"
 	fi
 
 	expectation_lines=$((expectation_lines + 1))
@@ -83,12 +86,11 @@ _shell_assertion_report ()
 	if test "${2}" = "${3}"
 	then
 		echo "  $ ${line_report}"
-		echo "${2}" | sed 's/# - \([^$]*\)\$/  \1/'
+		echo "${2}" | sed 's/# - \(.*\)/  \1/'
 	elif test ! -z "${1}"
 	then
 		echo "  $ ${line_report}"
-		echo "${3}" | sed 's/# - \([^$]*\)\$/- \1/'
-		echo "${2}" | sed 's/# - \([^$]*\)\$/+ \1/'
-		echo
+		echo "${3}" | sed 's/# - \(.*\)/+ \1/'
+		echo "${2}" | sed 's/# - \(.*\)/- \1/'
 	fi
 }

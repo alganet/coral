@@ -190,6 +190,16 @@ $ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" debian:testi
 $ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" debian:unstable sh -c 'sh ./spec_doc $(find doc/spec/*)'
 ```
 
+### Default Arch sh
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" base/archlinux:latest sh -c 'sh ./spec_doc $(find doc/spec/*)'
+```
+
+```console task
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" archlinux/base:latest sh -c 'sh ./spec_doc $(find doc/spec/*)'
+```
+
 ### Default OpenSuse sh
 
 ```console task

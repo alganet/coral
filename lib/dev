@@ -10,10 +10,11 @@ dev_library_dir="$(cd "${0%/*}";printf %s "${PWD}")"
 . "${dev_library_dir}/require.sh"
 
 entrypoint="${1:-false}"
+entrypoint="${entrypoint%.sh}"
 dev_library_file="$(echo "${entrypoint}" | sed 's|_|/|g').sh"
 require_path="${require_path:-.:${dev_library_dir}}"
 shift
 
-. "${dev_library_dir}/${dev_library_file}"
+require "${dev_library_file}"
 require_loaded=' require.sh '
 . "${dev_library_dir}/script/entrypoint"

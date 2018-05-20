@@ -92,7 +92,7 @@ module_assemble_dependencies ()
 	fi
 
 	echo "require_loaded='${require_loaded}'"
-	echo "require_path=\"\${assemble_path:-${require_path:-}}\""
+	echo "require_path=\"${assemble_path:-${require_path:-}}\""
 
 	if require_is_loaded "require.sh" ""
 	then
