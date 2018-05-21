@@ -214,7 +214,6 @@ spec_doc_report_single_result ()
 		test_number=$((test_number + 1))
 		fail_number=$((fail_number + 1))
 		error_line="${line_last_open_fence}"
-		printf %s\\n ''
 		printf %s\\n "not ok	${line_report}"
 		printf %s\\n "# Failure on ${target_file} line ${error_line}"
 		printf %s\\n "${3}" | sed 's/# - \(.*\)/\1/' > "${spec_directory}/.assertion_output"
@@ -240,12 +239,10 @@ spec_doc_report_code_result ()
 	else
 		fail_number=$((fail_number + 1))
 		error_line="${line_last_open_fence}"
-		echo
 		echo "not ok	${line_report}"
 		echo "# Failure on ${target_file} line ${error_line}"
 		echo "# Output"
 		echo "${3}" | sed 's/# - \(.*\)/#	\1/'
 		echo "# Exit Code: ${sandbox_code}"
-		echo
 	fi
 }

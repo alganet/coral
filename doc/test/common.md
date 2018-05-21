@@ -1,15 +1,13 @@
-🐚 coral Specification
+🐚 coral compatibility
 ======================
 
-Our documents are
-[literate](https://en.wikipedia.org/wiki/Literate_programming) documents
-containing natural language combined with contextual code snippets that
-run as tests.
+This document describes how to run the `coral` test suite across several
+different environment targets.
 
 Building
 --------
 
-First we build the `spec_doc` executable from the library
+First we build the `spec_doc` executable from the library:
 
 ```console task
 $ ./lib/dev module_assemble spec_doc spec_doc
@@ -18,7 +16,8 @@ $ ./lib/dev module_assemble spec_doc spec_doc
 Basic Run
 ---------
 
-The basic test suite should run all document and library tests.
+The basic test suite should run all document and library tests. We run
+it on the host machine to ensure the tests are properly working.
 
 ```console task
 $ sh ./spec_doc $(find doc/spec/*)
@@ -26,6 +25,9 @@ $ sh ./spec_doc $(find doc/spec/*)
 
 Testing Other Shells
 --------------------
+
+Each other environment will be tested inside a Docker container for
+better isolation.
 
 For that, we'll need a `Dockerfile`
 
@@ -53,6 +55,143 @@ WORKDIR /usr/local/share/coral
 
 This image will allow us to install multiple shells to test their
 compatibility:
+
+
+### Default Ubuntu dash
+
+```console task
+$ docker build --build-arg "TARGET=sh" -t dash .
+$ docker run --rm dash
+```
+
+### Default Ubuntu bash
+
+```console task
+$ docker build --build-arg "TARGET=bash" -t bash .
+$ docker run --rm bash
+```
+
+### Default Ubuntu yash
+
+```console task
+$ docker build --build-arg APT="yash" -t yash .
+$ docker run --rm -e spec_shell="yash" -t yash yash -c 'yash ./spec_doc $(find doc/spec/*)'
+```
+
+### Default Ubuntu posh
+
+```console task
+$ docker build --build-arg APT="posh" -t posh .
+$ docker run --rm -e spec_shell="posh" -t posh posh -c 'posh ./spec_doc $(find doc/spec/*)'
+```
+
+### Default Ubuntu zsh
+
+```console task
+$ docker build --build-arg APT="zsh" -t zsh .
+$ docker run --rm -e spec_shell="zsh" -t zsh zsh -c 'zsh ./spec_doc $(find doc/spec/*)'
+```
+
+### Default Ubuntu mksh
+
+```console task
+$ docker build --build-arg APT="mksh" -t mksh .
+$ docker run --rm -e spec_shell="mksh" -t mksh mksh -c 'mksh ./spec_doc $(find doc/spec/*)'
+```
+
+### Default Ubuntu pdksh
+
+```console task
+$ docker build --build-arg APT="pdksh" -t pdksh .
+$ docker run --rm -e spec_shell="pdksh" -t pdksh pdksh -c 'pdksh ./spec_doc $(find doc/spec/*)'
+```
+
+### Default Ubuntu sash
+
+```console task
+$ docker build --build-arg APT="sash" -t sash .
+$ docker run --rm -e spec_shell="sash" -t sash sash -c 'sash ./spec_doc $(find doc/spec/*)'
+```
+
+### Default Ubuntu ksh
+
+```console task
+$ docker build --build-arg APT="ksh" -t ksh .
+$ docker run --rm -e spec_shell="ksh" -t ksh ksh -c 'ksh ./spec_doc $(find doc/spec/*)'
+```
+
+### Default Ubuntu zsh-beta
+
+```console task
+$ docker build --build-arg APT="zsh-beta" -t zsh-beta .
+$ docker run --rm -e spec_shell="zsh-beta" -t zsh-beta zsh-beta -c 'zsh-beta ./spec_doc $(find doc/spec/*)'
+```
+
+### Default Ubuntu busybox
+
+```console task
+$ docker build --build-arg APT="busybox" -t busybox .
+$ docker run --rm -e spec_shell="busybox sh" -t busybox busybox sh -c 'busybox sh ./spec_doc $(find doc/spec/*)'
+```
+
+### Bash 2.05b
+
+```console task
+$ docker build --build-arg "PPA=team-mayhem/multishell" --build-arg "APT=bash-2.05b.13" -t bash2 .
+$ docker run --rm -e spec_shell="bash-2.05b.13" -t bash2 bash-2.05b.13 -c 'bash-2.05b.13 ./spec_doc $(find doc/spec/*)'
+```
+
+### Bash 3.0
+
+```console task
+$ docker build --build-arg "PPA=team-mayhem/multishell" --build-arg "APT=bash-3.0.16" -t bash3 .
+$ docker run --rm -e spec_shell="bash-3.0.16" -t bash3 bash-3.0.16 -c 'bash-3.0.16 ./spec_doc $(find doc/spec/*)'
+```
+
+### Bash 3.1
+
+```console task
+$ docker build --build-arg "PPA=team-mayhem/multishell" --build-arg "APT=bash-3.1.9" -t bash31 .
+$ docker run --rm -e spec_shell="bash-3.1.9" -t bash31 bash-3.1.9 -c 'bash-3.1.9 ./spec_doc $(find doc/spec/*)'
+```
+
+### Bash 3.2
+
+```console task
+$ docker build --build-arg "PPA=team-mayhem/multishell" --build-arg "APT=bash-3.2.9" -t bash32 .
+$ docker run --rm -e spec_shell="bash-3.2.9" -t bash32 bash-3.2.9 -c 'bash-3.2.9 ./spec_doc $(find doc/spec/*)'
+```
+
+### Bash 4.0
+
+This version is unsupported!
+
+### Bash 4.1
+
+```console task
+$ docker build --build-arg "PPA=team-mayhem/multishell" --build-arg "APT=bash-4.1.9" -t bash41 .
+$ docker run --rm -e spec_shell="bash-4.1.9" -t bash41 bash-4.1.9 -c 'bash-4.1.9 ./spec_doc $(find doc/spec/*)'
+```
+
+### Bash 4.2
+
+```console task
+$ docker build --build-arg "PPA=team-mayhem/multishell" --build-arg "APT=bash-4.2.53" -t bash42 .
+$ docker run --rm -e spec_shell="bash-4.2.53" -t bash42 bash-4.2.53 -c 'bash-4.2.53 ./spec_doc $(find doc/spec/*)'
+```
+
+### Bash 4.3
+
+```console task
+$ docker build --build-arg "PPA=team-mayhem/multishell" --build-arg "APT=bash-4.3.9" -t bash43 .
+$ docker run --rm -e spec_shell="bash-4.3.9" -t bash43 bash-4.3.9 -c 'bash-4.3.9 ./spec_doc $(find doc/spec/*)'
+```
+
+Default Shells From Common Images
+---------------------------------
+
+To ensure no surprises, `coral` is automatically tested targeting the default shell
+implementations of multiple popular images.
 
 ### Default Busybox
 
@@ -223,135 +362,4 @@ $ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" ubuntu:xenia
 
 ```console task
 $ docker run --rm -v "$(pwd):/coral" -w "/coral" -e spec_shell="sh" ubuntu:trusty sh -c 'sh ./spec_doc $(find doc/spec/*)'
-```
-
-
-### Default Ubuntu dash
-
-```console task
-$ docker build --build-arg "TARGET=sh" -t dash .
-$ docker run --rm dash
-```
-
-### Default Ubuntu bash
-
-```console task
-$ docker build --build-arg "TARGET=bash" -t bash .
-$ docker run --rm bash
-```
-
-### Default Ubuntu yash
-
-```console task
-$ docker build --build-arg APT="yash" -t yash .
-$ docker run --rm -e spec_shell="yash" -t yash yash -c 'yash ./spec_doc $(find doc/spec/*)'
-```
-
-### Default Ubuntu posh
-
-```console task
-$ docker build --build-arg APT="posh" -t posh .
-$ docker run --rm -e spec_shell="posh" -t posh posh -c 'posh ./spec_doc $(find doc/spec/*)'
-```
-
-### Default Ubuntu zsh
-
-```console task
-$ docker build --build-arg APT="zsh" -t zsh .
-$ docker run --rm -e spec_shell="zsh" -t zsh zsh -c 'zsh ./spec_doc $(find doc/spec/*)'
-```
-
-### Default Ubuntu mksh
-
-```console task
-$ docker build --build-arg APT="mksh" -t mksh .
-$ docker run --rm -e spec_shell="mksh" -t mksh mksh -c 'mksh ./spec_doc $(find doc/spec/*)'
-```
-
-### Default Ubuntu pdksh
-
-```console task
-$ docker build --build-arg APT="pdksh" -t pdksh .
-$ docker run --rm -e spec_shell="pdksh" -t pdksh pdksh -c 'pdksh ./spec_doc $(find doc/spec/*)'
-```
-
-### Default Ubuntu sash
-
-```console task
-$ docker build --build-arg APT="sash" -t sash .
-$ docker run --rm -e spec_shell="sash" -t sash sash -c 'sash ./spec_doc $(find doc/spec/*)'
-```
-
-### Default Ubuntu ksh
-
-```console task
-$ docker build --build-arg APT="ksh" -t ksh .
-$ docker run --rm -e spec_shell="ksh" -t ksh ksh -c 'ksh ./spec_doc $(find doc/spec/*)'
-```
-
-### Default Ubuntu zsh-beta
-
-```console task
-$ docker build --build-arg APT="zsh-beta" -t zsh-beta .
-$ docker run --rm -e spec_shell="zsh-beta" -t zsh-beta zsh-beta -c 'zsh-beta ./spec_doc $(find doc/spec/*)'
-```
-
-### Default Ubuntu busybox
-
-```console task
-$ docker build --build-arg APT="busybox" -t busybox .
-$ docker run --rm -e spec_shell="busybox sh" -t busybox busybox sh -c 'busybox sh ./spec_doc $(find doc/spec/*)'
-```
-
-### Bash 2.05b
-
-```console task
-$ docker build --build-arg "PPA=team-mayhem/multishell" --build-arg "APT=bash-2.05b.13" -t bash2 .
-$ docker run --rm -e spec_shell="bash-2.05b.13" -t bash2 bash-2.05b.13 -c 'bash-2.05b.13 ./spec_doc $(find doc/spec/*)'
-```
-
-### Bash 3.0
-
-```console task
-$ docker build --build-arg "PPA=team-mayhem/multishell" --build-arg "APT=bash-3.0.16" -t bash3 .
-$ docker run --rm -e spec_shell="bash-3.0.16" -t bash3 bash-3.0.16 -c 'bash-3.0.16 ./spec_doc $(find doc/spec/*)'
-```
-
-### Bash 3.1
-
-```console task
-$ docker build --build-arg "PPA=team-mayhem/multishell" --build-arg "APT=bash-3.1.9" -t bash31 .
-$ docker run --rm -e spec_shell="bash-3.1.9" -t bash31 bash-3.1.9 -c 'bash-3.1.9 ./spec_doc $(find doc/spec/*)'
-```
-
-### Bash 3.2
-
-```console task
-$ docker build --build-arg "PPA=team-mayhem/multishell" --build-arg "APT=bash-3.2.9" -t bash32 .
-$ docker run --rm -e spec_shell="bash-3.2.9" -t bash32 bash-3.2.9 -c 'bash-3.2.9 ./spec_doc $(find doc/spec/*)'
-```
-
-### Bash 4.0
-
-This version is unsupported!
-
-### Bash 4.1
-
-```console task
-$ docker build --build-arg "PPA=team-mayhem/multishell" --build-arg "APT=bash-4.1.9" -t bash41 .
-$ docker run --rm -e spec_shell="bash-4.1.9" -t bash41 bash-4.1.9 -c 'bash-4.1.9 ./spec_doc $(find doc/spec/*)'
-```
-
-### Bash 4.2
-
-```console task
-$ docker build --build-arg "PPA=team-mayhem/multishell" --build-arg "APT=bash-4.2.53" -t bash42 .
-$ docker run --rm -e spec_shell="bash-4.2.53" -t bash42 bash-4.2.53 -c 'bash-4.2.53 ./spec_doc $(find doc/spec/*)'
-```
-
-### Bash 4.3
-
-```console task
-$ docker build --build-arg "PPA=team-mayhem/multishell" --build-arg "APT=bash-4.3.9" -t bash43 .
-$ docker run --rm -e spec_shell="bash-4.3.9" -t bash43 bash-4.3.9 -c 'bash-4.3.9 ./spec_doc $(find doc/spec/*)'
 ```
