@@ -7,7 +7,7 @@ A modest shell script library that _works everywhere_.
 fine though.
 
 `coral` is designed to fill strategic gaps in _Shell Script_ by
-providing portable libraries that work across [multiple shells](doc/support.md).
+providing portable libraries that work across [multiple shells](doc/test/common.md).
 
 ---
 
