@@ -66,17 +66,15 @@ module_assemble_dependencies ()
 	local require_sources=
 
 	printf '' > "${assemble_dir}/required_modules"
-	echo 'require () ( : )' > "${assemble_dir}/require"
+	printf '' > "${assemble_dir}/required_calls"
+	printf %s\\n 'require () ( : )' > "${assemble_dir}/require"
 	require "${input_file}"
 
 	require_sources="$(fs_lines "${assemble_dir}/sources")"
 
 	if test -n "${require_sources}"
 	then
-		if ! require_is_loaded 'fs/lines.sh' ''
-		then
-			require_source 'fs/lines.sh' >> "${assemble_dir}/required_modules"
-		fi
+		require_source 'fs/lines.sh' >> "${assemble_dir}/required_modules"
 		fs_lines <<-SOURCES_SNIPPET >> "${assemble_dir}/required_modules"
 			require_source ()
 			{
@@ -96,11 +94,12 @@ module_assemble_dependencies ()
 
 	if require_is_loaded "require.sh" ""
 	then
-		require_source 'require.sh' > "${assemble_dir}/require"
+		printf %s\\n\\n "eval \"\$(require_source 'require.sh')\"" >> "${assemble_dir}/required_calls"
 	fi
 
 	fs_lines "${assemble_dir}/require"
 	fs_lines "${assemble_dir}/required_modules"
+	fs_lines "${assemble_dir}/required_calls"
 }
 
 
@@ -112,13 +111,14 @@ module_assemble_on_include ()
 	local contents
 
 	script_target_name="$(fs_basename "${script_target}")"
-	contents="$(fs_lines "${script_target}")"
+	#contents="$(fs_lines "${script_target}")"
 
 	test "${script_target_name%*.sh}.sh" = "${script_target_name}" || return 0
 
 	if test "${assemble_dependency}" != "require.sh"
 	then
-		printf %s\\n\\n "${contents}" >> "${assemble_dir}/required_modules"
+		#printf %s\\n\\n "${contents}" >> "${assemble_dir}/required_modules"
+		printf %s\\n\\n "eval \"\$(require_source '${assemble_dependency}')\"" >> "${assemble_dir}/required_calls"
 		require_on_include "${@:-}"
 	fi
 }
@@ -130,7 +130,7 @@ module_assemble_on_request ()
 	shift
 	local remaining_params="${*:-}"
 
-	if test "${#}" -gt 0 && test "${remaining_params#*--source*}" != "${*:-}"
+	if true
 	then
 		fs_lines <<-SOURCES_SNIPPET >> "${assemble_dir}/sources"
 			    elif test "\${1}" = "${assemble_dependency}"

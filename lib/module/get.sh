@@ -7,7 +7,7 @@ require 'net/fetch.sh'
 
 module_get ()
 {
-	local repo='https://raw.githubusercontent.com/alganet/coral/master'
+	local repo='https://raw.githubusercontent.com/alganet/coral/master/lib'
 	local module_get_channel="${module_get_channel:-${repo}}"
 	export require_on_search='module_get_on_search'
 	export require_on_request='module_get_on_request'
@@ -18,8 +18,9 @@ module_get ()
 
 	target_file="$(echo "${target}" | sed 's|_|/|g').sh"
 
-
 	require "${target_file}"
+
+	"${target}" "${@:-}"
 }
 
 module_get_on_request ()
