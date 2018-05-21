@@ -15,7 +15,7 @@ spec_doc ()
 	local fail_number=0
 	local test_result=0
 	local oldifs="${IFS}"
-	local tempdir=
+	local spec_doc_tmp
 	trap 'spec_doc_clean' 2
 
 	echo "# using	'${spec_doc_shell:-sh}'"
@@ -30,11 +30,11 @@ spec_doc ()
 
 	target_files="$(printf %s\\n "${@:-}")"
 
-	tempdir="$(fs_tempdir 'spec_doc')"
+	spec_doc_tmp="$(fs_tempdir 'spec_doc')"
 
 	echo "# "
 
-	cp -R "${PWD}" "${tempdir}/pwd"
+	cp -R "${PWD}" "${spec_doc_tmp}/pwd"
 
 	for target_file in ${target_files}
 	do
@@ -43,9 +43,9 @@ spec_doc ()
 			continue
 		fi
 		echo "# file	'${target_file}'"
-		mkdir -p "${tempdir}/${target_file}.workspace"
-		cp -R "${tempdir}/pwd/." "${tempdir}/${target_file}.workspace"
-		spec_doc_parse "${tempdir}/${target_file}.workspace" "${target_file}"
+		mkdir -p "${spec_doc_tmp}/${target_file}.workspace"
+		cp -R "${spec_doc_tmp}/pwd/." "${spec_doc_tmp}/${target_file}.workspace"
+		spec_doc_parse "${spec_doc_tmp}/${target_file}.workspace" "${target_file}"
 	done
 
 	if test "${fail_number}" -gt 0
@@ -67,7 +67,7 @@ spec_doc ()
 
 spec_doc_clean ()
 {
-	rm -Rf "${tempdir}"
+	rm -Rf "${spec_doc_tmp}"
 	${1:-exit 1}
 }
 

@@ -17,6 +17,9 @@ shell_assertion ()
 	local expectation_lines=0
 	local message_line=1
 	local oldifs="${IFS}"
+	local sandbox_id
+
+	sandbox_id="$(math_random)"
 
 	cd "${assertion_dir}"
 
@@ -30,7 +33,7 @@ shell_assertion ()
 			instructions="${message#*\$ }"
 			set +e
 			shell_sandbox_previous_code="${sandbox_code}" \
-				shell_sandbox "${assertion_dir}/.sandbox" "${instructions}" \
+				shell_sandbox "${assertion_dir}/.${sandbox_id}" "${instructions}" \
 				printf '' > "${assertion_dir}/.assertion_result" 2>&1
 			sandbox_code="${?}"
 			set -e

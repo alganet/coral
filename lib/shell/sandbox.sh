@@ -47,7 +47,8 @@ shell_sandbox ()
 		"${sandbox_file}${signature}.next" 2>/dev/null |
 		sed '/^external_code/d' >> "${sandbox_file}"
 
-	rm "${sandbox_file}${signature}.next" "${sandbox_file}${signature}.prev"
+	test -n "${sandbox_file}${signature}.prev" || rm "${sandbox_file}${signature}.prev"
+	test -n "${sandbox_file}${signature}.next" || rm "${sandbox_file}${signature}.next"
 
 	return ${return_code}
 }

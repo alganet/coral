@@ -1,22 +1,11 @@
 fs_tempdir
 ==========
 
-Creates directories for temporary use and prints out the absolute
-path for the directory. An optional prefix is allowed.
-
----
-
-Let's create a temporary directory, test for it's existence and remove
-it:
-
 ```console test
 $ my_tempdir="$(./lib/dev fs_tempdir)"
 $ test -n "${my_tempdir}" || echo 'Fail'
 $ rm -r "${my_tempdir}"
 ```
-
-Multiple temporary directories can be created, each one with a distinct
-random name:
 
 ```console test
 $ my_tempdir="$(./lib/dev fs_tempdir)"
@@ -26,7 +15,19 @@ $ rm -r "${my_tempdir}"
 $ rm -r "${other_tempdir}"
 ```
 
-We can use a prefix to be able to find our temporary directories easier:
+```console test
+$ ./lib/dev fs_tempdir > my_tempdir_path.txt
+$ my_tempdir="$(./lib/dev fs_lines my_tempdir_path.txt | sed -n '/tempdir/p')"
+$ test -n "${my_tempdir}" || echo 'Fail'
+$ rm -r "${my_tempdir}" my_tempdir_path.txt
+```
+
+```console test
+$ ./lib/dev fs_tempdir 'zoid' > my_tempdir_path.txt
+$ my_tempdir="$(./lib/dev fs_lines my_tempdir_path.txt | sed -n '/zoid/p')"
+$ test -n "${my_tempdir}" || echo 'Fail'
+$ rm -r "${my_tempdir}" my_tempdir_path.txt
+```
 
 ```console test
 $ ./lib/dev fs_tempdir 'zoid' > my_tempdir_path.txt

@@ -2,7 +2,7 @@ spec_doc
 ========
 
 A specification is a program written in [Markdown][MD]. [Code blocks][CB] are
-used to include formal code examples. 
+used to include formal code examples.
 
 The `coral spec` command will run these files as a test suite, using blocks
 with special [info strings][IS] to play different roles in the test suite.
@@ -24,7 +24,7 @@ Language blocks are also ignored.
 
 Special Blocks
 --------------
-	
+
 Blocks to place files in the test directory. Useful if you want to simulate
 files present in the disk during the tests.
 
@@ -32,7 +32,7 @@ files present in the disk during the tests.
 	A "file" block will save that file in the working directory when running
 	tests.
 	```
-	
+
 A block to simulate a console interaction. It checks if the real output
 matches the expected in the specification.
 

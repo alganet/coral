@@ -6,10 +6,12 @@ require 'math/random.sh'
 
 fs_tempdir ()
 {
-	local prefix="${1:-tempdir.sh}"
-	local systmp="${TMPDIR:-/tmp}"
+	local prefix
+	local systmp
     local tempdir
 
+    prefix="${1:-tempdir.sh}"
+	systmp="${TMPDIR:-/tmp}"
     tempdir="$(mktemp -d "${systmp}/${prefix}.XXXXXX" 2>/dev/null || :)"
 
     if test -z "${tempdir:-}"
@@ -18,5 +20,5 @@ fs_tempdir ()
 	    mkdir -m 'u+rwx' "${tempdir}"
 	fi
 
-	echo "${tempdir}"
+	printf %s\\n "${tempdir}"
 }
