@@ -2,22 +2,27 @@
  # module_assemble.sh - bundles modules into standalone executables
  ##
 
-require 'require.sh'        --source
-require 'script/entrypoint' --source
-require 'script/support'    --source
+require 'require.sh'
+require 'script/entrypoint'
+require 'script/support'
 require 'fs/basename.sh'
 require 'fs/tempdir.sh'
 require 'fs/lines.sh'
 
 module_assemble ()
 {
-	local assemble_input="${1:-}"
-	local assemble_output="${2:--}"
+	local assemble_input
+	local assemble_output
 	local assemble_dir
-	export require_on_include='module_assemble_on_include'
-	export require_on_request='module_assemble_on_request'
-	export require_loaded=' '
+	export require_on_include
+	export require_on_request
+	export require_loaded
 
+	assemble_input="${1:-}"
+	assemble_output="${2:--}"
+	require_on_include='module_assemble_on_include'
+	require_on_request='module_assemble_on_request'
+	require_loaded=' '
 	assemble_dir="$(fs_tempdir 'module_assemble')"
 
 	trap 'module_assemble_exit' 2
@@ -49,9 +54,10 @@ module_assemble_exit ()
 
 module_assemble_contents ()
 {
-	local input="${1:-}"
+	local input
 	local input_file
 
+	input="${1:-}"
 	input_file="$(echo "${input}" | sed 's|_|/|g').sh"
 
 	require_source 'script/support'
@@ -62,8 +68,10 @@ module_assemble_contents ()
 
 module_assemble_dependencies ()
 {
-	local input_file="${1:-}"
-	local require_sources=
+	local input_file
+	local require_sources
+
+	input_file="${1:-}"
 
 	printf '' > "${assemble_dir}/required_modules"
 	printf '' > "${assemble_dir}/required_calls"
@@ -105,10 +113,13 @@ module_assemble_dependencies ()
 
 module_assemble_on_include ()
 {
-	local script_target="${1}"
+	local script_target
 	local script_target_name
-	local assemble_dependency="${2:-}"
+	local assemble_dependency
 	local contents
+
+	script_target="${1}"
+	assemble_dependency="${2:-}"
 
 	script_target_name="$(fs_basename "${script_target}")"
 	#contents="$(fs_lines "${script_target}")"
@@ -126,9 +137,12 @@ module_assemble_on_include ()
 
 module_assemble_on_request ()
 {
-	local assemble_dependency="${1}"
+	local assemble_dependency
+	local remaining_params
+
+	assemble_dependency="${1}"
 	shift
-	local remaining_params="${*:-}"
+	remaining_params="${*:-}"
 
 	if true
 	then

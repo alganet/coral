@@ -2,7 +2,7 @@
  # shell_sandbox.sh - runs shell code controlling variable input/output
  ##
 
-require 'shell/vars.sh' --source
+require 'shell/vars.sh'
 require 'math/random.sh'
 
 shell_sandbox ()

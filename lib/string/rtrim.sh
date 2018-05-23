@@ -5,5 +5,5 @@ string_rtrim ()
 		set -- "${1}" "${2%${1}}"
 	done
 
-	echo "${2}"
+	printf %s\\n "${2}"
 }

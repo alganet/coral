@@ -10,20 +10,26 @@ require 'shell/assertion.sh'
 
 spec_doc ()
 {
-	local spec_doc_shell="${spec_doc_shell:-sh}"
-	local test_number=1
-	local fail_number=0
-	local test_result=0
-	local oldifs="${IFS}"
+	local spec_doc_shell
+	local test_number
+	local fail_number
+	local test_result
+	local oldifs
 	local spec_doc_tmp
+
+	spec_doc_shell="${spec_doc_shell:-sh}"
+	test_number=1
+	fail_number=0
+	test_result=0
+	oldifs="${IFS}"
 	trap 'spec_doc_clean' 2
 
-	echo "# using	'${spec_doc_shell:-sh}'"
+	printf %s\\n "# using	'${spec_doc_shell:-sh}'"
 
 	if test -z "${*:-}"
 	then
-		echo "# "
-		echo "# FAILURE (no .md files found)"
+		printf %s\\n "# "
+		printf %s\\n "# FAILURE (no .md files found)"
 		test_result=1
 		return
 	fi
@@ -32,7 +38,7 @@ spec_doc ()
 
 	spec_doc_tmp="$(fs_tempdir 'spec_doc')"
 
-	echo "# "
+	printf %s\\n "# "
 
 	cp -R "${PWD}" "${spec_doc_tmp}/pwd"
 
@@ -42,7 +48,7 @@ spec_doc ()
 		then
 			continue
 		fi
-		echo "# file	'${target_file}'"
+		printf %s\\n "# file	'${target_file}'"
 		mkdir -p "${spec_doc_tmp}/${target_file}.workspace"
 		cp -R "${spec_doc_tmp}/pwd/." "${spec_doc_tmp}/${target_file}.workspace"
 		spec_doc_parse "${spec_doc_tmp}/${target_file}.workspace" "${target_file}"
@@ -50,15 +56,15 @@ spec_doc ()
 
 	if test "${fail_number}" -gt 0
 	then
-		echo "# FAILURE (${fail_number} of ${test_number} assertions failed)"
-		echo "1..${test_number}"
+		printf %s\\n "# FAILURE (${fail_number} of ${test_number} assertions failed)"
+		printf %s\\n "1..${test_number}"
 		test_result=1
 	elif test "${test_number}" -gt 0
 	then
-		echo "# SUCCESS"
-		echo "1..${test_number}"
+		printf %s\\n "# SUCCESS"
+		printf %s\\n "1..${test_number}"
 	else
-		echo "# FAILURE (no tests found)"
+		printf %s\\n "# FAILURE (no tests found)"
 		test_result=1
 	fi
 
@@ -73,14 +79,20 @@ spec_doc_clean ()
 
 spec_doc_parse ()
 {
-	local spec_directory="${1}"
-	local line=
-	local open_fence=
-	local possible_fence=
-	local line_number=1
-	local line_last_open_fence=0
-	local setup='true'
-	local oldifs="${IFS}"
+	local spec_directory
+	local line
+	local open_fence
+	local possible_fence
+	local line_number
+	local line_last_open_fence
+	local setup
+	local oldifs
+
+	line_last_open_fence=0
+	line_number=1
+	spec_directory="${1}"
+	setup='true'
+	oldifs="${IFS}"
 
 	mkdir -p "${spec_directory}/.spec"
 
@@ -90,7 +102,7 @@ spec_doc_parse ()
 		IFS="${oldifs}"
 		possible_fence="${line#*\`\`\`}"
 
-		if test -z "${open_fence}"
+		if test -z "${open_fence:-}"
 		then
 			if test "${line}" = "\`\`\`${possible_fence}"
 			then
@@ -122,10 +134,15 @@ spec_doc_parse ()
 
 spec_doc_fence_open ()
 {
-	local language="${1:-}"
-	local key="${2:-}"
-	local value="${3:-}"
-	local file_path=''
+	local language
+	local key
+	local value
+	local file_path
+
+	language="${1:-}"
+	key="${2:-}"
+	value="${3:-}"
+	file_path=''
 
 	if test "file" = "${key}"
 	then
@@ -147,9 +164,13 @@ spec_doc_fence_open ()
 
 spec_doc_fence_line ()
 {
-	local language="${1:-}"
-	local key="${2:-}"
-	local value="${3:-}"
+	local language
+	local key
+	local value
+
+	language="${1:-}"
+	key="${2:-}"
+	value="${3:-}"
 
 	if test "file" = "${key}"
 	then
@@ -166,9 +187,13 @@ spec_doc_fence_line ()
 
 spec_doc_fence_close ()
 {
-	local language="${1:-}"
-	local key="${2:-}"
-	local value="${3:-}"
+	local language
+	local key
+	local value
+
+	language="${1:-}"
+	key="${2:-}"
+	value="${3:-}"
 
 	if test "console" = "${language}" &&
 	   test "test" = "${key}"
@@ -203,12 +228,14 @@ spec_doc_run_console ()
 
 spec_doc_report_single_result ()
 {
-	local line_report="${test_number} - ${1}"
+	local line_report
+
+	line_report="${test_number} - ${1}"
 
 	if test "${2}" = "${3}"
 	then
 		test_number=$((test_number + 1))
-		echo "ok	${line_report}"
+		printf %s\\n "ok	${line_report}"
 	elif test ! -z "${1}"
 	then
 		test_number=$((test_number + 1))
@@ -224,7 +251,9 @@ spec_doc_report_single_result ()
 
 spec_doc_report_code_result ()
 {
-	local line_report="${test_number} - ${1}"
+	local line_report
+
+	line_report="${test_number} - ${1}"
 
 	if test -z "${1}"
 	then
@@ -235,14 +264,14 @@ spec_doc_report_code_result ()
 
 	if test '0' = "${sandbox_code}"
 	then
-		echo "ok	${line_report}"
+		printf %s\\n "ok	${line_report}"
 	else
 		fail_number=$((fail_number + 1))
 		error_line="${line_last_open_fence}"
-		echo "not ok	${line_report}"
-		echo "# Failure on ${target_file} line ${error_line}"
-		echo "# Output"
-		echo "${3}" | sed 's/# - \(.*\)/#	\1/'
-		echo "# Exit Code: ${sandbox_code}"
+		printf %s\\n "not ok	${line_report}"
+		printf %s\\n "# Failure on ${target_file} line ${error_line}"
+		printf %s\\n "# Output"
+		printf %s\\n "${3}" | sed 's/# - \(.*\)/#	\1/'
+		printf %s\\n "# Exit Code: ${sandbox_code}"
 	fi
 }

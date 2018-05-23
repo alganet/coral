@@ -7,13 +7,20 @@ require 'net/fetch.sh'
 
 module_get ()
 {
-	local repo='https://raw.githubusercontent.com/alganet/coral/master/lib'
-	local module_get_channel="${module_get_channel:-${repo}}"
-	export require_on_search='module_get_on_search'
-	export require_on_request='module_get_on_request'
-	export require_on_include='module_get_on_include'
-	local target="${1:-}"
+	local repo
+	local module_get_channel
+	export require_on_search
+	export require_on_request
+	export require_on_include
+	local target
 	local target_file
+
+	repo='https://raw.githubusercontent.com/alganet/coral/master/lib'
+	module_get_channel="${module_get_channel:-${repo}}"
+	require_on_search='module_get_on_search'
+	require_on_request='module_get_on_request'
+	require_on_include='module_get_on_include'
+	target="${1:-}"
 	shift
 
 	target_file="$(echo "${target}" | sed 's|_|/|g').sh"
@@ -42,9 +49,10 @@ module_get_on_include ()
 
 module_get_on_search ()
 {
-	local vendor="${HOME}/.coral"
+	local vendor
 	local found
 
+	vendor="${HOME}/.coral"
 	found="$(require_on_search "${@:-}")"
 
 	if test -z "${found}"
