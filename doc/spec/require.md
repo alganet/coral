@@ -1,7 +1,12 @@
 require
 =======
 
-### Simple Module Requiring
+A modern module loader for many shell script interpreters.
+
+---
+
+`require.sh` is a module runner that needs to be loaded within a
+bootstrap. This is the bootstrap for testing it:
 
 ```sh file require_test
 #!/bin/sh
@@ -30,6 +35,10 @@ require_test ()
 
 ```
 
+The [lib_dev](lib_dev.md) module is also a `require.sh` bootstrap.
+
+Now we define some module. First a standalone one:
+
 ```sh file hello.sh
 
 hello ()
@@ -37,6 +46,8 @@ hello ()
 	echo hello
 }
 ```
+
+We make `world.sh` depend on `hello.sh`:
 
 ```sh file world.sh
 
@@ -50,6 +61,8 @@ world ()
 
 ```
 
+Running it should show messages in order as modules are executed:
+
 ```console test
 $ sh ./require_test world.sh
 hello
@@ -57,6 +70,9 @@ world
 ```
 
 ### Self-references
+
+We can create a module that contains self-references and `require.sh`
+will know how to ignore it:
 
 ```sh file loop.sh
 
@@ -68,12 +84,17 @@ loop ()
 }
 ```
 
+Running it will require the module a single time:
+
 ```console test
 $ sh ./require_test loop.sh
 loop
 ```
 
 ### Circular references
+
+The same applies for circular references, the chain will execute only
+a single time from the first time the module appears:
 
 ```sh file lorem.sh
 
@@ -97,7 +118,6 @@ ipsum ()
 
 ```
 
-
 ```console test
 $ sh ./require_test ipsum.sh
 lorem
@@ -105,6 +125,11 @@ ipsum
 ```
 
 ### Hooks
+
+Other modules might change the behavior of `require.sh`. This is the
+case of [module_assemble](module_assemble.md).
+
+These hooks need to attend some expectations from the require module:
 
 ```sh file hooks.sh
 
@@ -136,6 +161,8 @@ hooks ()
 
 ```
 
+These sample hooks only log what has been loaded:
+
 ```console test
 $ sh ./require_test hooks.sh
 Request: world.sh
@@ -147,6 +174,9 @@ Include: ./hello.sh
 ```
 
 ### Advanced Hooks
+
+You might use hooks to emulate the presence of modules that don't exist
+or manipulate their lookup flow:
 
 ```sh file hooks.sh
 
@@ -209,6 +239,9 @@ Could not find dependency 'always_errors.sh'
 ```
 
 ### Paths
+
+By default, `require.sh` should use the `$require_path` var to look for
+modules.
 
 ```sh file path1/hey.sh
 

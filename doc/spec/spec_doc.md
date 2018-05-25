@@ -162,7 +162,7 @@ ok	14 - ./lib/dev fs_dirname /some/example/path/to/this_is_a_file
 1..15
 ```
 
-The output is TAP-compliant and can be fet to any harness system
+The output is TAP-compliant and can be fed to any harness system
 directly or saved to a file.
 
 Failures will include a diff of the output that didn't matched:

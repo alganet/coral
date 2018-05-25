@@ -25,7 +25,7 @@ module_assemble ()
 	require_loaded=' '
 	assemble_dir="$(fs_tempdir 'module_assemble')"
 
-	trap 'module_assemble_exit' 2
+	trap 'module_assemble_exit' 2 >/dev/null 2>&1 || :
 
 	printf '' > "${assemble_dir}/sources"
 	module_assemble_contents "${assemble_input}" > "${assemble_dir}/output"

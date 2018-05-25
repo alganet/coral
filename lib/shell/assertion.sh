@@ -6,19 +6,30 @@ require 'shell/sandbox.sh'
 
 shell_assertion ()
 {
-	local assertion_dir="${2:-.}"
-	local assertion="${3:-_shell_assertion_report}"
-	local previous_dir="${PWD}"
-	local message=
-	local instructions=
-	local result=true
-	local sandbox_code=0
-	local expectation=
-	local expectation_lines=0
-	local message_line=1
-	local oldifs="${IFS}"
+	local assertion_dir
+	local assertion
+	local previous_dir
+	local message
+	local instructions
+	local result
+	local sandbox_code
+	local expectation
+	local expectation_lines
+	local message_line
+	local previous_IFS
 	local sandbox_id
 
+	assertion_dir="${2:-.}"
+	assertion="${3:-_shell_assertion_report}"
+	previous_dir="${PWD}"
+	message=
+	instructions=
+	result=true
+	sandbox_code=0
+	expectation=
+	expectation_lines=0
+	message_line=1
+	previous_IFS="${IFS}"
 	sandbox_id="$(math_random)"
 
 	cd "${assertion_dir}"
@@ -26,7 +37,7 @@ shell_assertion ()
 	IFS=''
 	while read -r message
 	do
-		IFS="${oldifs}"
+		IFS="${previous_IFS}"
 		if test "\$ ${message#*\$ }" = "${message}"
 		then
 			${assertion} "${instructions}" "${expectation}" "${result}"
@@ -48,7 +59,7 @@ shell_assertion ()
 		message_line=$((message_line + 1))
 		IFS=''
 	done < "${1}"
-	IFS="${oldifs}"
+	IFS="${previous_IFS}"
 
 	${assertion} "${instructions}" "${expectation}" "${result}"
 	instructions="${message#*\$ }"

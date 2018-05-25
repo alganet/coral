@@ -5,29 +5,19 @@
 fs_lines ()
 {
 	local line
-	local oldifs
-
-	# Removes the internal field separator
-	oldifs="${IFS}"
-	IFS=
+	local IFS
 
 	if test -e "${1:-}"
 	then
 		# Reading from file descriptor
-		while read -r line
-		do
-			printf '%s\n' "${line}"
-		done < "${1}"
-	else
-		# Reading from stdin
-		while read -r line
-		do
-			printf '%s\n' "${line}"
-		done
+		exec < "${1}"
 	fi
 
-	# Restores the internal field separator
-	IFS="${oldifs}"
+	IFS=
+	while read -r line
+	do
+		printf '%s\n' "${line}"
+	done
 
 	return 0
 }

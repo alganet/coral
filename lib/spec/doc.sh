@@ -14,14 +14,14 @@ spec_doc ()
 	local test_number
 	local fail_number
 	local test_result
-	local oldifs
+	local previous_IFS
 	local spec_doc_tmp
 
 	spec_doc_shell="${spec_doc_shell:-sh}"
 	test_number=1
 	fail_number=0
 	test_result=0
-	oldifs="${IFS}"
+	previous_IFS="${IFS}"
 
 	trap 'spec_doc_clean' 2 >/dev/null 2>&1 || :
 
@@ -87,20 +87,20 @@ spec_doc_parse ()
 	local line_number
 	local line_last_open_fence
 	local setup
-	local oldifs
+	local previous_IFS
 
 	line_last_open_fence=0
 	line_number=1
 	spec_directory="${1}"
 	setup='true'
-	oldifs="${IFS}"
+	previous_IFS="${IFS}"
 
 	mkdir -p "${spec_directory}/.spec"
 
 	IFS=''
 	while read -r line
 	do
-		IFS="${oldifs}"
+		IFS="${previous_IFS}"
 		possible_fence="${line#*\`\`\`}"
 
 		if test -z "${open_fence:-}"
@@ -130,7 +130,7 @@ spec_doc_parse ()
 		line_number=$((line_number + 1))
 		IFS=''
 	done < "${2}"
-	IFS="${oldifs}"
+	IFS="${previous_IFS}"
 }
 
 spec_doc_fence_open ()

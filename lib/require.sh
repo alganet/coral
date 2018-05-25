@@ -58,7 +58,9 @@ require_path ()
 {
 	local solved
 	local target_path="${2:-${require_path:-}}"
-	local IFS=':'
+	local IFS
+
+	IFS=':'
 
 	for solved in ${target_path}
 	do
@@ -101,6 +103,8 @@ require_is_loaded ()
 
 require_source ()
 {
+	local IFS
+
 	IFS=''
 
 	while read -r line
