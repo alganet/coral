@@ -5,7 +5,6 @@
 fs_lines ()
 {
 	local line
-	local IFS
 	local fs_lines_ifs
 
 	if test -e "${1:-}"
