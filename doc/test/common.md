@@ -61,14 +61,14 @@ compatibility:
 
 ```console task
 $ docker build --build-arg "TARGET=sh" -t dash .
-$ docker run --rm dash
+$ docker run --rm -e spec_shell="dash" -t dash dash -c 'dash ./spec_doc $(find doc/spec/*)'
 ```
 
 ### Default Ubuntu bash
 
 ```console task
 $ docker build --build-arg "TARGET=bash" -t bash .
-$ docker run --rm bash
+$ docker run --rm -e spec_shell="bash" -t bash bash -c 'bash ./spec_doc $(find doc/spec/*)'
 ```
 
 ### Default Ubuntu yash

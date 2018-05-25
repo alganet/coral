@@ -22,23 +22,24 @@ spec_doc ()
 	fail_number=0
 	test_result=0
 	oldifs="${IFS}"
-	trap 'spec_doc_clean' 2
 
-	printf %s\\n "# using	'${spec_doc_shell:-sh}'"
+	trap 'spec_doc_clean' 2 >/dev/null 2>&1 || :
+
+	printf '%s\n' "# using	'${spec_doc_shell:-sh}'"
 
 	if test -z "${*:-}"
 	then
-		printf %s\\n "# "
-		printf %s\\n "# FAILURE (no .md files found)"
+		printf '%s\n' "# "
+		printf '%s\n' "# FAILURE (no .md files found)"
 		test_result=1
 		return
 	fi
 
-	target_files="$(printf %s\\n "${@:-}")"
+	target_files="$(printf '%s\n' "${@:-}")"
 
 	spec_doc_tmp="$(fs_tempdir 'spec_doc')"
 
-	printf %s\\n "# "
+	printf '%s\n' "# "
 
 	cp -R "${PWD}" "${spec_doc_tmp}/pwd"
 
@@ -48,7 +49,7 @@ spec_doc ()
 		then
 			continue
 		fi
-		printf %s\\n "# file	'${target_file}'"
+		printf '%s\n' "# file	'${target_file}'"
 		mkdir -p "${spec_doc_tmp}/${target_file}.workspace"
 		cp -R "${spec_doc_tmp}/pwd/." "${spec_doc_tmp}/${target_file}.workspace"
 		spec_doc_parse "${spec_doc_tmp}/${target_file}.workspace" "${target_file}"
@@ -56,25 +57,25 @@ spec_doc ()
 
 	if test "${fail_number}" -gt 0
 	then
-		printf %s\\n "# FAILURE (${fail_number} of ${test_number} assertions failed)"
-		printf %s\\n "1..${test_number}"
+		printf '%s\n' "# FAILURE (${fail_number} of ${test_number} assertions failed)"
+		printf '%s\n' "1..${test_number}"
 		test_result=1
 	elif test "${test_number}" -gt 0
 	then
-		printf %s\\n "# SUCCESS"
-		printf %s\\n "1..${test_number}"
+		printf '%s\n' "# SUCCESS"
+		printf '%s\n' "1..${test_number}"
 	else
-		printf %s\\n "# FAILURE (no tests found)"
+		printf '%s\n' "# FAILURE (no tests found)"
 		test_result=1
 	fi
 
-	spec_doc_clean "return ${test_result}"
+	spec_doc_return "${test_result}"
 }
 
-spec_doc_clean ()
+spec_doc_return ()
 {
 	rm -Rf "${spec_doc_tmp}"
-	${1:-exit 1}
+	return "${1:-1}"
 }
 
 spec_doc_parse ()
@@ -174,14 +175,14 @@ spec_doc_fence_line ()
 
 	if test "file" = "${key}"
 	then
-		printf %s\\n "$line" >> "${spec_directory}/${value}"
+		printf '%s\n' "$line" >> "${spec_directory}/${value}"
 	elif test "console" = "${language}" &&
 		 test ! -z "${key}"
 	then
-		printf %s\\n "$line" >> "${spec_directory}/.spec/console"
+		printf '%s\n' "$line" >> "${spec_directory}/.spec/console"
 	elif test "setup" = "${key}" && test "${language}" != "console"
 	then
-		printf %s\\n "$line" >> "${spec_directory}/.spec/setup"
+		printf '%s\n' "$line" >> "${spec_directory}/.spec/setup"
 	fi
 }
 
@@ -235,16 +236,16 @@ spec_doc_report_single_result ()
 	if test "${2}" = "${3}"
 	then
 		test_number=$((test_number + 1))
-		printf %s\\n "ok	${line_report}"
+		printf '%s\n' "ok	${line_report}"
 	elif test ! -z "${1}"
 	then
 		test_number=$((test_number + 1))
 		fail_number=$((fail_number + 1))
 		error_line="${line_last_open_fence}"
-		printf %s\\n "not ok	${line_report}"
-		printf %s\\n "# Failure on ${target_file} line ${error_line}"
-		printf %s\\n "${3}" | sed 's/# - \(.*\)/\1/' > "${spec_directory}/.assertion_output"
-		printf %s\\n "${2}" | sed 's/# - \(.*\)/\1/' > "${spec_directory}/.assertion_expectation"
+		printf '%s\n' "not ok	${line_report}"
+		printf '%s\n' "# Failure on ${target_file} line ${error_line}"
+		printf '%s\n' "${3}" | sed 's/# - \(.*\)/\1/' > "${spec_directory}/.assertion_output"
+		printf '%s\n' "${2}" | sed 's/# - \(.*\)/\1/' > "${spec_directory}/.assertion_expectation"
 		diff "${spec_directory}/.assertion_expectation" "${spec_directory}/.assertion_output"
 	fi
 }
@@ -264,14 +265,14 @@ spec_doc_report_code_result ()
 
 	if test '0' = "${sandbox_code}"
 	then
-		printf %s\\n "ok	${line_report}"
+		printf '%s\n' "ok	${line_report}"
 	else
 		fail_number=$((fail_number + 1))
 		error_line="${line_last_open_fence}"
-		printf %s\\n "not ok	${line_report}"
-		printf %s\\n "# Failure on ${target_file} line ${error_line}"
-		printf %s\\n "# Output"
-		printf %s\\n "${3}" | sed 's/# - \(.*\)/#	\1/'
-		printf %s\\n "# Exit Code: ${sandbox_code}"
+		printf '%s\n' "not ok	${line_report}"
+		printf '%s\n' "# Failure on ${target_file} line ${error_line}"
+		printf '%s\n' "# Output"
+		printf '%s\n' "${3}" | sed 's/# - \(.*\)/#	\1/'
+		printf '%s\n' "# Exit Code: ${sandbox_code}"
 	fi
 }

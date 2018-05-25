@@ -5,5 +5,5 @@ string_ltrim ()
 		set -- "${1}" "${2#${1}}"
 	done
 
-	printf %s\\n "${2}"
+	printf '%s\n' "${2}"
 }

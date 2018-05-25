@@ -1,3 +1,17 @@
+Experimental Shells
+-------------------
+
+To test `coral` on experimental shells, let's first build the testing
+library using the host shell.
+
+```console task
+$ ./lib/dev module_assemble spec_doc spec_doc
+```
+
+### Minimal Linux
+
+First, let's create a build environment:
+
 ```Dockerfile file Dockerfile.builder
 FROM alpine:latest
 
@@ -104,19 +118,41 @@ RUN mkdir -p rootfs/tmp \
 RUN chroot rootfs /bin/sh -xc 'busybox'
 ```
 
+Now we create a container just with busybox:
+
 ```Dockerfile file Dockerfile
 FROM scratch
 ADD "busybox.tar.bz2" /
 CMD ["sh"]
 ```
 
-```console task
-$ ./lib/dev module_assemble spec_doc spec_doc
-```
+And we finally can run the tests on a minimal linux:
 
 ```console task
 $ docker build -t coral-builder -f Dockerfile.builder .
 $ docker run --rm "coral-builder" tar cC rootfs . | bzip2 > "busybox.tar.bz2"
 $ docker build -t "coral" .
 $ docker run --rm -v "$(pwd):/coral" -w "/coral" coral sh -c 'sh ./spec_doc $(find doc/spec/*)'
+```
+
+Oil Shell
+---------
+
+First we create a container with a compiled oil:
+
+```Dockerfile file Dockerfile.oil
+FROM ubuntu:latest
+
+RUN apt-get update -y
+RUN apt-get install -y build-essential curl unzip python-dev gawk time libreadline-dev
+RUN curl -fL -o oil.zip https://github.com/oilshell/oil/archive/master.zip
+RUN unzip oil.zip -d /
+RUN cd /oil-master && mkdir -p /oil-master/_tmp && bash /oil-master/build/dev.sh minimal
+```
+
+Now we can test it:
+
+```console task
+$ docker build -t osh -f Dockerfile.oil .
+$ docker run --rm -v "$(pwd):/coral" -w "/coral" osh sh -c '/oil-master/bin/osh ./spec_doc $(find doc/spec/*)'
 ```

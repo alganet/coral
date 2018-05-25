@@ -17,7 +17,7 @@ shell_vars_fill ()
 		while read -r shell_var_line
 		do
 			shell_var_value="$(eval printf %s "\${${shell_var_line}}")"
-			printf %s\\n "${shell_var_line}='${shell_var_value}'"
+			printf '%s\n' "${shell_var_line}='${shell_var_value}'"
 		done
 		return
 	fi
@@ -30,7 +30,7 @@ shell_vars_fill ()
 		   test "${shell_var_line#LINENO=*}" = "${shell_var_line}" &&
 		   test "${shell_var_line#IFS=*}" = "${shell_var_line}"
 		then
-			printf %s\\n "${shell_var_line}"
+			printf '%s\n' "${shell_var_line}"
 		elif test "${shell_var_line%% ()} ()" = "${shell_var_line}"
 		then
 			return

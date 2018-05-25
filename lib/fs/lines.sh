@@ -16,13 +16,13 @@ fs_lines ()
 		# Reading from file descriptor
 		while read -r line
 		do
-			printf %s\\n "${line}"
+			printf '%s\n' "${line}"
 		done < "${1}"
 	else
 		# Reading from stdin
 		while read -r line
 		do
-			printf %s\\n "${line}"
+			printf '%s\n' "${line}"
 		done
 	fi
 

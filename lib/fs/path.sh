@@ -16,7 +16,7 @@ fs_path ()
 	do
 		if test -f "${solved}/${1}"
 		then
-			printf %s\\n "${solved}/${1}"
+			printf '%s\n' "${solved}/${1}"
 			return
 		fi
 	done

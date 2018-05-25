@@ -75,7 +75,7 @@ module_assemble_dependencies ()
 
 	printf '' > "${assemble_dir}/required_modules"
 	printf '' > "${assemble_dir}/required_calls"
-	printf %s\\n 'require () ( : )' > "${assemble_dir}/require"
+	printf '%s\n' 'require () ( : )' > "${assemble_dir}/require"
 	require "${input_file}"
 
 	require_sources="$(fs_lines "${assemble_dir}/sources")"
@@ -102,7 +102,7 @@ module_assemble_dependencies ()
 
 	if require_is_loaded "require.sh" ""
 	then
-		printf %s\\n\\n "eval \"\$(require_source 'require.sh')\"" >> "${assemble_dir}/required_calls"
+		printf '%s\n'\\n "eval \"\$(require_source 'require.sh')\"" >> "${assemble_dir}/required_calls"
 	fi
 
 	fs_lines "${assemble_dir}/require"
@@ -128,8 +128,8 @@ module_assemble_on_include ()
 
 	if test "${assemble_dependency}" != "require.sh"
 	then
-		#printf %s\\n\\n "${contents}" >> "${assemble_dir}/required_modules"
-		printf %s\\n\\n "eval \"\$(require_source '${assemble_dependency}')\"" >> "${assemble_dir}/required_calls"
+		#printf '%s\n'\\n "${contents}" >> "${assemble_dir}/required_modules"
+		printf '%s\n'\\n "eval \"\$(require_source '${assemble_dependency}')\"" >> "${assemble_dir}/required_calls"
 		require_on_include "${@:-}"
 	fi
 }

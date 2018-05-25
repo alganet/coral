@@ -15,18 +15,7 @@ math_random ()
 
 math_random_device ()
 {
-	if ! command -v od >/dev/null 2>&1 &&
-	   ! : | od | : 2>&1
-	then
-		echo 'fail (math_random_device) cannot find od' 1>&2
-		return 1
-	elif ! test -e '/dev/random'
-	then
-		echo 'fail (math_random_device) cannot find /dev/random' 1>&2
-		return 2
-	fi
-
-	od '/dev/random' | {
+	od -A n -t u1 -N100 '/dev/random' | {
 		local random_integers
 		read -r random_integers
 		printf %s "${random_integers}" |

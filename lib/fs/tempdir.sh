@@ -20,5 +20,5 @@ fs_tempdir ()
 	    mkdir -m 'u+rwx' "${tempdir}"
 	fi
 
-	printf %s\\n "${tempdir}"
+	printf '%s\n' "${tempdir}"
 }

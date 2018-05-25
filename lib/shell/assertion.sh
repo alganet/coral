@@ -31,12 +31,11 @@ shell_assertion ()
 		then
 			${assertion} "${instructions}" "${expectation}" "${result}"
 			instructions="${message#*\$ }"
-			set +e
 			shell_sandbox_previous_code="${sandbox_code}" \
 				shell_sandbox "${assertion_dir}/.${sandbox_id}" "${instructions}" \
-				printf '' > "${assertion_dir}/.assertion_result" 2>&1
-			sandbox_code="${?}"
-			set -e
+					> "${assertion_dir}/.assertion_result" 2>&1 &&
+						sandbox_code="${?}" ||
+						sandbox_code="${?}"
 			result="$(
 				_shell_assertion_import_result \
 					< "${assertion_dir}/.assertion_result"
@@ -71,11 +70,11 @@ _shell_assertion_collect_expectation ()
 		expectation="# - $(printf \\n)"
 	elif test -z "${expectation}"
 	then
-		expectation="$(printf %s\\n "# - ${message}")"
+		expectation="$(printf '%s\n' "# - ${message}")"
 	else
 		expectation="$(
-			printf %s\\n "${expectation}"
-			printf %s\\n "# - ${message}"
+			printf '%s\n' "${expectation}"
+			printf '%s\n' "# - ${message}"
 		)"
 	fi
 
