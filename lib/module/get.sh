@@ -4,6 +4,7 @@
 
 require 'require.sh'
 require 'net/fetch.sh'
+require 'fs/tempdir.sh'
 
 module_get ()
 {
@@ -16,6 +17,7 @@ module_get ()
 	local target_file
 
 	repo='https://raw.githubusercontent.com/alganet/coral/master/lib'
+	module_get_folder="${module_get_folder:-$(fs_tempdir module_get)}"
 	module_get_channel="${module_get_channel:-${repo}}"
 	require_on_search='module_get_on_search'
 	require_on_request='module_get_on_request'
@@ -23,7 +25,7 @@ module_get ()
 	target="${1:-}"
 	shift
 
-	target_file="$(echo "${target}" | sed 's|_|/|g').sh"
+	target_file="$(printf '%s\n' "${target}" | sed 's|_|/|g').sh"
 
 	require "${target_file}"
 
@@ -49,18 +51,16 @@ module_get_on_include ()
 
 module_get_on_search ()
 {
-	local vendor
 	local found
 
-	vendor="${HOME}/.coral"
 	found="$(require_on_search "${@:-}")"
 
 	if test -z "${found}"
 	then
-		net_fetch "${module_get_channel}/${1}" "${vendor}/${1}" || return
-		echo "${vendor}/${1}"
+		net_fetch "${module_get_channel}/${1}" "${module_get_folder}/${1}" || return
+		printf '%s\n' "${module_get_folder}/${1}"
 		return
 	fi
 
-	echo "${found}"
+	printf '%s\n' "${found}"
 }

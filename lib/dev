@@ -12,6 +12,7 @@ dev_library_dir="$(cd "${0%/*}";printf %s "${PWD}")"
 entrypoint="${1:-false}"
 entrypoint="${entrypoint%.sh}"
 dev_library_file="$(echo "${entrypoint}" | sed 's|_|/|g').sh"
+module_get_folder="${dev_library_dir}"
 require_path="${require_path:-.:${dev_library_dir}}"
 shift
 

@@ -58,10 +58,10 @@ module_assemble_contents ()
 	local input_file
 
 	input="${1:-}"
-	input_file="$(echo "${input}" | sed 's|_|/|g').sh"
+	input_file="$(printf '%s\n' "${input}" | sed 's|_|/|g').sh"
 
 	require_source 'script/support'
-	echo "entrypoint='${input}'"
+	printf '%s\n' "entrypoint='${input}'"
 	module_assemble_dependencies "${input_file}"
 	require_source 'script/entrypoint'
 }
@@ -97,12 +97,12 @@ module_assemble_dependencies ()
 		SOURCES_SNIPPET
 	fi
 
-	echo "require_loaded='${require_loaded}'"
-	echo "require_path=\"${assemble_path:-${require_path:-}}\""
+	printf '%s\n' "require_loaded='${require_loaded}'"
+	printf '%s\n' "require_path=\"${assemble_path:-${require_path:-}}\""
 
 	if require_is_loaded "require.sh" ""
 	then
-		printf '%s\n'\\n "eval \"\$(require_source 'require.sh')\"" >> "${assemble_dir}/required_calls"
+		printf '%s\n' "eval \"\$(require_source 'require.sh')\"" >> "${assemble_dir}/required_calls"
 	fi
 
 	fs_lines "${assemble_dir}/require"
@@ -126,10 +126,11 @@ module_assemble_on_include ()
 
 	test "${script_target_name%*.sh}.sh" = "${script_target_name}" || return 0
 
-	if test "${assemble_dependency}" != "require.sh"
+	if test "${assemble_dependency}" != "require.sh" &&
+	   test "${assemble_dependency}" != "fs/lines.sh"
 	then
-		#printf '%s\n'\\n "${contents}" >> "${assemble_dir}/required_modules"
-		printf '%s\n'\\n "eval \"\$(require_source '${assemble_dependency}')\"" >> "${assemble_dir}/required_calls"
+		#printf '%s\n' "${contents}" >> "${assemble_dir}/required_modules"
+		printf '%s\n' "eval \"\$(require_source '${assemble_dependency}')\"" >> "${assemble_dir}/required_calls"
 		require_on_include "${@:-}"
 	fi
 }
