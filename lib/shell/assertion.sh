@@ -16,7 +16,7 @@ shell_assertion ()
 	local expectation
 	local expectation_lines
 	local message_line
-	local previous_IFS
+	local oldifs
 	local sandbox_id
 
 	assertion_dir="${2:-.}"
@@ -29,7 +29,7 @@ shell_assertion ()
 	expectation=
 	expectation_lines=0
 	message_line=1
-	previous_IFS="${IFS}"
+	oldifs="${IFS}"
 	sandbox_id="$(math_random)"
 
 	cd "${assertion_dir}"
@@ -37,7 +37,7 @@ shell_assertion ()
 	IFS=''
 	while read -r message
 	do
-		IFS="${previous_IFS}"
+		IFS="${oldifs}"
 		if test "\$ ${message#*\$ }" = "${message}"
 		then
 			${assertion} "${instructions}" "${expectation}" "${result}"
@@ -59,7 +59,7 @@ shell_assertion ()
 		message_line=$((message_line + 1))
 		IFS=''
 	done < "${1}"
-	IFS="${previous_IFS}"
+	IFS="${oldifs}"
 
 	${assertion} "${instructions}" "${expectation}" "${result}"
 	instructions="${message#*\$ }"
