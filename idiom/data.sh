@@ -3,7 +3,7 @@
 
 # Pseudo Data Structures
 
-_S=0 _L=0 _S=0 _A=0 # Some counters for Str, Lst, Set and Arr
+_T=0 _L=0 _S=0 _A=0 # Some counters for Txt, Lst, Set and Arr
 
 # Evaluates an expression within brackets
 exp () {
@@ -11,8 +11,8 @@ exp () {
     local _e=
 
 	case $# in
-		0) Str '' ; return ;;
-		1) Str $1 ; return ;;
+		0) Txt '' ; return ;;
+		1) Txt $1 ; return ;;
 		2) ${@:-} ; return ;;
 	esac
 
@@ -32,7 +32,7 @@ exp () {
 				_e="${1:-}${1:+ }$_R"
 				shift
 				;;
-			_[SLSA]*)
+			_[TLSA]*)
 				_e="${_e:-}${_e:+ }$_t"
 				;;
 			[A-Z][a-z]*)
@@ -46,7 +46,7 @@ exp () {
 		esac
 	done
 	case $_e in
-		_[SLSA]*) _R=$_e ;;
+		_[TLSA]*) _R=$_e ;;
 		       *) eval $_e ;;
 	esac
 }
@@ -61,14 +61,47 @@ val () {
 	esac
 }
 
-# The Str pseudotype constructor
-Str () {
-	_S=$((_S + 1))
-	_R=_S$_S
+# Dumps the internal values of a given pseudodatastructure recursively
+dump () {
+    local dump= item= len=0 count=0
+    case $1 in
+        _T*) eval dump=\"\'\$$1\'\" ;;
+		_[LS]*)
+			eval "REPLY=\"\$$1\""
+			case $1 in
+				_L*) dump="[ Lst " ;;
+				_S*) dump="[ Set " ;;
+			esac
+			for item in $REPLY
+			do
+				dump $item
+				dump="$dump$REPLY "
+			done
+			dump="$dump]"
+			;;
+		_A*)
+			eval "len=\"\$(($1))\""
+			dump="[ Arr "
+			while test $count -lt $len
+			do
+				eval "dump \$$1i$count"
+				dump="$dump$REPLY "
+				count=$((count + 1))
+			done
+			dump="$dump]"
+			;;
+    esac
+    REPLY="$dump"
+}
+
+# The Txt pseudotype constructor
+Txt () {
+	_T=$((_T + 1))
+	_R=_T$_T
 	eval "$_R=\${*:-}"
 }
 
-Str_add () {
+Txt_add () {
 	eval "$_R=\${*:-}"
 }
 

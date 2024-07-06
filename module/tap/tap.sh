@@ -5,9 +5,9 @@ tap_assert () {
     if ! test "x$1" = "x$2"
     then
         _print "  # expected: "
-        _inline "$1"
+        _inline "${1:-"<empty>"}"
         _print "  #   result: "
-        _inline "$2"
+        _inline "${2:-"<empty>"}"
     fi
 }
 
