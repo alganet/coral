@@ -16,13 +16,13 @@ There is no compilation or build step. Once you download it, you're good to go.
 Run all tests locally against the default shell:
 
 ```sh
-./entrypoint.sh tap
+./coral tap
 ```
 
 Run a single test. For example, the pseudoarray implementation:
 
 ```sh
-sh entrypoint.sh tap 'test/_idiom/005-Arr.sh'
+sh coral tap 'test/_idiom/005-Arr.sh'
 ```
 
 Run all tests inside an ephemeral docker container against all shells:
