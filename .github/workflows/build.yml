@@ -1,0 +1,21 @@
+# Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+# SPDX-License-Identifier: ISC
+
+name: CI
+
+on:
+  push:
+    branches:
+      - "main"
+  pull7_request:
+    branches:
+      - "main"
+
+jobs:
+  Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: ./entrypoint.sh tap
+      - run: make docker-matrix
+

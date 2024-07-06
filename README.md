@@ -1,42 +1,36 @@
+[#]:# "Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>"
+[#]:# "SPDX-License-Identifier: ISC"
 🐚 coral
-=======
+========
 
-A modest shell script library that _works everywhere_.
+a **modular** library to create **portable shell scripts** that run everywhere.
 
-> We are under _prototype_ development. Things are expected to work just
-fine though.
+## Introduction
 
-`coral` is designed to fill strategic gaps in _Shell Script_ by
-providing portable libraries that work across [multiple shells](doc/test/common.md).
+_coral_ is meant to solve the script portability problem the hard way: by writing reusable code and testing it.
 
----
+There is no compilation or build step. Once you download it, you're good to go:
 
-### [require.sh](doc/spec/require.md)
+```sh
+./entrypoint.sh help
+```
 
-A modern module loader with support for circular references and multiple
-paths.
+# Testing
 
-All `coral` libraries are exported as reusable modules.
+Run all tests locally against the default shell:
 
-### [spec/doc.sh](doc/spec/spec_doc.md)
+```sh
+./entrypoint.sh tap
+```
 
-A [literate](https://en.wikipedia.org/wiki/Literate_programming) test
-runner that runs documents written for humans as automated tests.
+Run a single test. For example, the pseudoarray implementation:
 
-It is used to test all `coral` software.
+```sh
+sh entrypoint.sh tap 'test/_idiom/005-Arr.sh'
+```
 
-### [module/assemble.sh](doc/spec/module_assemble.md)
+Run all tests inside an ephemeral docker container against all shells:
 
-A shell script bundler that can create single executables from multiple
-shell sources, supports runtime evaluated code and plays along with
-`require.sh`.
-
-It is used to build the `coral` releases.
-
-### [lib/dev](doc/spec/lib_dev.md)
-
-Used to bootstrap the modules, build and develop `coral` applications
-from scratch.
-
----
-
+```sh
+make docker-matrix
+```
