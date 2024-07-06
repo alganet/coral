@@ -1,8 +1,0 @@
-#!/bin/sh
-
-##
- # script/entrypoint - a modular command runner
- ##
-
-# Run command named by the entrypoint variable or nothing (the : command)
-"${entrypoint:-:}" "${@:-}"
