@@ -9,11 +9,7 @@ a **modular** library to create **portable shell scripts** that run everywhere.
 
 _coral_ is meant to solve the script portability problem the hard way: by writing reusable code and testing it.
 
-There is no compilation or build step. Once you download it, you're good to go:
-
-```sh
-./entrypoint.sh help
-```
+There is no compilation or build step. Once you download it, you're good to go.
 
 # Testing
 
