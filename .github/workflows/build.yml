@@ -7,7 +7,7 @@ on:
   push:
     branches:
       - "main"
-  pull7_request:
+  pull_request:
     branches:
       - "main"
 
