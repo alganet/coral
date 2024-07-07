@@ -94,6 +94,35 @@ dump () {
     REPLY="$dump"
 }
 
+toenv () {
+    local dump= item= len=0 count=0
+    case $1 in
+        _T*) eval dump=\"$1=\'\$$1\'\" ;;
+		_[LS]*)
+			dump=
+			eval "REPLY=\"\$$1\""
+			for item in $REPLY
+			do
+				toenv $item
+				dump="$dump$REPLY${__EOL__}"
+			done
+			eval "dump=\"\${dump}$1='\$$1'\"\${__EOL__}"
+			;;
+		_A*)
+			eval dump=\"$1=\'\$$1\'\${__EOL__}\"
+			eval "len=\"\$(($1))\""
+			while test $count -lt $len
+			do
+				eval "toenv \$$1i$count"
+				eval "dump=\"\${dump}$1i$count=\$$1i$count\"\${__EOL__}"
+				dump="$dump$REPLY${__EOL__}"
+				count=$((count + 1))
+			done
+			;;
+    esac
+    REPLY="$dump"
+}
+
 # The Txt pseudotype constructor
 Txt () {
 	_T=$((_T + 1))
@@ -127,12 +156,12 @@ Set () {
 }
 
 Set_add () {
-	_R=$1
+	_R="$1"
 	while test $# -gt 1
 	do shift ; eval "
-		case \"\$$_R\$__EOL__\" in
+		case \"\$__EOL__\$$_R\$__EOL__\" in
 			*\"\$__EOL__\$1\$__EOL__\"*);;
-			*)$_R=\"\$$_R\$__EOL__\$1\";;
+			*)$_R=\"\$$_R\${$_R:+\$__EOL__}\$1\";;
 		esac"
 	done
 }
