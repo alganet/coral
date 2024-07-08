@@ -147,7 +147,7 @@ Lst () {
 Lst_add () {
 	_R=$1
 	shift
-	eval "$_R=\"\${$_R:-}\$*\""
+	eval "$_R=\"\$$_R\${$_R:+\$__EOL__}\$*\""
 }
 
 # The Set pseudotype constructor
@@ -173,19 +173,13 @@ Set_add () {
 Arr () {
 	_A=$((_A + 1))
 	_R=_A$_A
-	eval "$_R=-1"
-	if test $# -gt 0
-	then
-		eval "$_R=-1"
-		Arr_add $_R "$@"
-	else
-		eval "$_R=0"
-	fi
+	eval "$_R=0"
+	test $# -lt 1 || Arr_add $_R "$@"
 }
 
 Arr_add () {
 	_R=$1
-	eval "$_R=$(($_R + $#))"
+	eval "$_R=$(($_R + $# - 1))"
 	while test $# -gt 1
 	do shift ; eval "${_R}i$(($_R - $#))=\$1"
 	done

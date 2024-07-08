@@ -36,3 +36,17 @@ test_Set_uniqueness_C () {
 	eval deref=\$$_R
 	tap_assert "bar${__EOL__}foo" "$deref"
 }
+
+test_Set_add_to_existing () {
+	Set foo bar baz
+	Set_add $_R baz foo qux bar qux
+	eval deref=\$$_R
+	tap_assert "foo${__EOL__}bar${__EOL__}baz${__EOL__}qux" "$deref"
+}
+
+test_Set_add_to_existing_empty_list () {
+	Set
+	Set_add $_R foo bar baz
+	eval deref=\$$_R
+	tap_assert "foo${__EOL__}bar${__EOL__}baz" "$deref"
+}
