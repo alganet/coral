@@ -22,6 +22,15 @@ test_dump_Lst () {
 	tap_assert "[ Lst 'Lorem' 'Ipsum' ]" "$REPLY"
 }
 
+test_dump_nested_Lst () {
+	val first_name = "Lorem"
+	val last_name = "Ipsum"
+	val name_parts = [ Lst $first_name $last_name ]
+	val person = [ Arr $name_parts ]
+	dump $person
+	tap_assert "[ Arr [ Lst 'Lorem' 'Ipsum' ] ]" "$REPLY"
+}
+
 test_toenv_Lst () {
 	val first_name = "Lorem"
 	local r1=$_R
@@ -71,11 +80,21 @@ test_toenv_Arr () {
 	tap_assert "$r3='2'${__EOL__}${r3}i0=$r1${__EOL__}$r1='Lorem'${__EOL__}${r3}i1=$r2${__EOL__}$r2='Ipsum'${__EOL__}" "$REPLY"
 }
 
-test_dump_nested_Lst () {
+test_dump_Map () {
 	val first_name = "Lorem"
 	val last_name = "Ipsum"
-	val name_parts = [ Lst $first_name $last_name ]
-	val person = [ Arr $name_parts ]
-	dump $person
-	tap_assert "[ Arr [ Lst 'Lorem' 'Ipsum' ] ]" "$REPLY"
+	val profile = [ Map :fname $first_name :lname $last_name ]
+	dump $profile
+	tap_assert "[ Map :fname 'Lorem' :lname 'Ipsum' ]" "$REPLY"
+}
+
+test_toenv_Map () {
+	val first_name = "Lorem"
+	local r1=$_R
+	val last_name = "Ipsum"
+	local r2=$_R
+	val profile = [ Map :fname $first_name :lname $last_name ]
+	local r3=$_R
+	toenv $profile
+	tap_assert "$r3='fname${__EOL__}lname'${__EOL__}${r3}ifname=$r1${__EOL__}${r3}ilname=$r2${__EOL__}" "$REPLY"
 }

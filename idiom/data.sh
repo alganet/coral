@@ -6,7 +6,7 @@
 # Variables in this file are intentionally short because
 # it is eval heavy and it matters for some shells.
 
-_T=0 _L=0 _S=0 _A=0 # Some counters for Txt, Lst, Set and Arr
+_T=0 _L=0 _S=0 _A=0 _M=0 # Some counters for Txt, Lst, Set, Arr and Map
 
 # Evaluates an expression within brackets
 exp () {
@@ -35,13 +35,14 @@ exp () {
 				_e="${1:-}${1:+ }$_R"
 				shift
 				;;
-			_[TLSA][0-9]*)
+			\:*)
 				_e="${_e:-}${_e:+ }$_t"
 				;;
-			[A-Z][a-z]*)
-				test -z "$_e" &&
-					_e="${_e:-}${_e:+ }$_t" ||
-					eval "_e=\"\${_e:-}\${_e:+ }\$$_t\""
+			_[TLSAM][0-9]*)
+				_e="${_e:-}${_e:+ }$_t"
+				;;
+			Txt|Lst|Set|Arr|Map)
+				_e="${_e:-}${_e:+ }$_t"
 				;;
 			*)
 				_write "bad expression: '$_t'"
@@ -50,8 +51,8 @@ exp () {
 		esac
 	done
 	case $_e in
-		_[TLSA][0-9]*) _R=$_e ;;
-		            *) eval $_e ;;
+		_[TLSAM][0-9]*) _R=$_e ;;
+		             *) eval $_e ;;
 	esac
 }
 
@@ -94,6 +95,16 @@ dump () {
 			done
 			dump="$dump]"
 			;;
+		_M[0-9]*)
+			eval "REPLY=\"\$$1\""
+			dump="[ Map "
+			for item in $REPLY
+			do
+				eval "dump \$$1i$item"
+				dump="$dump:$item $REPLY "
+			done
+			dump="$dump]"
+			;;
 		*)
 			_write "bad data: '$1'"
 			exit 1
@@ -125,6 +136,15 @@ toenv () {
 				eval "dump=\"\${dump}$1i$count=\$$1i$count\"\${__EOL__}"
 				dump="$dump$REPLY${__EOL__}"
 				count=$((count + 1))
+			done
+			;;
+		_M[0-9]*)
+			eval "REPLY=\"\$$1\""
+			eval dump=\"$1=\'\$$1\'\${__EOL__}\"
+			for item in $REPLY
+			do
+				eval "toenv \$$1i$item"
+				eval "dump=\"\${dump}$1i$item=\$$1i$item\"\${__EOL__}"
 			done
 			;;
 		*)
@@ -193,5 +213,24 @@ Arr_add () {
 	eval "$_R=$(($_R + $# - 1))"
 	while test $# -gt 1
 	do shift ; eval "${_R}i$(($_R - $#))=\$1"
+	done
+}
+
+# The Map pseudotype constructor
+Map () {
+	_M=$((_M + 1))
+	_R=_M$_M
+	eval "$_R="
+	Map_add $_R "$@"
+}
+
+Map_add () {
+	_R=$1
+	shift
+	while test $# -gt 0
+	do
+		Set_add $_R ${1#\:}
+		eval "${_R}i${1#\:}=\${2:-}"
+	 	shift 2
 	done
 }
