@@ -35,7 +35,7 @@ exp () {
 				_e="${1:-}${1:+ }$_R"
 				shift
 				;;
-			_[TLSA]*)
+			_[TLSA][0-9]*)
 				_e="${_e:-}${_e:+ }$_t"
 				;;
 			[A-Z][a-z]*)
@@ -44,13 +44,14 @@ exp () {
 					eval "_e=\"\${_e:-}\${_e:+ }\$$_t\""
 				;;
 			*)
-				ERROR $_t
+				_write "bad expression: '$_t'"
+				exit 1
 				;;
 		esac
 	done
 	case $_e in
-		_[TLSA]*) _R=$_e ;;
-		       *) eval $_e ;;
+		_[TLSA][0-9]*) _R=$_e ;;
+		            *) eval $_e ;;
 	esac
 }
 
@@ -69,7 +70,7 @@ dump () {
     local dump= item= len=0 count=0
     case $1 in
         _T*) eval dump=\"\'\$$1\'\" ;;
-		_[LS]*)
+		_[LS][0-9]*)
 			eval "REPLY=\"\$$1\""
 			case $1 in
 				_L*) dump="[ Lst " ;;
@@ -82,7 +83,7 @@ dump () {
 			done
 			dump="$dump]"
 			;;
-		_A*)
+		_A[0-9]*)
 			eval "len=\"\$(($1))\""
 			dump="[ Arr "
 			while test $count -lt $len
@@ -92,6 +93,10 @@ dump () {
 				count=$((count + 1))
 			done
 			dump="$dump]"
+			;;
+		*)
+			_write "bad data: '$1'"
+			exit 1
 			;;
     esac
     REPLY="$dump"
@@ -111,7 +116,7 @@ toenv () {
 			done
 			eval "dump=\"\${dump}$1='\$$1'\"\${__EOL__}"
 			;;
-		_A*)
+		_A[0-9]*)
 			eval dump=\"$1=\'\$$1\'\${__EOL__}\"
 			eval "len=\"\$(($1))\""
 			while test $count -lt $len
@@ -121,6 +126,10 @@ toenv () {
 				dump="$dump$REPLY${__EOL__}"
 				count=$((count + 1))
 			done
+			;;
+		*)
+			_write "bad data: '$1'"
+			exit 1
 			;;
     esac
     REPLY="$dump"
@@ -134,7 +143,9 @@ Txt () {
 }
 
 Txt_add () {
-	eval "$_R=\${*:-}"
+	_R=$1
+	shift
+	eval "$_R=\"\${$_R}\${*:-}\""
 }
 
 # The Lst pseudotype constructor

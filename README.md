@@ -11,7 +11,12 @@ _coral_ is meant to solve the script portability problem the hard way: by writin
 
 There is no compilation or build step. Once you download it, you're good to go.
 
-# Testing
+```sh
+$ ./coral example/hello_name.sh "World"
+Hello, World!
+```
+
+## Testing
 
 Run all tests locally against the default shell:
 
@@ -22,7 +27,7 @@ Run all tests locally against the default shell:
 Run a single test. For example, the pseudoarray implementation:
 
 ```sh
-sh coral tap 'test/_idiom/005-Arr.sh'
+./coral tap 'test/_idiom/005-Arr.sh'
 ```
 
 Run all tests inside an ephemeral docker container against all shells:

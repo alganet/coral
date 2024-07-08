@@ -16,7 +16,16 @@ then
 	REPLY=
 fi
 
-test $# = 0 || require "$1"
-shift
+if test $# -gt 0
+then
+	if ! test -f "$1"
+	then require "$1" # Main argument not a script, try to load a module
+	else
+		. "$1"
+		REPLY=${1#*\/}
+		REPLY=${REPLY%\.*}
+	fi
+	shift
+fi
 unset -f require
 "${REPLY:-}" "${@:-}"
