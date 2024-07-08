@@ -6,7 +6,6 @@ __TAB__="	"
 __EOL__="
 "
 
-
 LC_ALL=C     # Not all shells support modern charsets, we'll deal with it later.
 IFS=$__EOL__ # Don't break my variables by spaces
 PATH=""      # We don't need other programs
@@ -60,13 +59,13 @@ esac
 
 # Escapes multiple lines into a single one with \n in between
 _inline () {
-    set -- ${*:-}
+	set -- ${*:-}
 	test $# -gt 0 || return 0;
-    while test $# -gt 1
-    do
-        _write "$1\\n"
-        shift
-    done
+	while test $# -gt 1
+	do
+		_write "$1\\n"
+		shift
+	done
 	_write "$1${__EOL__}"
 }
 

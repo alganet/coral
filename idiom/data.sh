@@ -3,6 +3,9 @@
 
 # Pseudo Data Structures
 
+# Variables in this file are intentionally short because
+# it is eval heavy and it matters for some shells.
+
 _T=0 _L=0 _S=0 _A=0 # Some counters for Txt, Lst, Set and Arr
 
 # Evaluates an expression within brackets
@@ -55,9 +58,9 @@ exp () {
 val () {
 	local _n=$1 _o=$2
 	shift 2
-	exp ${@:-}
 	case $_o in
-		\=) eval $_n=\$_R ;;
+		\=)  exp ${@:-} ; eval $_n=\$_R ;;
+		\=@) eval $_n=\$$1 ;;
 	esac
 }
 

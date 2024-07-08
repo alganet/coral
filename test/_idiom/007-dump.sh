@@ -2,20 +2,20 @@
 # SPDX-License-Identifier: ISC
 
 test_dump_Txt () {
-    val first_name = "Lorem"
+	val first_name = "Lorem"
 	dump $first_name
-    tap_assert "'Lorem'" "$REPLY"
+	tap_assert "'Lorem'" "$REPLY"
 }
 
 test_toenv_Txt () {
-    val first_name = "Lorem"
+	val first_name = "Lorem"
 	local ref=$_R
 	toenv $first_name
-    tap_assert "$_R='Lorem'" "$REPLY"
+	tap_assert "$_R='Lorem'" "$REPLY"
 }
 
 test_dump_Lst () {
-    val first_name = "Lorem"
+	val first_name = "Lorem"
 	val last_name = "Ipsum"
 	val name_parts = [ Lst $first_name $last_name ]
 	dump $name_parts
@@ -23,7 +23,7 @@ test_dump_Lst () {
 }
 
 test_toenv_Lst () {
-    val first_name = "Lorem"
+	val first_name = "Lorem"
 	local r1=$_R
 	val last_name = "Ipsum"
 	local r2=$_R
@@ -34,7 +34,7 @@ test_toenv_Lst () {
 }
 
 test_dump_Set () {
-    val first_name = "Lorem"
+	val first_name = "Lorem"
 	val last_name = "Ipsum"
 	val name_parts = [ Set $first_name $last_name ]
 	dump $name_parts
@@ -42,7 +42,7 @@ test_dump_Set () {
 }
 
 test_toenv_Set () {
-    val first_name = "Lorem"
+	val first_name = "Lorem"
 	local r1=$_R
 	val last_name = "Ipsum"
 	local r2=$_R
@@ -53,7 +53,7 @@ test_toenv_Set () {
 }
 
 test_dump_Arr () {
-    val first_name = "Lorem"
+	val first_name = "Lorem"
 	val last_name = "Ipsum"
 	val name_parts = [ Arr $first_name $last_name ]
 	dump $name_parts
@@ -61,7 +61,7 @@ test_dump_Arr () {
 }
 
 test_toenv_Arr () {
-    val first_name = "Lorem"
+	val first_name = "Lorem"
 	local r1=$_R
 	val last_name = "Ipsum"
 	local r2=$_R

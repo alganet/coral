@@ -11,152 +11,152 @@ shell_count=0
 skip_count=0
 
 matrix_run () {
-    run_count=$((run_count + 1))
+	run_count=$((run_count + 1))
 
-    if ! command -v "$1" 2>&1 >/dev/null
-    then
-        echo  "ok $run_count - $1 # SKIP"
-        skip_count=$((skip_count + 1))
-        return
-    fi
+	if ! command -v "$1" 2>&1 >/dev/null
+	then
+		echo  "ok $run_count - $1 # SKIP"
+		skip_count=$((skip_count + 1))
+		return
+	fi
 
-    test_results="$("$@" | tail -n1)"
-    test_count="${test_results#*/}"
-    test_count="${test_count%\)}"
+	test_results="$("$@" | tail -n1)"
+	test_count="${test_results#*/}"
+	test_count="${test_count%\)}"
 
-    if test -z "$test_count_each"
-    then test_count_each=$test_count
-    fi
+	if test -z "$test_count_each"
+	then test_count_each=$test_count
+	fi
 
-    if eval test 1 = "\$((${test_results#*"("})"
-    then
-        if ! test $test_count_each != $test_count
-        then
-            echo -n "ok "
-        else
-            echo -n "not ok "
-            fail_count=$((fail_count + 1))
-        fi
-    else
-        echo -n "not ok "
-        fail_count=$((fail_count + 1))
-    fi
-    echo "$run_count - $1 $test_results"
+	if eval test 1 = "\$((${test_results#*"("})"
+	then
+		if ! test $test_count_each != $test_count
+		then
+			echo -n "ok "
+		else
+			echo -n "not ok "
+			fail_count=$((fail_count + 1))
+		fi
+	else
+		echo -n "not ok "
+		fail_count=$((fail_count + 1))
+	fi
+	echo "$run_count - $1 $test_results"
 }
 
 echo "TAP version 14"
 
 for SHELL in \
-    "/opt/bash_3.0.22/bin/bash" \
-    "/opt/bash_3.1.23/bin/bash" \
-    "/opt/bash_3.2.57/bin/bash" \
-    "/opt/bash_4.0.44/bin/bash" \
-    "/opt/bash_4.1.17/bin/bash" \
-    "/opt/bash_4.2.53/bin/bash" \
-    "/opt/bash_4.3.48/bin/bash" \
-    "/opt/bash_4.4.23/bin/bash" \
-    "/opt/bash_5.0.18/bin/bash" \
-    "/opt/bash_5.1.16/bin/bash" \
-    "/opt/bash_5.2.21/bin/bash" \
-    "/opt/bash_5.3-alpha/bin/bash" \
-    "/opt/busybox_1.27.2/bin/busybox ash" \
-    "/opt/busybox_1.28.4/bin/busybox ash" \
-    "/opt/busybox_1.29.3/bin/busybox ash" \
-    "/opt/busybox_1.30.1/bin/busybox ash" \
-    "/opt/busybox_1.31.1/bin/busybox ash" \
-    "/opt/busybox_1.32.1/bin/busybox ash" \
-    "/opt/busybox_1.33.2/bin/busybox ash" \
-    "/opt/busybox_1.34.1/bin/busybox ash" \
-    "/opt/busybox_1.35.0/bin/busybox ash" \
-    "/opt/busybox_1.36.1/bin/busybox ash" \
-    "/opt/dash_0.5.10.2/bin/dash" \
-    "/opt/dash_0.5.11.5/bin/dash" \
-    "/opt/dash_0.5.12/bin/dash" \
-    "/opt/dash_0.5.5.1/bin/dash" \
-    "/opt/dash_0.5.6.1/bin/dash" \
-    "/opt/dash_0.5.7/bin/dash" \
-    "/opt/dash_0.5.8/bin/dash" \
-    "/opt/dash_0.5.9.1/bin/dash" \
-    "/opt/ksh_shvrA93uplusm-v1.0.1/bin/ksh" \
-    "/opt/ksh_shvrA93uplusm-v1.0.2/bin/ksh" \
-    "/opt/ksh_shvrA93uplusm-v1.0.3/bin/ksh" \
-    "/opt/ksh_shvrA93uplusm-v1.0.4/bin/ksh" \
-    "/opt/ksh_shvrA93uplusm-v1.0.6/bin/ksh" \
-    "/opt/ksh_shvrA93uplusm-v1.0.7/bin/ksh" \
-    "/opt/ksh_shvrA93uplusm-v1.0.8/bin/ksh" \
-    "/opt/ksh_shvrB2020-2020.0.0/bin/ksh" \
-    "/opt/ksh_shvrChistory-b_2010-06-21/bin/ksh" \
-    "/opt/ksh_shvrChistory-b_2010-10-26/bin/ksh" \
-    "/opt/ksh_shvrChistory-b_2011-03-10/bin/ksh" \
-    "/opt/ksh_shvrChistory-b_2012-08-01/bin/ksh" \
-    "/opt/ksh_shvrChistory-b_2016-01-10/bin/ksh" \
-    "/opt/loksh_6.7.5/bin/loksh" \
-    "/opt/loksh_6.8.1/bin/loksh" \
-    "/opt/loksh_6.9/bin/loksh" \
-    "/opt/loksh_7.0/bin/loksh" \
-    "/opt/loksh_7.1/bin/loksh" \
-    "/opt/loksh_7.3/bin/loksh" \
-    "/opt/loksh_7.4/bin/loksh" \
-    "/opt/loksh_7.5/bin/loksh" \
-    "/opt/mksh_R45/bin/mksh" \
-    "/opt/mksh_R46/bin/mksh" \
-    "/opt/mksh_R47/bin/mksh" \
-    "/opt/mksh_R48b/bin/mksh" \
-    "/opt/mksh_R49/bin/mksh" \
-    "/opt/mksh_R50f/bin/mksh" \
-    "/opt/mksh_R51/bin/mksh" \
-    "/opt/mksh_R52c/bin/mksh" \
-    "/opt/mksh_R53a/bin/mksh" \
-    "/opt/mksh_R54/bin/mksh" \
-    "/opt/mksh_R55/bin/mksh" \
-    "/opt/mksh_R56c/bin/mksh" \
-    "/opt/mksh_R57/bin/mksh" \
-    "/opt/mksh_R58/bin/mksh" \
-    "/opt/mksh_R59c/bin/mksh" \
-    "/opt/oksh_6.5/bin/oksh" \
-    "/opt/oksh_6.6/bin/oksh" \
-    "/opt/oksh_6.7.1/bin/oksh" \
-    "/opt/oksh_6.8.1/bin/oksh" \
-    "/opt/oksh_6.9/bin/oksh" \
-    "/opt/oksh_7.0/bin/oksh" \
-    "/opt/oksh_7.1/bin/oksh" \
-    "/opt/oksh_7.2/bin/oksh" \
-    "/opt/oksh_7.3/bin/oksh" \
-    "/opt/oksh_7.4/bin/oksh" \
-    "/opt/oksh_7.5/bin/oksh" \
-    "/opt/posh_0.12.6/bin/posh" \
-    "/opt/posh_0.13.2/bin/posh" \
-    "/opt/posh_0.14.1/bin/posh" \
-    "/opt/zsh_4.2.7/bin/zsh" \
-    "/opt/zsh_5.0.8/bin/zsh" \
-    "/opt/zsh_5.1.1/bin/zsh" \
-    "/opt/zsh_5.2/bin/zsh" \
-    "/opt/zsh_5.3.1/bin/zsh" \
-    "/opt/zsh_5.4.2/bin/zsh" \
-    "/opt/zsh_5.5.1/bin/zsh" \
-    "/opt/zsh_5.6.2/bin/zsh" \
-    "/opt/zsh_5.7.1/bin/zsh" \
-    "/opt/zsh_5.8.1/bin/zsh" \
-    "/opt/zsh_5.9/bin/zsh" \
-    "/opt/osh_0.14.2/bin/osh" \
-    "/opt/osh_0.15.0/bin/osh" \
-    "/opt/osh_0.16.0/bin/osh" \
-    "/opt/osh_0.17.0/bin/osh" \
-    "/opt/osh_0.18.0/bin/osh" \
-    "/opt/osh_0.19.0/bin/osh" \
-    "/opt/osh_0.20.0/bin/osh" \
-    "/opt/osh_0.21.0/bin/osh" \
-    "/opt/osh_0.22.0/bin/osh"
+	"/opt/bash_3.0.22/bin/bash" \
+	"/opt/bash_3.1.23/bin/bash" \
+	"/opt/bash_3.2.57/bin/bash" \
+	"/opt/bash_4.0.44/bin/bash" \
+	"/opt/bash_4.1.17/bin/bash" \
+	"/opt/bash_4.2.53/bin/bash" \
+	"/opt/bash_4.3.48/bin/bash" \
+	"/opt/bash_4.4.23/bin/bash" \
+	"/opt/bash_5.0.18/bin/bash" \
+	"/opt/bash_5.1.16/bin/bash" \
+	"/opt/bash_5.2.21/bin/bash" \
+	"/opt/bash_5.3-alpha/bin/bash" \
+	"/opt/busybox_1.27.2/bin/busybox ash" \
+	"/opt/busybox_1.28.4/bin/busybox ash" \
+	"/opt/busybox_1.29.3/bin/busybox ash" \
+	"/opt/busybox_1.30.1/bin/busybox ash" \
+	"/opt/busybox_1.31.1/bin/busybox ash" \
+	"/opt/busybox_1.32.1/bin/busybox ash" \
+	"/opt/busybox_1.33.2/bin/busybox ash" \
+	"/opt/busybox_1.34.1/bin/busybox ash" \
+	"/opt/busybox_1.35.0/bin/busybox ash" \
+	"/opt/busybox_1.36.1/bin/busybox ash" \
+	"/opt/dash_0.5.10.2/bin/dash" \
+	"/opt/dash_0.5.11.5/bin/dash" \
+	"/opt/dash_0.5.12/bin/dash" \
+	"/opt/dash_0.5.5.1/bin/dash" \
+	"/opt/dash_0.5.6.1/bin/dash" \
+	"/opt/dash_0.5.7/bin/dash" \
+	"/opt/dash_0.5.8/bin/dash" \
+	"/opt/dash_0.5.9.1/bin/dash" \
+	"/opt/ksh_shvrA93uplusm-v1.0.1/bin/ksh" \
+	"/opt/ksh_shvrA93uplusm-v1.0.2/bin/ksh" \
+	"/opt/ksh_shvrA93uplusm-v1.0.3/bin/ksh" \
+	"/opt/ksh_shvrA93uplusm-v1.0.4/bin/ksh" \
+	"/opt/ksh_shvrA93uplusm-v1.0.6/bin/ksh" \
+	"/opt/ksh_shvrA93uplusm-v1.0.7/bin/ksh" \
+	"/opt/ksh_shvrA93uplusm-v1.0.8/bin/ksh" \
+	"/opt/ksh_shvrB2020-2020.0.0/bin/ksh" \
+	"/opt/ksh_shvrChistory-b_2010-06-21/bin/ksh" \
+	"/opt/ksh_shvrChistory-b_2010-10-26/bin/ksh" \
+	"/opt/ksh_shvrChistory-b_2011-03-10/bin/ksh" \
+	"/opt/ksh_shvrChistory-b_2012-08-01/bin/ksh" \
+	"/opt/ksh_shvrChistory-b_2016-01-10/bin/ksh" \
+	"/opt/loksh_6.7.5/bin/loksh" \
+	"/opt/loksh_6.8.1/bin/loksh" \
+	"/opt/loksh_6.9/bin/loksh" \
+	"/opt/loksh_7.0/bin/loksh" \
+	"/opt/loksh_7.1/bin/loksh" \
+	"/opt/loksh_7.3/bin/loksh" \
+	"/opt/loksh_7.4/bin/loksh" \
+	"/opt/loksh_7.5/bin/loksh" \
+	"/opt/mksh_R45/bin/mksh" \
+	"/opt/mksh_R46/bin/mksh" \
+	"/opt/mksh_R47/bin/mksh" \
+	"/opt/mksh_R48b/bin/mksh" \
+	"/opt/mksh_R49/bin/mksh" \
+	"/opt/mksh_R50f/bin/mksh" \
+	"/opt/mksh_R51/bin/mksh" \
+	"/opt/mksh_R52c/bin/mksh" \
+	"/opt/mksh_R53a/bin/mksh" \
+	"/opt/mksh_R54/bin/mksh" \
+	"/opt/mksh_R55/bin/mksh" \
+	"/opt/mksh_R56c/bin/mksh" \
+	"/opt/mksh_R57/bin/mksh" \
+	"/opt/mksh_R58/bin/mksh" \
+	"/opt/mksh_R59c/bin/mksh" \
+	"/opt/oksh_6.5/bin/oksh" \
+	"/opt/oksh_6.6/bin/oksh" \
+	"/opt/oksh_6.7.1/bin/oksh" \
+	"/opt/oksh_6.8.1/bin/oksh" \
+	"/opt/oksh_6.9/bin/oksh" \
+	"/opt/oksh_7.0/bin/oksh" \
+	"/opt/oksh_7.1/bin/oksh" \
+	"/opt/oksh_7.2/bin/oksh" \
+	"/opt/oksh_7.3/bin/oksh" \
+	"/opt/oksh_7.4/bin/oksh" \
+	"/opt/oksh_7.5/bin/oksh" \
+	"/opt/posh_0.12.6/bin/posh" \
+	"/opt/posh_0.13.2/bin/posh" \
+	"/opt/posh_0.14.1/bin/posh" \
+	"/opt/zsh_4.2.7/bin/zsh" \
+	"/opt/zsh_5.0.8/bin/zsh" \
+	"/opt/zsh_5.1.1/bin/zsh" \
+	"/opt/zsh_5.2/bin/zsh" \
+	"/opt/zsh_5.3.1/bin/zsh" \
+	"/opt/zsh_5.4.2/bin/zsh" \
+	"/opt/zsh_5.5.1/bin/zsh" \
+	"/opt/zsh_5.6.2/bin/zsh" \
+	"/opt/zsh_5.7.1/bin/zsh" \
+	"/opt/zsh_5.8.1/bin/zsh" \
+	"/opt/zsh_5.9/bin/zsh" \
+	"/opt/osh_0.14.2/bin/osh" \
+	"/opt/osh_0.15.0/bin/osh" \
+	"/opt/osh_0.16.0/bin/osh" \
+	"/opt/osh_0.17.0/bin/osh" \
+	"/opt/osh_0.18.0/bin/osh" \
+	"/opt/osh_0.19.0/bin/osh" \
+	"/opt/osh_0.20.0/bin/osh" \
+	"/opt/osh_0.21.0/bin/osh" \
+	"/opt/osh_0.22.0/bin/osh"
 do
-    shell_count=$((shell_count + 1))
-    matrix_run $SHELL "$@"
+	shell_count=$((shell_count + 1))
+	matrix_run $SHELL "$@"
 done
 
 if test $fail_count -gt 0
 then
-    echo "# MATRIX FAIL ($shell_count runs, $skip_count skipped, $fail_count failures)"
-    return 1
+	echo "# MATRIX FAIL ($shell_count runs, $skip_count skipped, $fail_count failures)"
+	return 1
 else
-    echo "# MAXTRIX PASS ($shell_count runs, $skip_count skipped)"
-    return 0
+	echo "# MATRIX PASS ($shell_count runs, $skip_count skipped)"
+	return 0
 fi
