@@ -8,7 +8,6 @@ test_write () {
 	tap_assert 'x\nx'                "$(_write 'x\nx')"
 	tap_assert 'x\tx'                "$(_write 'x\tx')"
 	tap_assert "123123"              "$(_write 123; _write 123)"
-	tap_assert "123${__EOL__}456123" "$(_write 123 456; _write 123)"
 }
 
 test_print () {
@@ -18,7 +17,6 @@ test_print () {
 	tap_assert "x${__EOL__}x"        "$(_print 'x\nx')"
 	tap_assert "x${__TAB__}x"        "$(_print 'x\tx')"
 	tap_assert "123123"              "$(_print 123; _print 123)"
-	tap_assert "123${__EOL__}456123" "$(_print 123 456; _print 123)"
 }
 
 test_inline_unary_zerolength () {

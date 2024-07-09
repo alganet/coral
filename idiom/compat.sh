@@ -6,7 +6,7 @@ __TAB__="	"
 __EOL__="
 "
 
-LC_ALL=C     # Not all shells support modern charsets, we'll deal with it later.
+LC_ALL=C     # We want to treat multibyte strings as individual bytes
 IFS=$__EOL__ # Don't break my variables by spaces
 PATH=""      # We don't need other programs
 
@@ -31,18 +31,17 @@ REPLY="$(
 
 case "$REPLY" in
 "\\061 2 "*)
-	_print () { printf %b "${*:-}"; }
-	_write () { printf %s "${*:-}"; }
+	_print () { printf %b "${1:-}"; }
+	_write () { printf %s "${1:-}"; }
 	;;
 "\\063 ")
-	_print () { echo -n -e "${*:-}"; }
-	_write () { echo -n -E "${*:-}"; }
+	_print () { echo -n -e "${1:-}"; }
+	_write () { echo -n -E "${1:-}"; }
 	;;
 *)
-	_print () { echo -n "${*:-}"; }
+	_print () { echo -n "${1:-}"; }
 	# Only posh will use this, as it doesn't have a non-escaping builtin echo
 	_write () {
-		set -- "${*:-}"
 		IFS='\'
 		set -- $1
 		IFS=$__EOL__

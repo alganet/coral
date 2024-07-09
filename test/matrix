@@ -15,7 +15,7 @@ matrix_run () {
 
 	if ! command -v "$1" 2>&1 >/dev/null
 	then
-		echo  "ok $run_count - $1 # SKIP"
+		echo "ok $run_count - $1 # SKIP"
 		skip_count=$((skip_count + 1))
 		return
 	fi

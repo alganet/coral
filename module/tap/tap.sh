@@ -21,7 +21,7 @@ tap_tap () {
 	else _glob "$input.sh"
 	fi
 
-	_write "TAP version 14" ""
+	_print "TAP version 14\n"
 	for file in $REPLY
 	do
 		lineno=0
@@ -53,27 +53,27 @@ tap_tap () {
 			errors="$(set +x; $test_name 2>&1 || :)"
 
 			if test -z "$errors"
-			then _write "ok ${test_count} - $test_name" ""
+			then _print "ok ${test_count} - $test_name\n"
 			else
 				fail_count=$((fail_count + 1))
 
-				_write \
+				_print \
 					"not ok ${test_count} - $test_name" \
 					"${errors}" \
-					"  #       at: $file:$test_line${__TAB__}" "" ""
+					"  #       at: $file:$test_line${__TAB__}\n\n"
 			fi
 
 		done
 	done
 
-	_write "1..${test_count}" ""
+	_print "1..${test_count}\n"
 	local test_results="($((test_count - fail_count))/$test_count)"
 	if test "$fail_count" -gt 0
 	then
-		_write "# FAIL $test_results" ""
+		_print "# FAIL $test_results\n"
 		return 1
 	else
-		_write "# PASS $test_results" ""
+		_print "# PASS $test_results\n"
 		return 0
 	fi
 }
