@@ -18,7 +18,7 @@ _has () { _quiet command -v "$1"; }  # Checks if a command is available
 set -euf
 
 # Feature-detects glob stuff
-if _quiet setopt sh_word_split no_glob no_multios ignore_braces
+if _quiet setopt sh_word_split no_glob no_multios ignore_braces no_equals
 then _glob () { setopt glob glob_subst; _reply $@; unsetopt glob; }
 else _glob () { set +f; _reply $@; set -f; }
 fi
