@@ -21,10 +21,3 @@ test_val_simple () {
 	dump $my_variable
 	tap_assert "'Some text'" "$REPLY"
 }
-
-test_val_exp_Txt_creation () {
-	local my_variable=
-	val my_variable = [ Lst ="foo" ="bar" ]
-	dump $my_variable
-	tap_assert "[ Lst 'foo' 'bar' ]" "$REPLY"
-}

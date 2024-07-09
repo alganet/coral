@@ -43,10 +43,10 @@ case "$REPLY" in
 	# Only posh will use this, as it doesn't have a non-escaping builtin echo
 	_write () {
 		IFS='\'
-		set -- $1
+		set -- ${1:-}
 		IFS=$__EOL__
-		echo -n "$1"
-		shift
+		echo -n "${1:-}"
+		test $# -lt 1 || shift
 		while test $# -gt 0
 		do
 			echo -n "\\\\$1"

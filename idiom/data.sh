@@ -65,8 +65,8 @@ val () {
 	local _n=$1 _o=$2
 	shift 2
 	case $_o in
-		\=)  exp ${@:-} ; eval $_n=\$_R ;;
-		\=@) eval $_n=\$$1 ;;
+		\=)  exp ${@:-} ; eval "$_n=\$_R" ;;
+		\=@) eval "$_n=\$$1" ;;
 	esac
 }
 
@@ -89,11 +89,11 @@ dump () {
 			dump="$dump]"
 			;;
 		_A[0-9]*)
-			eval "len=\"\$(($1))\""
+			eval "len=\"\$$1\""
 			dump="[ Arr "
 			while test $count -lt $len
 			do
-				eval "dump \$$1i$count"
+				eval "dump \$${1}i$count"
 				dump="$dump$REPLY "
 				count=$((count + 1))
 			done
@@ -104,7 +104,7 @@ dump () {
 			dump="[ Map "
 			for item in $REPLY
 			do
-				eval "dump \$$1i$item"
+				eval "dump \$${1}i$item"
 				dump="$dump:$item $REPLY "
 			done
 			dump="$dump]"
@@ -119,13 +119,15 @@ dump () {
 
 toenv () {
     local dump= item= len=0 count=0
+
     case $1 in
-        _T*) eval dump=\"$1=\'\$$1\'\" ;;
+        _T*) eval dump=\"$1=\'\${$1}\'\" ;;
 		_[LS]*)
 			dump=
-			eval "REPLY=\"\$$1\""
+			eval "REPLY=\$$1"
 			for item in $REPLY
 			do
+				: x$item
 				toenv $item
 				dump="$dump$REPLY${__EOL__}"
 			done
@@ -136,8 +138,8 @@ toenv () {
 			eval "len=\"\$(($1))\""
 			while test $count -lt $len
 			do
-				eval "toenv \$$1i$count"
-				eval "dump=\"\${dump}$1i$count=\$$1i$count\"\${__EOL__}"
+				eval "toenv \$${1}i$count"
+				eval "dump=\"\${dump}${1}i$count=\$${1}i$count\"\${__EOL__}"
 				dump="$dump$REPLY${__EOL__}"
 				count=$((count + 1))
 			done
@@ -147,8 +149,9 @@ toenv () {
 			eval dump=\"$1=\'\$$1\'\${__EOL__}\"
 			for item in $REPLY
 			do
-				eval "toenv \$$1i$item"
-				eval "dump=\"\${dump}$1i$item=\$$1i$item\"\${__EOL__}"
+				test -n "$item" || continue
+				eval "toenv \$${1}i$item"
+				eval "dump=\"\${dump}${1}i$item=\$${1}i$item\"\${__EOL__}"
 				dump="$dump$REPLY${__EOL__}"
 			done
 			;;
@@ -226,7 +229,7 @@ Map () {
 	_M=$((_M + 1))
 	_R=_M$_M
 	eval "$_R="
-	Map_add $_R "$@"
+	test $# -lt 1 || Map_add $_R "$@"
 }
 
 Map_add () {

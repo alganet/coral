@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: ISC
 
 tap_assert () {
-	if ! test "x$1" = "x$2"
+	if ! test "x${1}" = "x$2"
 	then
 		_print "  # expected: "
 		_inline "${1:-"<empty>"}"

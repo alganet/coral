@@ -2,15 +2,20 @@
 # SPDX-License-Identifier: ISC
 
 # Shim for local on ksh93
-if eval "REPLY=;_ltest(){ local REPLY=x;} 2>/dev/null" && test "$REPLY" = x
+if eval "REPLY=;_ltest(){ local REPLY=x;} 2>/dev/null;_ltest" && test "$REPLY" = x
 then
 	unset -f ltest
 	for __decl in $(typeset +f)
 	do
 		__name=${__decl%"()"}
+		case $__OPT__ in *x*) typeset -fx $__name;; esac
+		case $__name in
+			val|exp|_*)
+				continue
+				;;
+		esac
 		__body="$(typeset -f "$__name" || :)"
 		eval "function $__name ${__body#"$__decl"}"
-		case $__OPT__ in *x*) typeset -fx $__name;; esac
 	done
 	unset __decl __name __body
 	REPLY=

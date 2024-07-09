@@ -13,4 +13,4 @@ docker-matrix:
 		-v $(PWD):/opt/coral \
 		-w /opt/coral \
 		$(IMAGE) \
-			sh test/matrix -c "./coral tap 'test/*/*'"
+			sh test/matrix ./coral tap "test/*/*"

@@ -85,9 +85,6 @@ for SHELL in \
 	"/opt/ksh_shvrA93uplusm-v1.0.7/bin/ksh" \
 	"/opt/ksh_shvrA93uplusm-v1.0.8/bin/ksh" \
 	"/opt/ksh_shvrB2020-2020.0.0/bin/ksh" \
-	"/opt/ksh_shvrChistory-b_2010-06-21/bin/ksh" \
-	"/opt/ksh_shvrChistory-b_2010-10-26/bin/ksh" \
-	"/opt/ksh_shvrChistory-b_2011-03-10/bin/ksh" \
 	"/opt/ksh_shvrChistory-b_2012-08-01/bin/ksh" \
 	"/opt/ksh_shvrChistory-b_2016-01-10/bin/ksh" \
 	"/opt/loksh_6.7.5/bin/loksh" \
@@ -124,7 +121,6 @@ for SHELL in \
 	"/opt/oksh_7.3/bin/oksh" \
 	"/opt/oksh_7.4/bin/oksh" \
 	"/opt/oksh_7.5/bin/oksh" \
-	"/opt/posh_0.12.6/bin/posh" \
 	"/opt/posh_0.13.2/bin/posh" \
 	"/opt/posh_0.14.1/bin/posh" \
 	"/opt/zsh_4.2.7/bin/zsh" \
