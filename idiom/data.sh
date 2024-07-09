@@ -127,7 +127,6 @@ toenv () {
 			eval "REPLY=\$$1"
 			for item in $REPLY
 			do
-				: x$item
 				toenv $item
 				dump="$dump$REPLY${__EOL__}"
 			done
