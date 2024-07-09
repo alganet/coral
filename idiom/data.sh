@@ -44,6 +44,10 @@ exp () {
 			Txt|Lst|Set|Arr|Map)
 				_e="${_e:-}${_e:+ }$_t"
 				;;
+			=*)
+				Txt "${_t#\=}"
+				_e="${_e:-}${_e:+ }$_R"
+				;;
 			*)
 				_write "bad expression: '$_t'"
 				exit 1
@@ -145,6 +149,7 @@ toenv () {
 			do
 				eval "toenv \$$1i$item"
 				eval "dump=\"\${dump}$1i$item=\$$1i$item\"\${__EOL__}"
+				dump="$dump$REPLY${__EOL__}"
 			done
 			;;
 		*)

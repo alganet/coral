@@ -3,34 +3,34 @@
 
 test_Txt_noargs () {
 	Txt
-	eval deref=\$$_R
-	tap_assert "" "$deref"
+	dump $_R
+	tap_assert "''" "$REPLY"
 }
 
 test_Txt_unary_zerolength () {
 	Txt ""
-	eval deref=\$$_R
-	tap_assert "" "$deref"
+	dump $_R
+	tap_assert "''" "$REPLY"
 }
 
 test_Txt_simple () {
 	Txt "Some text"
-	eval deref=\$$_R
-	tap_assert "Some text" "$deref"
+	dump $_R
+	tap_assert "'Some text'" "$REPLY"
 }
 
 test_Txt_add () {
 	Txt "Some text"
-	eval deref=\$$_R
+	dump $_R
 	Txt_add $_R " and some more"
-	eval deref=\$$_R
-	tap_assert "Some text and some more" "$deref"
+	dump $_R
+	tap_assert "'Some text and some more'" "$REPLY"
 }
 
 test_Txt_add_to_empty_string () {
 	Txt
-	eval deref=\$$_R
+	dump $_R
 	Txt_add $_R "Hi"
-	eval deref=\$$_R
-	tap_assert "Hi" "$deref"
+	dump $_R
+	tap_assert "'Hi'" "$REPLY"
 }

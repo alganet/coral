@@ -4,20 +4,27 @@
 test_val_noargs () {
 	local my_variable=
 	val my_variable =
-	eval deref=\$$my_variable
-	tap_assert "" "$deref"
+	dump $my_variable
+	tap_assert "''" "$REPLY"
 }
 
 test_val_unary_zerolength () {
 	local my_variable=
 	val my_variable = ""
-	eval deref=\$$my_variable
-	tap_assert "" "$deref"
+	dump $my_variable
+	tap_assert "''" "$REPLY"
 }
 
 test_val_simple () {
 	local my_variable=
 	val my_variable = "Some text"
-	eval deref=\$$my_variable
-	tap_assert "Some text" "$deref"
+	dump $my_variable
+	tap_assert "'Some text'" "$REPLY"
+}
+
+test_val_exp_Txt_creation () {
+	local my_variable=
+	val my_variable = [ Lst ="foo" ="bar" ]
+	dump $my_variable
+	tap_assert "[ Lst 'foo' 'bar' ]" "$REPLY"
 }

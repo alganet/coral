@@ -50,17 +50,15 @@ tap_tap () {
 			val test_name =@ $1
 			val test_line =@ $2
 			test_count=$((test_count + 1))
-			errors="$(set +x; $test_name 2>&1 || :)"
+			errors="$(set +x; $test_name 2>&1 || :)" || :
 
 			if test -z "$errors"
 			then _print "ok ${test_count} - $test_name\n"
 			else
 				fail_count=$((fail_count + 1))
 
-				_print \
-					"not ok ${test_count} - $test_name" \
-					"${errors}" \
-					"  #       at: $file:$test_line${__TAB__}\n\n"
+				errors="${errors}${__EOL__}  #       at: $file:$test_line${__TAB__}${__EOL__}${__EOL__}"
+				_write "not ok ${test_count} - $test_name${__EOL__}${errors}"
 			fi
 
 		done

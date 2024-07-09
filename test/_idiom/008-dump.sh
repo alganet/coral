@@ -96,5 +96,5 @@ test_toenv_Map () {
 	val profile = [ Map :fname $first_name :lname $last_name ]
 	local r3=$_R
 	toenv $profile
-	tap_assert "$r3='fname${__EOL__}lname'${__EOL__}${r3}ifname=$r1${__EOL__}${r3}ilname=$r2${__EOL__}" "$REPLY"
+	tap_assert "${r3}='fname${__EOL__}lname'${__EOL__}${r3}ifname=$r1${__EOL__}$r1='Lorem'${__EOL__}${r3}ilname=$r2${__EOL__}$r2='Ipsum'${__EOL__}" "$REPLY"
 }
