@@ -3,32 +3,39 @@
 
 test_Lst_noargs () {
 	Lst
-	eval deref=\$$_R
-	tap_assert "" "$deref"
+	dump $_R
+	tap_assert "[ Lst ]" "$REPLY"
 }
 
 test_Lst_unary_zerolength () {
 	Lst ""
-	eval deref=\$$_R
-	tap_assert "" "$deref"
+	dump $_R
+	tap_assert "[ Lst ]" "$REPLY"
 }
 
 test_Lst_simple () {
-	Lst foo bar baz
-	eval deref=\$$_R
-	tap_assert "foo${__EOL__}bar${__EOL__}baz" "$deref"
+	local lst=
+	val lst = Lst =foo =bar =baz
+	dump $lst
+	tap_assert "[ Lst 'foo' 'bar' 'baz' ]" "$REPLY"
 }
 
 test_Lst_add_to_existing () {
-	Lst foo bar baz
-	Lst_add $_R qux
-	eval deref=\$$_R
-	tap_assert "foo${__EOL__}bar${__EOL__}baz${__EOL__}qux" "$deref"
+	local lst= extra=
+	val lst = Lst =foo =bar =baz
+	val extra = "qux"
+	Lst_add $_R $extra
+	dump $lst
+	tap_assert "[ Lst 'foo' 'bar' 'baz' ]" "$REPLY"
 }
 
 test_Lst_add_to_existing_empty_list () {
-	Lst
-	Lst_add $_R foo bar baz
-	eval deref=\$$_R
-	tap_assert "foo${__EOL__}bar${__EOL__}baz" "$deref"
+	local lst= a= b= c=
+	val a = foo
+	val b = bar
+	val c = baz
+	val lst = [ Lst ]
+	Lst_add $_R $a $b $c
+	dump $lst
+	tap_assert "[ Lst 'foo' 'bar' 'baz' ]" "$REPLY"
 }
