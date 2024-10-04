@@ -57,7 +57,7 @@ for SHELL in \
 	"/opt/bash_4.4.23/bin/bash" \
 	"/opt/bash_5.0.18/bin/bash" \
 	"/opt/bash_5.1.16/bin/bash" \
-	"/opt/bash_5.2.21/bin/bash" \
+	"/opt/bash_5.2.32/bin/bash" \
 	"/opt/bash_5.3-alpha/bin/bash" \
 	"/opt/busybox_1.27.2/bin/busybox ash" \
 	"/opt/busybox_1.28.4/bin/busybox ash" \
@@ -69,6 +69,7 @@ for SHELL in \
 	"/opt/busybox_1.34.1/bin/busybox ash" \
 	"/opt/busybox_1.35.0/bin/busybox ash" \
 	"/opt/busybox_1.36.1/bin/busybox ash" \
+	"/opt/busybox_1.37.0/bin/busybox ash" \
 	"/opt/dash_0.5.10.2/bin/dash" \
 	"/opt/dash_0.5.11.5/bin/dash" \
 	"/opt/dash_0.5.12/bin/dash" \
@@ -78,12 +79,14 @@ for SHELL in \
 	"/opt/dash_0.5.8/bin/dash" \
 	"/opt/dash_0.5.9.1/bin/dash" \
 	"/opt/ksh_shvrA93uplusm-v1.0.1/bin/ksh" \
+	"/opt/ksh_shvrA93uplusm-v1.0.10/bin/ksh" \
 	"/opt/ksh_shvrA93uplusm-v1.0.2/bin/ksh" \
 	"/opt/ksh_shvrA93uplusm-v1.0.3/bin/ksh" \
 	"/opt/ksh_shvrA93uplusm-v1.0.4/bin/ksh" \
 	"/opt/ksh_shvrA93uplusm-v1.0.6/bin/ksh" \
 	"/opt/ksh_shvrA93uplusm-v1.0.7/bin/ksh" \
 	"/opt/ksh_shvrA93uplusm-v1.0.8/bin/ksh" \
+	"/opt/ksh_shvrA93uplusm-v1.0.9/bin/ksh" \
 	"/opt/ksh_shvrB2020-2020.0.0/bin/ksh" \
 	"/opt/ksh_shvrChistory-b_2012-08-01/bin/ksh" \
 	"/opt/ksh_shvrChistory-b_2016-01-10/bin/ksh" \
@@ -121,8 +124,30 @@ for SHELL in \
 	"/opt/oksh_7.3/bin/oksh" \
 	"/opt/oksh_7.4/bin/oksh" \
 	"/opt/oksh_7.5/bin/oksh" \
+	"/opt/osh_0.14.2/bin/osh" \
+	"/opt/osh_0.15.0/bin/osh" \
+	"/opt/osh_0.16.0/bin/osh" \
+	"/opt/osh_0.17.0/bin/osh" \
+	"/opt/osh_0.18.0/bin/osh" \
+	"/opt/osh_0.19.0/bin/osh" \
+	"/opt/osh_0.20.0/bin/osh" \
+	"/opt/osh_0.21.0/bin/osh" \
+	"/opt/osh_0.22.0/bin/osh" \
+	"/opt/osh_0.23.0/bin/osh" \
 	"/opt/posh_0.13.2/bin/posh" \
 	"/opt/posh_0.14.1/bin/posh" \
+	"/opt/yash_2.46/bin/yash" \
+	"/opt/yash_2.47/bin/yash" \
+	"/opt/yash_2.48/bin/yash" \
+	"/opt/yash_2.49/bin/yash" \
+	"/opt/yash_2.50/bin/yash" \
+	"/opt/yash_2.51/bin/yash" \
+	"/opt/yash_2.52/bin/yash" \
+	"/opt/yash_2.53/bin/yash" \
+	"/opt/yash_2.54/bin/yash" \
+	"/opt/yash_2.55/bin/yash" \
+	"/opt/yash_2.56.1/bin/yash" \
+	"/opt/yash_2.57/bin/yash" \
 	"/opt/zsh_4.2.7/bin/zsh" \
 	"/opt/zsh_5.0.8/bin/zsh" \
 	"/opt/zsh_5.1.1/bin/zsh" \
@@ -133,16 +158,7 @@ for SHELL in \
 	"/opt/zsh_5.6.2/bin/zsh" \
 	"/opt/zsh_5.7.1/bin/zsh" \
 	"/opt/zsh_5.8.1/bin/zsh" \
-	"/opt/zsh_5.9/bin/zsh" \
-	"/opt/osh_0.14.2/bin/osh" \
-	"/opt/osh_0.15.0/bin/osh" \
-	"/opt/osh_0.16.0/bin/osh" \
-	"/opt/osh_0.17.0/bin/osh" \
-	"/opt/osh_0.18.0/bin/osh" \
-	"/opt/osh_0.19.0/bin/osh" \
-	"/opt/osh_0.20.0/bin/osh" \
-	"/opt/osh_0.21.0/bin/osh" \
-	"/opt/osh_0.22.0/bin/osh"
+	"/opt/zsh_5.9/bin/zsh"
 do
 	shell_count=$((shell_count + 1))
 	matrix_run $SHELL "$@"

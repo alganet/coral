@@ -23,6 +23,16 @@ then _glob () { setopt glob glob_subst; _reply $@; unsetopt glob; }
 else _glob () { set +f; _reply $@; set -f; }
 fi
 
+# Make yash 2.54+ use test even if it's not on PATH
+if ! _quiet command test 1 = 1 && _quiet command -p test 1 = 1
+then test () { command -p test "$@"; }
+fi
+
+# Make yash 2.54+ use printf even if it's not on PATH
+if ! _quiet command printf '' && _quiet command -p printf ''
+then printf () { command -p printf "$@"; }
+fi
+
 # Feature-detects printing functions
 REPLY="$(
 	_noerr printf %s%b "\\061 " "\\062 "

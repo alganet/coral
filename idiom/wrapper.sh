@@ -27,10 +27,11 @@ then
 	then require "$1" # Main argument not a script, try to load a module
 	else
 		. "$1"
-		REPLY=${1#*\/}
+		REPLY=${1##*\/}
 		REPLY=${REPLY%\.*}
 	fi
 	shift
 fi
+
 unset -f require
-"${REPLY:-}" "${@:-}"
+"${REPLY:-:}" "${@:-}"
