@@ -47,6 +47,19 @@ matrix_run () {
 echo "TAP version 14"
 
 for SHELL in \
+	"/opt/ash_1.26.2/bin/ash" \
+	"/opt/ash_1.27.2/bin/ash" \
+	"/opt/ash_1.28.4/bin/ash" \
+	"/opt/ash_1.29.3/bin/ash" \
+	"/opt/ash_1.30.1/bin/ash" \
+	"/opt/ash_1.31.1/bin/ash" \
+	"/opt/ash_1.32.1/bin/ash" \
+	"/opt/ash_1.33.2/bin/ash" \
+	"/opt/ash_1.34.1/bin/ash" \
+	"/opt/ash_1.35.0/bin/ash" \
+	"/opt/ash_1.36.1/bin/ash" \
+	"/opt/ash_1.37.0/bin/ash" \
+	"/opt/bash_2.05b.13/bin/bash" \
 	"/opt/bash_3.0.22/bin/bash" \
 	"/opt/bash_3.1.23/bin/bash" \
 	"/opt/bash_3.2.57/bin/bash" \
@@ -57,33 +70,18 @@ for SHELL in \
 	"/opt/bash_4.4.23/bin/bash" \
 	"/opt/bash_5.0.18/bin/bash" \
 	"/opt/bash_5.1.16/bin/bash" \
-	"/opt/bash_5.2.32/bin/bash" \
-	"/opt/bash_5.3-alpha/bin/bash" \
-	"/opt/busybox_1.27.2/bin/busybox ash" \
-	"/opt/busybox_1.28.4/bin/busybox ash" \
-	"/opt/busybox_1.29.3/bin/busybox ash" \
-	"/opt/busybox_1.30.1/bin/busybox ash" \
-	"/opt/busybox_1.31.1/bin/busybox ash" \
-	"/opt/busybox_1.32.1/bin/busybox ash" \
-	"/opt/busybox_1.33.2/bin/busybox ash" \
-	"/opt/busybox_1.34.1/bin/busybox ash" \
-	"/opt/busybox_1.35.0/bin/busybox ash" \
-	"/opt/busybox_1.36.1/bin/busybox ash" \
-	"/opt/busybox_1.37.0/bin/busybox ash" \
+	"/opt/bash_5.2.37/bin/bash" \
+	"/opt/bash_5.3.9/bin/bash" \
 	"/opt/dash_0.5.10.2/bin/dash" \
 	"/opt/dash_0.5.11.5/bin/dash" \
 	"/opt/dash_0.5.12/bin/dash" \
+	"/opt/dash_0.5.13/bin/dash" \
 	"/opt/dash_0.5.5.1/bin/dash" \
 	"/opt/dash_0.5.6.1/bin/dash" \
 	"/opt/dash_0.5.7/bin/dash" \
 	"/opt/dash_0.5.8/bin/dash" \
 	"/opt/dash_0.5.9.1/bin/dash" \
-	"/opt/ksh_shvrA93uplusm-v1.0.1/bin/ksh" \
 	"/opt/ksh_shvrA93uplusm-v1.0.10/bin/ksh" \
-	"/opt/ksh_shvrA93uplusm-v1.0.2/bin/ksh" \
-	"/opt/ksh_shvrA93uplusm-v1.0.3/bin/ksh" \
-	"/opt/ksh_shvrA93uplusm-v1.0.4/bin/ksh" \
-	"/opt/ksh_shvrA93uplusm-v1.0.6/bin/ksh" \
 	"/opt/ksh_shvrA93uplusm-v1.0.7/bin/ksh" \
 	"/opt/ksh_shvrA93uplusm-v1.0.8/bin/ksh" \
 	"/opt/ksh_shvrA93uplusm-v1.0.9/bin/ksh" \
@@ -98,6 +96,9 @@ for SHELL in \
 	"/opt/loksh_7.3/bin/loksh" \
 	"/opt/loksh_7.4/bin/loksh" \
 	"/opt/loksh_7.5/bin/loksh" \
+	"/opt/loksh_7.6/bin/loksh" \
+	"/opt/loksh_7.7/bin/loksh" \
+	"/opt/loksh_7.8/bin/loksh" \
 	"/opt/mksh_R45/bin/mksh" \
 	"/opt/mksh_R46/bin/mksh" \
 	"/opt/mksh_R47/bin/mksh" \
@@ -124,18 +125,24 @@ for SHELL in \
 	"/opt/oksh_7.3/bin/oksh" \
 	"/opt/oksh_7.4/bin/oksh" \
 	"/opt/oksh_7.5/bin/oksh" \
-	"/opt/osh_0.14.2/bin/osh" \
-	"/opt/osh_0.15.0/bin/osh" \
-	"/opt/osh_0.16.0/bin/osh" \
-	"/opt/osh_0.17.0/bin/osh" \
-	"/opt/osh_0.18.0/bin/osh" \
-	"/opt/osh_0.19.0/bin/osh" \
-	"/opt/osh_0.20.0/bin/osh" \
-	"/opt/osh_0.21.0/bin/osh" \
-	"/opt/osh_0.22.0/bin/osh" \
-	"/opt/osh_0.23.0/bin/osh" \
+	"/opt/oksh_7.6/bin/oksh" \
+	"/opt/oksh_7.7/bin/oksh" \
+	"/opt/oksh_7.8/bin/oksh" \
+	"/opt/osh_0.25.0/bin/osh" \
+	"/opt/osh_0.26.0/bin/osh" \
+	"/opt/osh_0.27.0/bin/osh" \
+	"/opt/osh_0.28.0/bin/osh" \
+	"/opt/osh_0.29.0/bin/osh" \
+	"/opt/osh_0.30.0/bin/osh" \
+	"/opt/osh_0.31.0/bin/osh" \
+	"/opt/osh_0.32.0/bin/osh" \
+	"/opt/osh_0.33.0/bin/osh" \
+	"/opt/osh_0.34.0/bin/osh" \
+	"/opt/osh_0.35.0/bin/osh" \
+	"/opt/osh_0.36.0/bin/osh" \
 	"/opt/posh_0.13.2/bin/posh" \
-	"/opt/posh_0.14.1/bin/posh" \
+	"/opt/posh_0.14.3/bin/posh" \
+	"/opt/yash_2.45/bin/yash" \
 	"/opt/yash_2.46/bin/yash" \
 	"/opt/yash_2.47/bin/yash" \
 	"/opt/yash_2.48/bin/yash" \
@@ -148,6 +155,11 @@ for SHELL in \
 	"/opt/yash_2.55/bin/yash" \
 	"/opt/yash_2.56.1/bin/yash" \
 	"/opt/yash_2.57/bin/yash" \
+	"/opt/yash_2.58.1/bin/yash" \
+	"/opt/yash_2.59/bin/yash" \
+	"/opt/yash_2.60/bin/yash" \
+	"/opt/yashrs_0.4.5/bin/yash3" \
+	"/opt/yashrs_3.0.4/bin/yash3" \
 	"/opt/zsh_4.2.7/bin/zsh" \
 	"/opt/zsh_5.0.8/bin/zsh" \
 	"/opt/zsh_5.1.1/bin/zsh" \
